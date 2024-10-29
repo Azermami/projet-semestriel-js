@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Manager</title>
+    <script src="/dist/projectManager.js" type="module"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen flex flex-col">
+        <div id="header"></div>
+        <main class="flex-1 p-4">
+            <header class="bg-blue-600 p-4 text-white">
+                <h1 class="text-2xl">Project Manager</h1>
+            </header>
+            <form id="addProjectForm" class="space-y-4 bg-white p-4 rounded shadow-md mb-6">
+                <input id="projectTitle" type="text" placeholder="Project Title" class="w-full p-2 border rounded" required />
+                <textarea id="projectDescription" placeholder="Project Description" class="w-full p-2 border rounded" required></textarea>
+                <label for="projectPriority">Priorité:</label>
+                <select id="projectPriority" name="projectPriority">
+                    <option value="haute">Haute</option>
+                    <option value="moyenne">Moyenne</option>
+                    <option value="basse">Basse</option>
+                </select>
+                <input id="projectDeadline" type="date" class="w-full p-2 border rounded" required />
+                <button type="submit" class="w-full bg-green-500 text-white p-2 rounded">Add Project</button>
+            </form>
+            <div class="bg-white p-4 rounded shadow-md">
+                <h2 class="text-xl font-bold mb-4">Liste des Projets</h2>
+                <table class="min-w-full table-auto">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2">Titre</th>
+                            <th class="px-4 py-2">Description</th>
+                            <th class="px-4 py-2">Priorité</th>
+                            <th class="px-4 py-2">Date Limite</th>
+                            <th class="px-4 py-2">Actions</th>
+                        </tr>
+                    </thead> 
+                    <tbody id="projectTableBody">
+                        <!-- Les lignes de tâches seront insérées ici -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    <script>
+        // Charger le menu de navigation une fois que le DOM est prêt
+        window.onload = function() {
+            fetch('header.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('header').innerHTML = data;
+                });
+        };
+    </script>
+</body>
+</html>

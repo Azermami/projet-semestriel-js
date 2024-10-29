@@ -79,3 +79,45 @@ export function deleteTask(id: string): void {
     tasks = tasks.filter((task: any) => task.id !== id);
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
+
+
+// Fonction pour sauvegarder un projet
+export function saveProject(project: any): void {
+    const projects = JSON.parse(localStorage.getItem('projects') || '[]');
+    const newProject = {
+        id: Date.now().toString(),  // Utilisation d'un ID unique
+        nom_projet: project.nom_projet,
+        description: project.description,
+        date_creation: new Date().toISOString(),
+        date_limite: project.date_limite,
+        etat_projet: "pending",
+        priorite: project.priorite,
+        progression: 0,
+        id_utilisateur_attribue: project.id_utilisateur_attribue
+    };
+    projects.push(newProject);
+    localStorage.setItem('projects', JSON.stringify(projects));
+}
+
+// Récupération des projets
+export function getProjects(): any[] {
+    return JSON.parse(localStorage.getItem('projects') || '[]');
+}
+
+// Suppression d'un projet
+export function deleteProject(id: string): void {
+    let projects = JSON.parse(localStorage.getItem('projects') || '[]');
+    projects = projects.filter((project: any) => project.id !== id);
+    localStorage.setItem('projects', JSON.stringify(projects));
+}
+
+// Mise à jour profil
+// Récupérer la liste des utilisateurs
+export function getUsers(): any[] {
+    return JSON.parse(localStorage.getItem('users') || '[]');
+}
+
+// Sauvegarder la liste des utilisateurs
+export function saveUsers(users: any[]): void {
+    localStorage.setItem('users', JSON.stringify(users));
+}

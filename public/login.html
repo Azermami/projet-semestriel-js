@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen flex justify-center items-center">
+        <div class="bg-white p-8 rounded shadow-md w-96">
+            <h2 class="text-2xl font-bold text-center mb-6">Login</h2>
+            <form id="loginForm" autocomplete="off" class="space-y-4">
+                <input type="text" id="username" placeholder="Username" class="w-full p-2 border rounded" />
+                <input type="password" id="password" placeholder="Password" class="w-full p-2 border rounded" />
+                <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded">Login</button>
+            </form>
+            <div id="loginError" class="text-red-500 mt-4 hidden">Invalid credentials, please try again.</div>
+            <div class="text-center mt-4">
+                <a href="register.html" class="text-blue-500">Don't have an account? Sign up</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Effacer les champs de saisie au chargement de la page
+        window.onload = function() {
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        };
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(user => user.username === username && user.password === password);
+
+            if (user) {
+                localStorage.setItem('loggedInUser', JSON.stringify(user));
+                window.location.href = "dashboard.html";
+            } else {
+                document.getElementById('loginError').classList.remove('hidden');
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+            }
+        });
+    </script>
+</body>
+</html>

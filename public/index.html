@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!-- <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -10,6 +10,88 @@
     <h1 class="text-4xl font-bold text-green-600">Page principale</h1>
     <p class="mt-4 text-lg text-gray-700">Bienvenue sur la page principale de votre application TypeScript et Tailwind CSS.</p>
     <a href="about.html" class="mt-6 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">Accéder à la page À propos</a>
+
+    <script type="module" src="../dist/index.js"></script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil | Gestionnaire de Tâches</title>
+    <!-- Lien correct pour Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.1/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+
+    <!-- Header -->
+    <header class="bg-green-600 p-6 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Logo -->
+            <div class="flex items-center">
+                <img src="logo.png" alt="Logo" class="h-10 w-10 mr-3">
+                <h1 class="text-3xl font-bold text-white">Gestionnaire de Tâches</h1>
+            </div>
+            <!-- Navigation -->
+            <nav>
+                <ul class="flex space-x-6">
+                    <li><a href="login.html" class="text-white hover:text-gray-200 transition duration-300">Connexion</a></li>
+                    <li><a href="about.html" class="text-white hover:text-gray-200 transition duration-300">À Propos</a></li>
+                    <li><a href="profile.html" class="text-white hover:text-gray-200 transition duration-300">Profil</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Section -->
+    <section class="container mx-auto mt-12 p-8 bg-white rounded-lg shadow-lg text-center">
+        <h2 class="text-2xl font-semibold text-gray-800">Organisez vos tâches, priorisez et ne manquez jamais une échéance.</h2>
+        <p class="mt-4 text-lg text-gray-600">Avec notre application, vous pouvez gérer vos tâches, définir des rappels et suivre vos progrès en temps réel.</p>
+        <a href="register.html" class="inline-block mt-8 px-8 py-3 bg-green-600 text-white font-semibold rounded hover:bg-green-700 transition duration-300">Commencer Maintenant</a>
+        
+        <!-- Illustration Section -->
+        <div class="mt-10">
+            <img src="tasks-illustration.png" alt="Illustration de gestion de tâches" class="mx-auto w-64">
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="container mx-auto mt-16 p-8 bg-gray-100 rounded-lg shadow-lg">
+        <h3 class="text-xl font-semibold text-gray-800 text-center mb-8">Principales Fonctionnalités</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Feature 1 -->
+            <div class="p-6 bg-white rounded-lg shadow-md">
+                <img src="task-icon.png" alt="Icone tâche" class="w-12 mx-auto mb-4">
+                <h4 class="text-lg font-bold text-gray-800">Gestion des tâches</h4>
+                <p class="mt-2 text-gray-600">Créez, modifiez, et supprimez vos tâches avec une interface simple et intuitive.</p>
+            </div>
+            <!-- Feature 2 -->
+            <div class="p-6 bg-white rounded-lg shadow-md">
+                <img src="priority-icon.png" alt="Icone priorité" class="w-12 mx-auto mb-4">
+                <h4 class="text-lg font-bold text-gray-800">Priorisation des tâches</h4>
+                <p class="mt-2 text-gray-600">Classez vos tâches par importance pour une meilleure gestion du temps.</p>
+            </div>
+            <!-- Feature 3 -->
+            <div class="p-6 bg-white rounded-lg shadow-md">
+                <img src="reminder-icon.png" alt="Icone rappel" class="w-12 mx-auto mb-4">
+                <h4 class="text-lg font-bold text-gray-800">Rappels</h4>
+                <p class="mt-2 text-gray-600">Définissez des rappels et des dates limites pour ne jamais oublier vos échéances.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 mt-16 py-6">
+        <div class="container mx-auto text-center text-white">
+            <p>&copy; 2024 Gestionnaire de Tâches. Tous droits réservés.</p>
+            <div class="mt-4">
+                <a href="#" class="text-gray-400 hover:text-white mx-2">Politique de confidentialité</a>
+                <a href="#" class="text-gray-400 hover:text-white mx-2">Conditions d'utilisation</a>
+            </div>
+        </div>
+    </footer>
 
     <script type="module" src="../dist/index.js"></script>
 </body>

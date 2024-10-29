@@ -6,10 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById("addTaskForm")?.addEventListener("submit", (e) => {
         e.preventDefault();
-        const taskId = (document.getElementById("taskId") as HTMLInputElement)?.value; // Récupérez l'ID de la tâche à modifier
+        const taskId = (document.getElementById("taskId") as HTMLInputElement)?.value;
 
         const newTask = {
-            id: taskId || Date.now().toString(), // Utiliser l'ID existant ou créer un nouvel ID
+            id: taskId || Date.now().toString(),
             nom_tache: (document.getElementById("taskTitle") as HTMLInputElement).value,
             description: (document.getElementById("taskDescription") as HTMLTextAreaElement).value,
             priorite: (document.getElementById("taskPriority") as HTMLSelectElement).value,
@@ -17,9 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
             id_utilisateur_attribue: JSON.parse(localStorage.getItem("loggedInUser") || "{}").id
         };
 
-        // Vérifiez si nous modifions une tâche existante ou en ajoutons une nouvelle
         if (taskId) {
-            updateTask(newTask); // Appel de la fonction de mise à jour
+            updateTask(newTask);
         } else {
             saveTask(newTask);
         }
@@ -53,7 +52,6 @@ function displayTasks(tasks: any[]) {
             taskTableBody.appendChild(row);
         });
 
-        // Ajoutez des gestionnaires d'événements pour les boutons
         addTaskButtonListeners();
     }
 }
@@ -79,13 +77,11 @@ function addTaskButtonListeners() {
             if (taskId) {
                 const taskToEdit = getTasks().find(task => task.id === taskId);
                 if (taskToEdit) {
-                    // Remplir le formulaire avec les données de la tâche à modifier
                     (document.getElementById("taskTitle") as HTMLInputElement).value = taskToEdit.nom_tache;
                     (document.getElementById("taskDescription") as HTMLTextAreaElement).value = taskToEdit.description;
                     (document.getElementById("taskPriority") as HTMLSelectElement).value = taskToEdit.priorite;
                     (document.getElementById("taskDeadline") as HTMLInputElement).value = taskToEdit.date_limite;
 
-                    // Ajouter un champ caché pour l'ID de la tâche à modifier
                     let taskIdInput = document.getElementById("taskId") as HTMLInputElement;
                     if (!taskIdInput) {
                         taskIdInput = document.createElement("input");

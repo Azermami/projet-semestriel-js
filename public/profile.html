@@ -3,27 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <title>Profile</title>
-    <script src="profile.js"></script>
-    
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="dist/profile.js" defer></script>
 </head>
 <body class="bg-gray-100">
-    <!-- Div pour l'en-tête -->
     <div id="header"></div>
-
     <div class="min-h-screen flex justify-center items-center">
         <div class="bg-white p-8 rounded shadow-md w-96">
             <h2 class="text-2xl font-bold text-center mb-6">Profile</h2>
             <form id="profileForm" class="space-y-4">
                 <input type="text" id="userName" placeholder="Username" class="w-full p-2 border rounded" />
                 <input type="email" id="userEmail" placeholder="Email" class="w-full p-2 border rounded" />
+                
+                <input type="password" id="currentPassword" placeholder="Current Password" class="w-full p-2 border rounded" />
+                <input type="password" id="newPassword" placeholder="New Password" class="w-full p-2 border rounded" />
+
                 <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded">Update Profile</button>
             </form>
         </div>
     </div>
-
     <script>
         window.onload = function() {
             fetch('header.html')

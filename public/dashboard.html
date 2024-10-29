@@ -8,6 +8,8 @@
 </head>
 <body class="bg-gray-100">
     <!-- Ici, le menu sera chargé -->
+    <h1 class="text-2xl font-bold" id="welcomeMessage"></h1>
+
     <div id="header"></div>
 
     <div class="container mx-auto p-4">
@@ -23,5 +25,24 @@
                 document.getElementById('header').innerHTML = data;
             });
     </script>
+    <!-- <script>
+        // Charger le menu de navigation
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header').innerHTML = data;
+            });
+    
+        // Afficher le message de bienvenue
+        const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
+        const welcomeMessage = document.getElementById("welcomeMessage");
+    
+        if (loggedInUser && loggedInUser.username) {
+            welcomeMessage.textContent = `Bienvenue, ${loggedInUser.username}!`;
+        } else {
+            welcomeMessage.textContent = `Bienvenue!`;
+        }
+    </script> -->
+    
 </body>
 </html>

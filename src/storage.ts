@@ -79,3 +79,17 @@ export function deleteTask(id: string): void {
     tasks = tasks.filter((task: any) => task.id !== id);
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
+
+
+
+
+//Mis a jour profil
+// Récupérer la liste des utilisateurs
+export function getUsers(): any[] {
+    return JSON.parse(localStorage.getItem('users') || '[]');
+}
+
+// Sauvegarder la liste des utilisateurs
+export function saveUsers(users: any[]): void {
+    localStorage.setItem('users', JSON.stringify(users));
+}

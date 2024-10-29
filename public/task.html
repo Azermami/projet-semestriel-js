@@ -1,75 +1,19 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion des Tâches</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <header>
-        <h2>Mes Tâches</h2>
-        <nav>
-            <ul>
-                <li><a href="dashboard.html">Tableau de Bord</a></li>
-                <li><a href="profile.html">Profil</a></li>
-                <li><button id="logoutButton">Déconnexion</button></li>
-            </ul>
-        </nav>
-    </header>
-
-    <section>
-        <form id="addTaskForm">
-            <h3>Créer une Nouvelle Tâche</h3>
-            <label for="taskTitle">Titre de la Tâche:</label>
-            <input type="text" id="taskTitle" name="taskTitle" required>
-
-            <label for="taskDescription">Description:</label>
-            <textarea id="taskDescription" name="taskDescription"></textarea>
-
-            <label for="taskPriority">Priorité:</label>
-            <select id="taskPriority" name="taskPriority">
-                <option value="haute">Haute</option>
-                <option value="moyenne">Moyenne</option>
-                <option value="basse">Basse</option>
-            </select>
-
-            <label for="taskDeadline">Date Limite:</label>
-            <input type="date" id="taskDeadline" name="taskDeadline" required>
-
-            <button type="submit">Ajouter la Tâche</button>
-        </form>
-
-        <section id="taskContainer">
-            <h3>Liste des Tâches</h3>
-            Les tâches seront ajoutées ici dynamiquement -->
-        <!-- </section>
-    </section>
-    <script src="taskmanager.js" type="module"></script>
-</body>
-</html> --> 
-<!DOCTYPE html>   
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Manager</title>
-    <!-- <script src="../dist/taskManager.js" type="module"></script> -->
-<script src="/dist/taskManager.js" type="module"></script>
-
+    <script src="/dist/taskManager.js" type="module"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100">
     <div class="min-h-screen flex flex-col">
-        
         <div id="header"></div>
-
         <main class="flex-1 p-4">
             <header class="bg-blue-600 p-4 text-white">
                 <h1 class="text-2xl">Task Manager</h1>
             </header>
-
             <form id="addTaskForm" class="space-y-4 bg-white p-4 rounded shadow-md mb-6">
                 <input id="taskTitle" type="text" placeholder="Task Title" class="w-full p-2 border rounded" required />
                 <textarea id="taskDescription" placeholder="Task Description" class="w-full p-2 border rounded" required></textarea>
@@ -78,11 +22,10 @@
                     <option value="haute">Haute</option>
                     <option value="moyenne">Moyenne</option>
                     <option value="basse">Basse</option>
-                </select>                <input id="taskDeadline" type="date" class="w-full p-2 border rounded" required />
+                </select>
+                <input id="taskDeadline" type="date" class="w-full p-2 border rounded" required />
                 <button type="submit" class="w-full bg-green-500 text-white p-2 rounded">Add Task</button>
             </form>
-
-            <!-- Tableau des tâches existantes -->
             <div class="bg-white p-4 rounded shadow-md">
                 <h2 class="text-xl font-bold mb-4">Liste des Tâches</h2>
                 <table class="min-w-full table-auto">
@@ -94,7 +37,7 @@
                             <th class="px-4 py-2">Date Limite</th>
                             <th class="px-4 py-2">Actions</th>
                         </tr>
-                    </thead>
+                    </thead> 
                     <tbody id="taskTableBody">
                         <!-- Les lignes de tâches seront insérées ici -->
                     </tbody>
@@ -102,7 +45,6 @@
             </div>
         </main>
     </div>
-
     <script>
         // Charger le menu de navigation une fois que le DOM est prêt
         window.onload = function() {

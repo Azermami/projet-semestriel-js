@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendrier</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen flex flex-col">
+        <div id="header"></div>
+        <main class="flex-1 p-4">
+            <header class="bg-blue-600 p-4 text-white">
+                <h1 class="text-2xl">Calendrier Hebdomadaire</h1>
+            </header>
+
+            <div class="bg-white p-4 rounded shadow-md mt-6">
+                <h2 class="text-xl font-bold mb-4">Vue du Calendrier de la Semaine</h2>
+                <table class="min-w-full table-auto border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 border">Lundi</th>
+                            <th class="px-4 py-2 border">Mardi</th>
+                            <th class="px-4 py-2 border">Mercredi</th>
+                            <th class="px-4 py-2 border">Jeudi</th>
+                            <th class="px-4 py-2 border">Vendredi</th>
+                            <th class="px-4 py-2 border">Samedi</th>
+                            <th class="px-4 py-2 border">Dimanche</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="px-4 py-2 border" id="monday">Aucune tâche</td>
+                            <td class="px-4 py-2 border" id="tuesday">Aucune tâche</td>
+                            <td class="px-4 py-2 border" id="wednesday">Aucune tâche</td>
+                            <td class="px-4 py-2 border" id="thursday">Aucune tâche</td>
+                            <td class="px-4 py-2 border" id="friday">Aucune tâche</td>
+                            <td class="px-4 py-2 border" id="saturday">Aucune tâche</td>
+                            <td class="px-4 py-2 border" id="sunday">Aucune tâche</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Charger le menu de navigation une fois que le DOM est prêt
+        window.onload = function() {
+            fetch('header.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('header').innerHTML = data;
+                });
+        };
+    </script>
+</body>
+</html>

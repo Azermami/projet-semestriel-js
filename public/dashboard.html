@@ -18,8 +18,7 @@
                 <a href="project.html" class="text-blue-500 hover:underline">Projets en cours ></a>
             </h2>
             <div id="projets-liste">
-                <!-- Contenu dynamique des projets à insérer ici -->
-                <p class="text-gray-600">Aucun projet en cours pour le moment.</p>
+                <p class="text-gray-600">Chargement des projets en cours...</p>
             </div>
         </div>
 
@@ -29,20 +28,39 @@
                 <a href="task.html" class="text-blue-500 hover:underline">Tâches arrivant à échéance ></a>
             </h2>
             <div id="taches-liste">
-                <!-- Contenu dynamique des tâches à insérer ici -->
-                <p class="text-gray-600">Aucune tâche à échéance proche pour le moment.</p>
+                <p class="text-gray-600">Chargement des tâches...</p>
             </div>
         </div>
 
-        <!-- Section Calendrier de la semaine -->
+        <!-- Section Calendrier Hebdomadaire -->
         <div id="calendrier-semaine" class="mt-8 p-4 bg-white rounded shadow">
             <h2 class="text-xl font-bold mb-4">
                 <a href="calendar.html" class="text-blue-500 hover:underline">Calendrier de la semaine ></a>
             </h2>
-            <div id="calendrier">
-                <!-- Placeholder pour le calendrier -->
-                <p class="text-gray-600">Affichage du calendrier hebdomadaire ici.</p>
-            </div>
+            <table class="min-w-full table-auto border-collapse">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="px-4 py-2 border">Lundi</th>
+                        <th class="px-4 py-2 border">Mardi</th>
+                        <th class="px-4 py-2 border">Mercredi</th>
+                        <th class="px-4 py-2 border">Jeudi</th>
+                        <th class="px-4 py-2 border">Vendredi</th>
+                        <th class="px-4 py-2 border">Samedi</th>
+                        <th class="px-4 py-2 border">Dimanche</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="px-4 py-2 border" id="monday">Aucune tâche</td>
+                        <td class="px-4 py-2 border" id="tuesday">Aucune tâche</td>
+                        <td class="px-4 py-2 border" id="wednesday">Aucune tâche</td>
+                        <td class="px-4 py-2 border" id="thursday">Aucune tâche</td>
+                        <td class="px-4 py-2 border" id="friday">Aucune tâche</td>
+                        <td class="px-4 py-2 border" id="saturday">Aucune tâche</td>
+                        <td class="px-4 py-2 border" id="sunday">Aucune tâche</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -53,34 +71,139 @@
             .then(data => {
                 document.getElementById('header').innerHTML = data;
 
-                // Afficher le nom d'utilisateur
                 if (Auth.isAuthenticated()) {
                     const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
                     const userInfoDiv = document.getElementById('user-info');
                     userInfoDiv.innerHTML = `<h1 class="text-2xl font-bold">Bienvenue sur le Dashboard <strong>${loggedInUser.username}</strong></h1>`;
                 } else {
-                    document.getElementById('user-info').innerHTML = `<p class="text-lg">Not logged in.</p>`;
+                    document.getElementById('user-info').innerHTML = `<p class="text-lg">Vous n'êtes pas connecté.</p>`;
                 }
             });
 
         class Auth {
-            static login(username, password) {
-                const userData = JSON.parse(localStorage.getItem("users") || "[]");
-                const user = userData.find((user) => user.username === username && user.password === password);
-                if (user) {
-                    localStorage.setItem("loggedInUser", JSON.stringify(user));
-                    return true;
-                }
-                return false;
-            }
-            static logout() {
-                localStorage.removeItem("loggedInUser");
-                window.location.href = "login.html";
-            }
             static isAuthenticated() {
                 return localStorage.getItem("loggedInUser") !== null;
             }
         }
+
+        function getProjects() {
+            return JSON.parse(localStorage.getItem("projects") || "[]");
+        }
+
+        function getTasks() {
+            return JSON.parse(localStorage.getItem("tasks") || "[]");
+        }
+
+        function getTop3Projects() {
+            const projects = getProjects();
+            const sortedProjects = projects.sort((a, b) => new Date(a.date_limite) - new Date(b.date_limite));
+            return sortedProjects.slice(0, 3);
+        }
+
+        function getTop3Tasks() {
+            const tasks = getTasks();
+            const sortedTasks = tasks.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+            return sortedTasks.slice(0, 3);
+        }
+
+        function displayProjects() {
+            const projetsListeDiv = document.getElementById('projets-liste');
+            const topProjects = getTop3Projects();
+            projetsListeDiv.innerHTML = '';
+            if (topProjects.length === 0) {
+                projetsListeDiv.innerHTML = `<p class="text-gray-600">Aucun projet en cours pour le moment.</p>`;
+                return;
+            }
+            topProjects.forEach(project => {
+                const projetItem = document.createElement('div');
+                projetItem.className = "mb-2 p-2 border border-gray-200 rounded";
+                projetItem.innerHTML = `
+                    <h3 class="font-bold">${project.nom_projet}</h3>
+                    <p class="text-gray-600">${project.description}</p>
+                    <p class="text-gray-500">Date limite : ${project.date_limite}</p>
+                `;
+                projetsListeDiv.appendChild(projetItem);
+            });
+        }
+
+        function displayTasks() {
+            const tachesListeDiv = document.getElementById('taches-liste');
+            const topTasks = getTop3Tasks();
+            tachesListeDiv.innerHTML = '';
+            if (topTasks.length === 0) {
+                tachesListeDiv.innerHTML = `<p class="text-gray-600">Aucune tâche à échéance proche pour le moment.</p>`;
+                return;
+            }
+            topTasks.forEach(task => {
+                const tacheItem = document.createElement('div');
+                tacheItem.className = "mb-2 p-2 border border-gray-200 rounded";
+                tacheItem.innerHTML = `
+                    <h3 class="font-bold">${task.title}</h3>
+                    <p class="text-gray-600">${task.description}</p>
+                    <p class="text-gray-500">Date limite : ${task.deadline}</p>
+                `;
+                tachesListeDiv.appendChild(tacheItem);
+            });
+        }
+
+        function organizeItemsByDay() {
+            const tasks = getTasks();
+            const projects = getProjects();
+            const now = new Date();
+            const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + 1));
+            const daysOfWeek = Array.from({ length: 7 }, (_, i) => {
+                const date = new Date(startOfWeek);
+                date.setDate(date.getDate() + i);
+                return date.toISOString().split("T")[0];
+            });
+
+            const itemsByDay = {
+                monday: [],
+                tuesday: [],
+                wednesday: [],
+                thursday: [],
+                friday: [],
+                saturday: [],
+                sunday: [],
+            };
+
+            tasks.forEach(task => {
+                if (daysOfWeek.includes(task.date_limite)) {
+                    const dayKey = getDayKey(new Date(task.date_limite));
+                    itemsByDay[dayKey].push(`Tâche: ${task.nom_tache}`);
+                }
+            });
+
+            projects.forEach(project => {
+                if (daysOfWeek.includes(project.date_limite)) {
+                    const dayKey = getDayKey(new Date(project.date_limite));
+                    itemsByDay[dayKey].push(`Projet: ${project.nom_projet}`);
+                }
+            });
+
+            return itemsByDay;
+        }
+
+        function getDayKey(date) {
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            return days[date.getDay() - 1] || 'sunday';
+        }
+
+        function displayCalendar() {
+            const itemsByDay = organizeItemsByDay();
+            Object.entries(itemsByDay).forEach(([day, items]) => {
+                const cell = document.getElementById(day);
+                if (cell) {
+                    cell.innerHTML = items.length > 0 ? items.join('<br>') : "Aucune tâche";
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            displayProjects();
+            displayTasks();
+            displayCalendar();
+        });
     </script>
 </body>
 </html>

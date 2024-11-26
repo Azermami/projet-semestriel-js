@@ -53,6 +53,81 @@
                     document.getElementById('header').innerHTML = data;
                 });
         };
+
+        // Récupérer les tâches depuis le localStorage
+        function getTasks() {
+            return JSON.parse(localStorage.getItem("tasks") || "[]");
+        }
+
+        // Récupérer les projets depuis le localStorage
+        function getProjects() {
+            return JSON.parse(localStorage.getItem("projects") || "[]");
+        }
+
+        // Organiser les tâches et projets par jour de la semaine
+        function organizeItemsByDay() {
+            const tasks = getTasks();
+            const projects = getProjects();
+
+            // Obtenir la date de début de la semaine (lundi)
+            const now = new Date();
+            const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + 1)); // Lundi
+            const daysOfWeek = Array.from({ length: 7 }, (_, i) => {
+                const date = new Date(startOfWeek);
+                date.setDate(date.getDate() + i);
+                return date.toISOString().split("T")[0]; // Format YYYY-MM-DD
+            });
+
+            // Structure pour stocker les événements par jour
+            const itemsByDay = {
+                monday: [],
+                tuesday: [],
+                wednesday: [],
+                thursday: [],
+                friday: [],
+                saturday: [],
+                sunday: [],
+            };
+
+            // Ajouter les tâches et projets à leurs jours respectifs
+            tasks.forEach(task => {
+                if (daysOfWeek.includes(task.date_limite)) {
+                    const dayKey = getDayKey(new Date(task.date_limite));
+                    itemsByDay[dayKey].push(`Tâche: ${task.nom_tache}`);
+                }
+            });
+
+            projects.forEach(project => {
+                if (daysOfWeek.includes(project.date_limite)) {
+                    const dayKey = getDayKey(new Date(project.date_limite));
+                    itemsByDay[dayKey].push(`Projet: ${project.nom_projet}`);
+                }
+            });
+
+            return itemsByDay;
+        }
+
+        // Associer une date à un jour de la semaine
+        function getDayKey(date) {
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            return days[date.getDay() - 1] || 'sunday'; // Le dimanche retourne -1, donc on l'ajoute manuellement
+        }
+
+        // Afficher les éléments dans le tableau
+        function displayItemsInCalendar(itemsByDay) {
+            Object.entries(itemsByDay).forEach(([day, items]) => {
+                const cell = document.getElementById(day);
+                if (cell) {
+                    cell.innerHTML = items.length > 0 ? items.join('<br>') : "Aucune tâche";
+                }
+            });
+        }
+
+        // Charger et afficher les données au chargement de la page
+        document.addEventListener('DOMContentLoaded', function () {
+            const itemsByDay = organizeItemsByDay();
+            displayItemsInCalendar(itemsByDay);
+        });
     </script>
 </body>
 </html>

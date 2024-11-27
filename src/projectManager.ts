@@ -6,25 +6,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById("addProjectForm")?.addEventListener("submit", (e) => {
         e.preventDefault();
-        const projectId = (document.getElementById("projectId") as HTMLInputElement)?.value; // Récupérez l'ID du projet à modifier
+
+        // Récupérer l'ID du projet à modifier (s'il existe)
+        const projectId = (document.getElementById("projectId") as HTMLInputElement)?.value;
 
         const newProject = {
-            id: projectId || Date.now().toString(), // Utiliser l'ID existant ou créer un nouvel ID
-            nom_projet: (document.getElementById("projectTitle") as HTMLInputElement).value,
-            description: (document.getElementById("projectDescription") as HTMLTextAreaElement).value,
+            id: projectId || Date.now().toString(), // Générer un ID si c'est un nouveau projet
+            nom_projet: (document.getElementById("projectTitle") as HTMLInputElement).value.trim(),
+            description: (document.getElementById("projectDescription") as HTMLTextAreaElement).value.trim(),
             priorite: (document.getElementById("projectPriority") as HTMLSelectElement).value,
             date_limite: (document.getElementById("projectDeadline") as HTMLInputElement).value,
             id_utilisateur_attribue: JSON.parse(localStorage.getItem("loggedInUser") || "{}").id
         };
 
-        // Vérifiez si nous modifions un projet existant ou en ajoutons un nouveau
+        // Vérification des champs requis
+        if (!newProject.nom_projet || !newProject.description || !newProject.date_limite) {
+            alert("Tous les champs sont obligatoires !");
+            return;
+        }
+
         if (projectId) {
-            updateProject(newProject); // Appel de la fonction de mise à jour
+            // Mettre à jour le projet existant
+            updateProject(newProject);
         } else {
+            // Ajouter un nouveau projet
             saveProject(newProject);
         }
 
+        // Actualiser l'affichage et vider le formulaire
         displayProjects(getProjects());
+        document.getElementById("addProjectForm")?.reset();
+
+        // Supprimer l'ID caché du projet après mise à jour
+        const hiddenProjectIdField = document.getElementById("projectId") as HTMLInputElement;
+        if (hiddenProjectIdField) hiddenProjectIdField.remove();
+
         alert(projectId ? "Projet modifié avec succès !" : "Projet enregistré avec succès !");
     });
 });
@@ -41,25 +57,26 @@ function displayProjects(projects: any[]) {
         userProjects.forEach(project => {
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td>${project.nom_projet}</td>
-                <td>${project.description}</td>
-                <td>${project.priorite}</td>
-                <td>${project.date_limite}</td>
+                <td>${project.nom_projet || "Sans titre"}</td>
+                <td>${project.description || "Sans description"}</td>
+                <td>${project.priorite || "Non définie"}</td>
+                <td>${project.date_limite || "Non définie"}</td>
                 <td>
-                    <button class="editProjectBtn" data-id="${project.id}">Modifier</button>
-                    <button class="deleteProjectBtn" data-id="${project.id}">Supprimer</button>
+                    <button class="editProjectBtn bg-blue-500 text-white px-2 py-1 rounded" data-id="${project.id}">Modifier</button>
+                    <button class="deleteProjectBtn bg-red-500 text-white px-2 py-1 rounded" data-id="${project.id}">Supprimer</button>
                 </td>
             `;
             projectTableBody.appendChild(row);
         });
 
-        // Ajoutez des gestionnaires d'événements pour les boutons
+        // Ajouter des écouteurs aux boutons d'action
         addProjectButtonListeners();
     }
 }
 
 // Fonction pour ajouter des écouteurs d'événements aux boutons
 function addProjectButtonListeners() {
+    // Boutons de suppression
     const deleteButtons = document.querySelectorAll(".deleteProjectBtn");
     deleteButtons.forEach(button => {
         button.addEventListener("click", (e) => {
@@ -72,6 +89,7 @@ function addProjectButtonListeners() {
         });
     });
 
+    // Boutons de modification
     const editButtons = document.querySelectorAll(".editProjectBtn");
     editButtons.forEach(button => {
         button.addEventListener("click", (e) => {
@@ -79,13 +97,13 @@ function addProjectButtonListeners() {
             if (projectId) {
                 const projectToEdit = getProjects().find(project => project.id === projectId);
                 if (projectToEdit) {
-                    // Remplir le formulaire avec les données du projet à modifier
-                    (document.getElementById("projectTitle") as HTMLInputElement).value = projectToEdit.nom_projet;
-                    (document.getElementById("projectDescription") as HTMLTextAreaElement).value = projectToEdit.description;
-                    (document.getElementById("projectPriority") as HTMLSelectElement).value = projectToEdit.priorite;
-                    (document.getElementById("projectDeadline") as HTMLInputElement).value = projectToEdit.date_limite;
+                    // Remplir le formulaire avec les données du projet
+                    (document.getElementById("projectTitle") as HTMLInputElement).value = projectToEdit.nom_projet || "";
+                    (document.getElementById("projectDescription") as HTMLTextAreaElement).value = projectToEdit.description || "";
+                    (document.getElementById("projectPriority") as HTMLSelectElement).value = projectToEdit.priorite || "moyenne";
+                    (document.getElementById("projectDeadline") as HTMLInputElement).value = projectToEdit.date_limite || "";
 
-                    // Ajouter un champ caché pour l'ID du projet à modifier
+                    // Ajouter un champ caché pour stocker l'ID du projet
                     let projectIdInput = document.getElementById("projectId") as HTMLInputElement;
                     if (!projectIdInput) {
                         projectIdInput = document.createElement("input");
@@ -100,9 +118,9 @@ function addProjectButtonListeners() {
     });
 }
 
-// Fonction pour mettre à jour un projet
-function updateProject(updatedProject: any) {
+// Fonction pour mettre à jour un projet existant
+function updateProject(updatedProject: any): void {
     let projects = getProjects();
     projects = projects.map(project => project.id === updatedProject.id ? updatedProject : project);
-    localStorage.setItem('projects', JSON.stringify(projects));
+    localStorage.setItem("projects", JSON.stringify(projects));
 }

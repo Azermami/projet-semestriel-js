@@ -4,13 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Manager</title>
-    <script src="/dist/projectManager.js" type="module"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+        }
+        #sidebar {
+            min-width: 250px;
+            background-color: #1F2937;
+            color: white;
+        }
+        #content {
+            flex: 1;
+            padding: 1rem;
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
-    <div class="min-h-screen flex flex-col">
-        <div id="header"></div>
-        <main class="flex-1 p-4">
+<body>
+    <!-- Sidebar -->
+    <div id="sidebar" class="flex flex-col p-4">
+        <h1 class="text-xl font-bold mb-6">Gestionnaire de Taches</h1>
+        <nav class="space-y-4">
+            <a href="dashboard.html" class="block text-white hover:text-blue-400">Dashboard</a>
+            <a href="project.html" class="block text-white hover:text-blue-400">Projet</a>
+            <a href="task.html" class="block text-white hover:text-blue-400">Taches</a>
+            <a href="calendar.html" class="block text-white hover:text-blue-400">Calendrier</a>
+            <a href="profile.html" class="block text-white hover:text-blue-400">Profil</a>
+            <a href="login.html" class="block text-white hover:text-red-400">Se déconnecter</a>
+        </nav>
+    </div>
+
+    <!-- Content -->
+    <div id="content">
+        <main class="flex-1">
             <header class="bg-blue-600 p-4 text-white">
                 <h1 class="text-2xl">Project Manager</h1>
             </header>
@@ -18,7 +46,7 @@
                 <input id="projectTitle" type="text" placeholder="Project Title" class="w-full p-2 border rounded" required />
                 <textarea id="projectDescription" placeholder="Project Description" class="w-full p-2 border rounded" required></textarea>
                 <label for="projectPriority">Priorité:</label>
-                <select id="projectPriority" name="projectPriority">
+                <select id="projectPriority" name="projectPriority" class="p-2 border rounded w-full">
                     <option value="haute">Haute</option>
                     <option value="moyenne">Moyenne</option>
                     <option value="basse">Basse</option>
@@ -28,32 +56,124 @@
             </form>
             <div class="bg-white p-4 rounded shadow-md">
                 <h2 class="text-xl font-bold mb-4">Liste des Projets</h2>
-                <table class="min-w-full table-auto">
+                <table class="min-w-full table-auto border-collapse">
                     <thead>
                         <tr class="bg-gray-200">
-                            <th class="px-4 py-2">Titre</th>
-                            <th class="px-4 py-2">Description</th>
-                            <th class="px-4 py-2">Priorité</th>
-                            <th class="px-4 py-2">Date Limite</th>
-                            <th class="px-4 py-2">Actions</th>
+                            <th class="px-4 py-2 border">Titre</th>
+                            <th class="px-4 py-2 border">Description</th>
+                            <th class="px-4 py-2 border">Priorité</th>
+                            <th class="px-4 py-2 border">Date Limite</th>
+                            <th class="px-4 py-2 border">Actions</th>
                         </tr>
-                    </thead> 
+                    </thead>
                     <tbody id="projectTableBody">
-                        <!-- Les lignes de tâches seront insérées ici -->
+                        <!-- Les lignes des projets seront insérées ici -->
                     </tbody>
                 </table>
             </div>
         </main>
     </div>
+
     <script>
-        // Charger le menu de navigation une fois que le DOM est prêt
-        window.onload = function() {
-            fetch('header.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('header').innerHTML = data;
-                });
-        };
+        // Récupérer les projets depuis le localStorage
+        function getProjects() {
+            try {
+                return JSON.parse(localStorage.getItem("projects") || "[]");
+            } catch (error) {
+                console.error("Erreur lors de la récupération des projets :", error);
+                return [];
+            }
+        }
+
+        // Sauvegarder un projet dans le localStorage
+        function saveProject(project) {
+            const projects = getProjects();
+            projects.push(project);
+            localStorage.setItem("projects", JSON.stringify(projects));
+        }
+
+        // Sauvegarder tous les projets (mise à jour complète)
+        function saveAllProjects(projects) {
+            localStorage.setItem("projects", JSON.stringify(projects));
+        }
+
+        // Afficher les projets dans le tableau
+        function displayProjects() {
+            const projects = getProjects();
+            const projectTableBody = document.getElementById("projectTableBody");
+
+            // Vider le tableau avant de le remplir
+            projectTableBody.innerHTML = "";
+
+            if (projects.length === 0) {
+                projectTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center text-gray-500">Aucun projet trouvé.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // Ajouter chaque projet dans le tableau
+            projects.forEach((project, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td class="px-4 py-2 border">${project.title || "Non défini"}</td>
+                    <td class="px-4 py-2 border">${project.description || "Non défini"}</td>
+                    <td class="px-4 py-2 border">${project.priority || "Non défini"}</td>
+                    <td class="px-4 py-2 border">${project.deadline || "Non défini"}</td>
+                    <td class="px-4 py-2 border">
+                        <button class="bg-blue-500 text-white px-2 py-1 rounded mr-2" onclick="editProject(${index})">Modifier</button>
+                        <button class="bg-red-500 text-white px-2 py-1 rounded" onclick="deleteProject(${index})">Supprimer</button>
+                    </td>
+                `;
+                projectTableBody.appendChild(row);
+            });
+        }
+
+        // Supprimer un projet
+        function deleteProject(index) {
+            const projects = getProjects();
+            projects.splice(index, 1); // Supprimer le projet à l'index donné
+            saveAllProjects(projects); // Sauvegarder les projets restants
+            displayProjects(); // Mettre à jour l'affichage
+        }
+
+        // Gestion de l'ajout de projet
+        document.getElementById("addProjectForm").addEventListener("submit", function (event) {
+            event.preventDefault(); // Empêcher le rechargement de la page
+
+            // Récupérer les valeurs du formulaire
+            const title = document.getElementById("projectTitle").value.trim();
+            const description = document.getElementById("projectDescription").value.trim();
+            const priority = document.getElementById("projectPriority").value;
+            const deadline = document.getElementById("projectDeadline").value;
+
+            // Vérification des champs
+            if (!title || !description || !deadline) {
+                alert("Tous les champs sont obligatoires !");
+                return;
+            }
+
+            // Créer un nouveau projet
+            const newProject = {
+                title,
+                description,
+                priority,
+                deadline,
+            };
+
+            saveProject(newProject); // Sauvegarder le projet
+            displayProjects(); // Mettre à jour l'affichage
+
+            // Réinitialiser le formulaire
+            document.getElementById("addProjectForm").reset();
+        });
+
+        // Afficher les projets au chargement de la page
+        document.addEventListener("DOMContentLoaded", function () {
+            displayProjects();
+        });
     </script>
 </body>
 </html>

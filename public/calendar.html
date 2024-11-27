@@ -3,128 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendrier</title>
+    <title>Calendrier Hebdomadaire</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+        }
+        #sidebar {
+            min-width: 250px;
+            background-color: #1F2937;
+            color: white;
+        }
+        #content {
+            flex: 1;
+            padding: 1rem;
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
-    <div class="min-h-screen flex flex-col">
-        <div id="header"></div>
-        <main class="flex-1 p-4">
-            <header class="bg-blue-600 p-4 text-white">
-                <h1 class="text-2xl">Calendrier Hebdomadaire</h1>
-            </header>
+<body>
+    <!-- Sidebar -->
+    <div id="sidebar" class="flex flex-col p-4">
+        <h1 class="text-xl font-bold mb-6">Gestionnaire de Taches</h1>
+        <nav class="space-y-4">
+            <a href="dashboard.html" class="block text-white hover:text-blue-400">Dashboard</a>
+            <a href="project.html" class="block text-white hover:text-blue-400">Projet</a>
+            <a href="task.html" class="block text-white hover:text-blue-400">Taches</a>
+            <a href="calendar.html" class="block text-white hover:text-blue-400">Calendrier</a>
+            <a href="profile.html" class="block text-white hover:text-blue-400">Profil</a>
+            <a href="login.html" class="block text-white hover:text-red-400">Se déconnecter</a>
+        </nav>
+    </div>
 
-            <div class="bg-white p-4 rounded shadow-md mt-6">
-                <h2 class="text-xl font-bold mb-4">Vue du Calendrier de la Semaine</h2>
-                <table class="min-w-full table-auto border-collapse">
-                    <thead>
-                        <tr class="bg-gray-200">
-                            <th class="px-4 py-2 border">Lundi</th>
-                            <th class="px-4 py-2 border">Mardi</th>
-                            <th class="px-4 py-2 border">Mercredi</th>
-                            <th class="px-4 py-2 border">Jeudi</th>
-                            <th class="px-4 py-2 border">Vendredi</th>
-                            <th class="px-4 py-2 border">Samedi</th>
-                            <th class="px-4 py-2 border">Dimanche</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="px-4 py-2 border" id="monday">Aucune tâche</td>
-                            <td class="px-4 py-2 border" id="tuesday">Aucune tâche</td>
-                            <td class="px-4 py-2 border" id="wednesday">Aucune tâche</td>
-                            <td class="px-4 py-2 border" id="thursday">Aucune tâche</td>
-                            <td class="px-4 py-2 border" id="friday">Aucune tâche</td>
-                            <td class="px-4 py-2 border" id="saturday">Aucune tâche</td>
-                            <td class="px-4 py-2 border" id="sunday">Aucune tâche</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </main>
+    <!-- Content -->
+    <div id="content">
+        <header class="bg-blue-600 p-4 text-white">
+            <h1 class="text-2xl">Calendrier Hebdomadaire</h1>
+        </header>
+
+        <div class="bg-white p-4 rounded shadow-md mt-6">
+            <h2 class="text-xl font-bold mb-4">Vue du Calendrier de la Semaine</h2>
+            <table class="min-w-full table-auto border-collapse">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="px-4 py-2 border">Lundi</th>
+                        <th class="px-4 py-2 border">Mardi</th>
+                        <th class="px-4 py-2 border">Mercredi</th>
+                        <th class="px-4 py-2 border">Jeudi</th>
+                        <th class="px-4 py-2 border">Vendredi</th>
+                        <th class="px-4 py-2 border">Samedi</th>
+                        <th class="px-4 py-2 border">Dimanche</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td id="tasks-monday" class="px-4 py-2 border">Aucune tâche</td>
+                        <td id="tasks-tuesday" class="px-4 py-2 border">Aucune tâche</td>
+                        <td id="tasks-wednesday" class="px-4 py-2 border">Aucune tâche</td>
+                        <td id="tasks-thursday" class="px-4 py-2 border">Aucune tâche</td>
+                        <td id="tasks-friday" class="px-4 py-2 border">Aucune tâche</td>
+                        <td id="tasks-saturday" class="px-4 py-2 border">Aucune tâche</td>
+                        <td id="tasks-sunday" class="px-4 py-2 border">Aucune tâche</td>
+                    </tr>
+                    <tr>
+                        <td id="projects-monday" class="px-4 py-2 border">Aucun projet</td>
+                        <td id="projects-tuesday" class="px-4 py-2 border">Aucun projet</td>
+                        <td id="projects-wednesday" class="px-4 py-2 border">Aucun projet</td>
+                        <td id="projects-thursday" class="px-4 py-2 border">Aucun projet</td>
+                        <td id="projects-friday" class="px-4 py-2 border">Aucun projet</td>
+                        <td id="projects-saturday" class="px-4 py-2 border">Aucun projet</td>
+                        <td id="projects-sunday" class="px-4 py-2 border">Aucun projet</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script>
-        // Charger le menu de navigation une fois que le DOM est prêt
-        window.onload = function() {
-            fetch('header.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('header').innerHTML = data;
-                });
-        };
-
-        // Récupérer les tâches depuis le localStorage
+        // Récupérer les tâches et projets depuis le localStorage
         function getTasks() {
             return JSON.parse(localStorage.getItem("tasks") || "[]");
         }
 
-        // Récupérer les projets depuis le localStorage
         function getProjects() {
             return JSON.parse(localStorage.getItem("projects") || "[]");
         }
 
-        // Organiser les tâches et projets par jour de la semaine
+        // Organiser les éléments par jour de la semaine
         function organizeItemsByDay() {
             const tasks = getTasks();
             const projects = getProjects();
 
-            // Obtenir la date de début de la semaine (lundi)
+            // Obtenir la date de début de la semaine
             const now = new Date();
-            const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + 1)); // Lundi
+            const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + 1));
             const daysOfWeek = Array.from({ length: 7 }, (_, i) => {
                 const date = new Date(startOfWeek);
                 date.setDate(date.getDate() + i);
-                return date.toISOString().split("T")[0]; // Format YYYY-MM-DD
+                return date.toISOString().split("T")[0];
             });
 
-            // Structure pour stocker les événements par jour
             const itemsByDay = {
-                monday: [],
-                tuesday: [],
-                wednesday: [],
-                thursday: [],
-                friday: [],
-                saturday: [],
-                sunday: [],
+                tasks: {
+                    monday: [],
+                    tuesday: [],
+                    wednesday: [],
+                    thursday: [],
+                    friday: [],
+                    saturday: [],
+                    sunday: [],
+                },
+                projects: {
+                    monday: [],
+                    tuesday: [],
+                    wednesday: [],
+                    thursday: [],
+                    friday: [],
+                    saturday: [],
+                    sunday: [],
+                },
             };
 
-            // Ajouter les tâches et projets à leurs jours respectifs
             tasks.forEach(task => {
-                if (daysOfWeek.includes(task.date_limite)) {
-                    const dayKey = getDayKey(new Date(task.date_limite));
-                    itemsByDay[dayKey].push(`Tâche: ${task.nom_tache}`);
-                }
+                const dayKey = getDayKey(new Date(task.deadline), daysOfWeek);
+                if (dayKey) itemsByDay.tasks[dayKey].push(task.title);
             });
 
             projects.forEach(project => {
-                if (daysOfWeek.includes(project.date_limite)) {
-                    const dayKey = getDayKey(new Date(project.date_limite));
-                    itemsByDay[dayKey].push(`Projet: ${project.nom_projet}`);
-                }
+                const dayKey = getDayKey(new Date(project.deadline), daysOfWeek);
+                if (dayKey) itemsByDay.projects[dayKey].push(project.title);
             });
 
             return itemsByDay;
         }
 
         // Associer une date à un jour de la semaine
-        function getDayKey(date) {
-            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-            return days[date.getDay() - 1] || 'sunday'; // Le dimanche retourne -1, donc on l'ajoute manuellement
+        function getDayKey(date, daysOfWeek) {
+            const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            const dayIndex = daysOfWeek.indexOf(date.toISOString().split("T")[0]);
+            return dayIndex >= 0 ? dayNames[dayIndex] : null;
         }
 
-        // Afficher les éléments dans le tableau
+        // Afficher les tâches et projets dans le tableau
         function displayItemsInCalendar(itemsByDay) {
-            Object.entries(itemsByDay).forEach(([day, items]) => {
-                const cell = document.getElementById(day);
-                if (cell) {
-                    cell.innerHTML = items.length > 0 ? items.join('<br>') : "Aucune tâche";
-                }
+            Object.entries(itemsByDay.tasks).forEach(([day, tasks]) => {
+                const cell = document.getElementById(`tasks-${day}`);
+                cell.innerHTML = tasks.length > 0 ? tasks.join('<br>') : "Aucune tâche";
+            });
+
+            Object.entries(itemsByDay.projects).forEach(([day, projects]) => {
+                const cell = document.getElementById(`projects-${day}`);
+                cell.innerHTML = projects.length > 0 ? projects.join('<br>') : "Aucun projet";
             });
         }
 
         // Charger et afficher les données au chargement de la page
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', () => {
             const itemsByDay = organizeItemsByDay();
             displayItemsInCalendar(itemsByDay);
         });

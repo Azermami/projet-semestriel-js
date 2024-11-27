@@ -1,0 +1,19 @@
+/* header.css */
+
+/* Espacement entre les éléments du menu */
+header nav a {
+    display: block;
+    padding: 0.5rem 0;
+    margin-bottom: 48px; /* Espacement de 48px */
+    text-decoration: none; /* Supprime le soulignement */
+    color: white; /* Couleur des liens */
+    transition: color 0.3s; /* Animation douce pour les survols */
+}
+
+header nav a:hover {
+    color: #3B82F6; /* Couleur au survol */
+}
+
+header nav a:hover.text-red-400 {
+    color: #EF4444; /* Rouge pour la déconnexion */
+}

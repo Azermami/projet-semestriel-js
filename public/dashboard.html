@@ -5,11 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+        }
+        #sidebar {
+            width: 250px;
+            background-color: #1F2937;
+            color: white;
+            flex-shrink: 0;
+        }
+        #content {
+            flex: 1;
+            padding: 1rem;
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
-    <div id="header"></div>
+<body>
+    <!-- Sidebar -->
+    <div id="sidebar" class="flex flex-col p-4">
+        <h1 class="text-xl font-bold mb-6">Gestionnaire de Taches</h1>
+        <nav class="space-y-4">
+            <a href="dashboard.html" class="block text-white hover:text-blue-400">Dashboard</a>
+            <a href="project.html" class="block text-white hover:text-blue-400">Projet</a>
+            <a href="task.html" class="block text-white hover:text-blue-400">Taches</a>
+            <a href="calendar.html" class="block text-white hover:text-blue-400">Calendrier</a>
+            <a href="profile.html" class="block text-white hover:text-blue-400">Profil</a>
+            <a href="login.html" class="block text-white hover:text-red-400">Se déconnecter</a>
+        </nav>
+    </div>
 
-    <div class="container mx-auto p-4">
+    <!-- Main Content -->
+    <div id="content">
         <div id="user-info" class="mt-4"></div>
 
         <!-- Section Projets en cours -->
@@ -65,26 +94,19 @@
     </div>
 
     <script>
-        // Charger le menu de navigation
-        fetch('header.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('header').innerHTML = data;
-
-                if (Auth.isAuthenticated()) {
-                    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-                    const userInfoDiv = document.getElementById('user-info');
-                    userInfoDiv.innerHTML = `<h1 class="text-2xl font-bold">Bienvenue sur le Dashboard <strong>${loggedInUser.username}</strong></h1>`;
-                } else {
-                    document.getElementById('user-info').innerHTML = `<p class="text-lg">Vous n'êtes pas connecté.</p>`;
-                }
-            });
-
-        class Auth {
-            static isAuthenticated() {
-                return localStorage.getItem("loggedInUser") !== null;
+        // Charger l'utilisateur et les données du dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            const userInfoDiv = document.getElementById('user-info');
+            const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+            if (loggedInUser) {
+                userInfoDiv.innerHTML = `<h1 class="text-2xl font-bold">Bienvenue sur le Dashboard <strong>${loggedInUser.username}</strong></h1>`;
+            } else {
+                userInfoDiv.innerHTML = `<p class="text-lg">Vous n'êtes pas connecté.</p>`;
             }
-        }
+            displayProjects();
+            displayTasks();
+            displayCalendar();
+        });
 
         function getProjects() {
             return JSON.parse(localStorage.getItem("projects") || "[]");
@@ -94,61 +116,61 @@
             return JSON.parse(localStorage.getItem("tasks") || "[]");
         }
 
-        function getTop3Projects() {
-            const projects = getProjects();
-            const sortedProjects = projects.sort((a, b) => new Date(a.date_limite) - new Date(b.date_limite));
-            return sortedProjects.slice(0, 3);
-        }
-
-        function getTop3Tasks() {
-            const tasks = getTasks();
-            const sortedTasks = tasks.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
-            return sortedTasks.slice(0, 3);
-        }
-
+        // Fonction pour afficher les 3 projets avec les échéances les plus proches
         function displayProjects() {
             const projetsListeDiv = document.getElementById('projets-liste');
-            const topProjects = getTop3Projects();
+            const projects = getProjects()
+                .sort((a, b) => new Date(a.date_limite) - new Date(b.date_limite))
+                .slice(0, 3);
+
             projetsListeDiv.innerHTML = '';
-            if (topProjects.length === 0) {
+            if (projects.length === 0) {
                 projetsListeDiv.innerHTML = `<p class="text-gray-600">Aucun projet en cours pour le moment.</p>`;
                 return;
             }
-            topProjects.forEach(project => {
+
+            projects.forEach(project => {
                 const projetItem = document.createElement('div');
                 projetItem.className = "mb-2 p-2 border border-gray-200 rounded";
                 projetItem.innerHTML = `
-                    <h3 class="font-bold">${project.nom_projet}</h3>
-                    <p class="text-gray-600">${project.description}</p>
-                    <p class="text-gray-500">Date limite : ${project.date_limite}</p>
+                    <h3 class="font-bold">${project.nom_projet || "Sans titre"}</h3>
+                    <p class="text-gray-600">${project.description || "Pas de description"}</p>
+                    <p class="text-gray-500">Date limite : ${project.date_limite || "Non définie"}</p>
                 `;
                 projetsListeDiv.appendChild(projetItem);
             });
         }
 
+        // Fonction pour afficher les 3 tâches avec les échéances les plus proches
         function displayTasks() {
             const tachesListeDiv = document.getElementById('taches-liste');
-            const topTasks = getTop3Tasks();
+            const tasks = getTasks()
+                .sort((a, b) => new Date(a.deadline) - new Date(b.deadline))
+                .slice(0, 3);
+
             tachesListeDiv.innerHTML = '';
-            if (topTasks.length === 0) {
+            if (tasks.length === 0) {
                 tachesListeDiv.innerHTML = `<p class="text-gray-600">Aucune tâche à échéance proche pour le moment.</p>`;
                 return;
             }
-            topTasks.forEach(task => {
+
+            tasks.forEach(task => {
                 const tacheItem = document.createElement('div');
                 tacheItem.className = "mb-2 p-2 border border-gray-200 rounded";
                 tacheItem.innerHTML = `
-                    <h3 class="font-bold">${task.title}</h3>
-                    <p class="text-gray-600">${task.description}</p>
-                    <p class="text-gray-500">Date limite : ${task.deadline}</p>
+                    <h3 class="font-bold">${task.title || "Sans titre"}</h3>
+                    <p class="text-gray-600">${task.description || "Pas de description"}</p>
+                    <p class="text-gray-500">Date limite : ${task.deadline || "Non définie"}</p>
                 `;
                 tachesListeDiv.appendChild(tacheItem);
             });
         }
 
-        function organizeItemsByDay() {
+        // Fonction pour organiser et afficher le calendrier hebdomadaire
+        function displayCalendar() {
             const tasks = getTasks();
             const projects = getProjects();
+
             const now = new Date();
             const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + 1));
             const daysOfWeek = Array.from({ length: 7 }, (_, i) => {
@@ -168,29 +190,19 @@
             };
 
             tasks.forEach(task => {
-                if (daysOfWeek.includes(task.date_limite)) {
-                    const dayKey = getDayKey(new Date(task.date_limite));
-                    itemsByDay[dayKey].push(`Tâche: ${task.nom_tache}`);
+                if (daysOfWeek.includes(task.deadline)) {
+                    const dayKey = getDayKey(new Date(task.deadline));
+                    itemsByDay[dayKey].push(`Tâche: ${task.title || "Sans titre"}`);
                 }
             });
 
             projects.forEach(project => {
                 if (daysOfWeek.includes(project.date_limite)) {
                     const dayKey = getDayKey(new Date(project.date_limite));
-                    itemsByDay[dayKey].push(`Projet: ${project.nom_projet}`);
+                    itemsByDay[dayKey].push(`Projet: ${project.nom_projet || "Sans titre"}`);
                 }
             });
 
-            return itemsByDay;
-        }
-
-        function getDayKey(date) {
-            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-            return days[date.getDay() - 1] || 'sunday';
-        }
-
-        function displayCalendar() {
-            const itemsByDay = organizeItemsByDay();
             Object.entries(itemsByDay).forEach(([day, items]) => {
                 const cell = document.getElementById(day);
                 if (cell) {
@@ -199,11 +211,10 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            displayProjects();
-            displayTasks();
-            displayCalendar();
-        });
+        function getDayKey(date) {
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            return days[date.getDay() - 1] || 'sunday';
+        }
     </script>
 </body>
 </html>

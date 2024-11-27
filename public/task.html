@@ -4,60 +4,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Manager</title>
-    <script src="/dist/taskManager.js" type="module"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+        }
+        #sidebar {
+            min-width: 250px;
+            background-color: #1F2937;
+            color: white;
+        }
+        #content {
+            flex: 1;
+            padding: 1rem;
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
-    <div class="min-h-screen flex flex-col">
-        <div id="header"></div>
-        <main class="flex-1 p-4">
-            <header class="bg-blue-600 p-4 text-white">
-                <h1 class="text-2xl">Task Manager</h1>
-            </header>
-            <form id="addTaskForm" class="space-y-4 bg-white p-4 rounded shadow-md mb-6">
-                <input id="taskTitle" type="text" placeholder="Task Title" class="w-full p-2 border rounded" required />
-                <textarea id="taskDescription" placeholder="Task Description" class="w-full p-2 border rounded" required></textarea>
-                <label for="taskPriority">Priorité:</label>
-                <select id="taskPriority" name="taskPriority" class="w-full p-2 border rounded">
-                    <option value="haute">Haute</option>
-                    <option value="moyenne">Moyenne</option>
-                    <option value="basse">Basse</option>
-                </select>
-                <input id="taskDeadline" type="date" class="w-full p-2 border rounded" required />
-                <button type="submit" class="w-full bg-green-500 text-white p-2 rounded">Add Task</button>
-                <button type="button" id="updateTaskBtn" class="w-full bg-yellow-500 text-white p-2 rounded hidden">Update Task</button>
-            </form>
-            <div class="bg-white p-4 rounded shadow-md">
-                <h2 class="text-xl font-bold mb-4">Liste des Tâches</h2>
-                <table class="min-w-full table-auto">
-                    <thead>
-                        <tr class="bg-gray-200">
-                            <th class="px-4 py-2">Titre</th>
-                            <th class="px-4 py-2">Description</th>
-                            <th class="px-4 py-2">Priorité</th>
-                            <th class="px-4 py-2">Date Limite</th>
-                            <th class="px-4 py-2">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="taskTableBody">
-                        <!-- Les lignes des tâches seront insérées ici -->
-                    </tbody>
-                </table>
-            </div>
-        </main>
+<body>
+    <!-- Sidebar -->
+    <div id="sidebar" class="flex flex-col p-4">
+        <h1 class="text-xl font-bold mb-6">Gestionnaire de Taches</h1>
+        <nav class="space-y-4">
+            <a href="dashboard.html" class="block text-white hover:text-blue-400">Dashboard</a>
+            <a href="project.html" class="block text-white hover:text-blue-400">Projet</a>
+            <a href="task.html" class="block text-white hover:text-blue-400">Taches</a>
+            <a href="calendar.html" class="block text-white hover:text-blue-400">Calendrier</a>
+            <a href="profile.html" class="block text-white hover:text-blue-400">Profil</a>
+            <a href="login.html" class="block text-white hover:text-red-400">Se déconnecter</a>
+        </nav>
+    </div>
+
+    <!-- Content -->
+    <div id="content">
+        <header class="bg-blue-600 p-4 text-white mb-4">
+            <h1 class="text-2xl">Task Manager</h1>
+        </header>
+        <form id="addTaskForm" class="space-y-4 bg-white p-4 rounded shadow-md mb-6">
+            <input id="taskTitle" type="text" placeholder="Task Title" class="w-full p-2 border rounded" required />
+            <textarea id="taskDescription" placeholder="Task Description" class="w-full p-2 border rounded" required></textarea>
+            <label for="taskPriority">Priorité:</label>
+            <select id="taskPriority" name="taskPriority" class="w-full p-2 border rounded">
+                <option value="haute">Haute</option>
+                <option value="moyenne">Moyenne</option>
+                <option value="basse">Basse</option>
+            </select>
+            <input id="taskDeadline" type="date" class="w-full p-2 border rounded" required />
+            <button type="submit" class="w-full bg-green-500 text-white p-2 rounded">Add Task</button>
+            <button type="button" id="updateTaskBtn" class="w-full bg-yellow-500 text-white p-2 rounded hidden">Update Task</button>
+        </form>
+        <div class="bg-white p-4 rounded shadow-md">
+            <h2 class="text-xl font-bold mb-4">Liste des Tâches</h2>
+            <table class="min-w-full table-auto border-collapse">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="px-4 py-2 border">Titre</th>
+                        <th class="px-4 py-2 border">Description</th>
+                        <th class="px-4 py-2 border">Priorité</th>
+                        <th class="px-4 py-2 border">Date Limite</th>
+                        <th class="px-4 py-2 border">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="taskTableBody">
+                    <!-- Les lignes des tâches seront insérées ici -->
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script>
-        // Charger le menu de navigation
-        window.onload = function() {
-            fetch('header.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('header').innerHTML = data;
-                });
-        };
-
-        // Fonction pour récupérer les tâches depuis le localStorage
+        // Récupérer les tâches depuis le localStorage
         function getTasks() {
             try {
                 return JSON.parse(localStorage.getItem("tasks") || "[]");
@@ -67,25 +84,24 @@
             }
         }
 
-        // Fonction pour sauvegarder une tâche dans le localStorage
+        // Sauvegarder une tâche dans le localStorage
         function saveTask(task) {
             const tasks = getTasks();
             tasks.push(task);
             localStorage.setItem("tasks", JSON.stringify(tasks));
         }
 
-        // Fonction pour sauvegarder toutes les tâches mises à jour
+        // Sauvegarder toutes les tâches dans le localStorage
         function saveAllTasks(tasks) {
             localStorage.setItem("tasks", JSON.stringify(tasks));
         }
 
-        // Fonction pour afficher les tâches dans le tableau
+        // Afficher les tâches
         function displayTasks() {
             const tasks = getTasks();
             const taskTableBody = document.getElementById("taskTableBody");
 
-            // Vider le tableau avant de le remplir
-            taskTableBody.innerHTML = "";
+            taskTableBody.innerHTML = ""; // Vider le tableau
 
             if (tasks.length === 0) {
                 taskTableBody.innerHTML = `
@@ -96,15 +112,15 @@
                 return;
             }
 
-            // Ajouter chaque tâche dans le tableau
+            // Afficher chaque tâche
             tasks.forEach((task, index) => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
-                    <td class="px-4 py-2">${task.title || "Non défini"}</td>
-                    <td class="px-4 py-2">${task.description || "Non défini"}</td>
-                    <td class="px-4 py-2">${task.priority || "Non défini"}</td>
-                    <td class="px-4 py-2">${task.deadline || "Non défini"}</td>
-                    <td class="px-4 py-2">
+                    <td class="px-4 py-2 border">${task.title || "Non défini"}</td>
+                    <td class="px-4 py-2 border">${task.description || "Non défini"}</td>
+                    <td class="px-4 py-2 border">${task.priority || "Non défini"}</td>
+                    <td class="px-4 py-2 border">${task.deadline || "Non défini"}</td>
+                    <td class="px-4 py-2 border">
                         <button class="bg-blue-500 text-white px-2 py-1 rounded mr-2" onclick="editTask(${index})">Modifier</button>
                         <button class="bg-red-500 text-white px-2 py-1 rounded" onclick="deleteTask(${index})">Supprimer</button>
                     </td>
@@ -113,83 +129,67 @@
             });
         }
 
-        // Fonction pour supprimer une tâche
+        // Supprimer une tâche
         function deleteTask(index) {
             const tasks = getTasks();
-            tasks.splice(index, 1); // Supprimer la tâche à l'index donné
-            saveAllTasks(tasks); // Sauvegarder les tâches mises à jour
-            displayTasks(); // Mettre à jour l'affichage
+            tasks.splice(index, 1);
+            saveAllTasks(tasks);
+            displayTasks();
         }
 
-        // Fonction pour éditer une tâche
+        // Modifier une tâche
         function editTask(index) {
             const tasks = getTasks();
             const task = tasks[index];
 
-            // Remplir le formulaire avec les données de la tâche
             document.getElementById("taskTitle").value = task.title;
             document.getElementById("taskDescription").value = task.description;
             document.getElementById("taskPriority").value = task.priority;
             document.getElementById("taskDeadline").value = task.deadline;
 
-            // Afficher le bouton de mise à jour et cacher le bouton d'ajout
             document.getElementById("updateTaskBtn").classList.remove("hidden");
             document.getElementById("addTaskForm").querySelector("button[type='submit']").classList.add("hidden");
 
-            // Ajouter un événement au bouton de mise à jour
-            document.getElementById("updateTaskBtn").onclick = function() {
+            document.getElementById("updateTaskBtn").onclick = function () {
                 tasks[index] = {
                     title: document.getElementById("taskTitle").value.trim(),
                     description: document.getElementById("taskDescription").value.trim(),
                     priority: document.getElementById("taskPriority").value,
-                    deadline: document.getElementById("taskDeadline").value
+                    deadline: document.getElementById("taskDeadline").value,
                 };
 
-                saveAllTasks(tasks); // Sauvegarder les tâches mises à jour
-                displayTasks(); // Mettre à jour l'affichage
+                saveAllTasks(tasks);
+                displayTasks();
 
-                // Réinitialiser le formulaire et boutons
                 document.getElementById("addTaskForm").reset();
                 document.getElementById("updateTaskBtn").classList.add("hidden");
                 document.getElementById("addTaskForm").querySelector("button[type='submit']").classList.remove("hidden");
             };
         }
 
-        // Gestion du formulaire d'ajout de tâche
-        document.getElementById("addTaskForm").addEventListener("submit", function(event) {
-            event.preventDefault(); // Empêcher le rechargement de la page
+        // Gérer l'ajout de tâche
+        document.getElementById("addTaskForm").addEventListener("submit", function (event) {
+            event.preventDefault();
 
-            // Récupérer les valeurs du formulaire
             const title = document.getElementById("taskTitle").value.trim();
             const description = document.getElementById("taskDescription").value.trim();
             const priority = document.getElementById("taskPriority").value;
             const deadline = document.getElementById("taskDeadline").value;
 
-            // Vérification des champs
             if (!title || !description || !deadline) {
                 alert("Tous les champs sont obligatoires !");
                 return;
             }
 
-            // Créer une nouvelle tâche
-            const newTask = {
-                title: title,
-                description: description,
-                priority: priority,
-                deadline: deadline
-            };
+            const newTask = { title, description, priority, deadline };
+            saveTask(newTask);
+            displayTasks();
 
-            saveTask(newTask); // Sauvegarder la tâche
-            displayTasks(); // Afficher les tâches
-
-            // Réinitialiser le formulaire
             document.getElementById("addTaskForm").reset();
         });
 
-        // Afficher les tâches au chargement de la page
-        document.addEventListener("DOMContentLoaded", function() {
-            displayTasks();
-        });
+        // Charger les tâches à l'ouverture de la page
+        document.addEventListener("DOMContentLoaded", displayTasks);
     </script>
 </body>
 </html>

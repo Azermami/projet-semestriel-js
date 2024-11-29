@@ -5,37 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Manager</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="sidebar.css">
+    
     <style>
         body {
             display: flex;
             min-height: 100vh;
             margin: 0;
         }
-        #sidebar {
-            min-width: 250px;
-            background-color: #1F2937;
-            color: white;
-        }
         #content {
             flex: 1;
             padding: 1rem;
         }
     </style>
+    <script>
+        // Charger dynamiquement la sidebar
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch('sidebar.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('sidebar-container').innerHTML = data;
+                })
+                .catch(error => console.error('Erreur lors du chargement de la sidebar:', error));
+        });
+    </script>
 </head>
 <body>
     <!-- Sidebar -->
-    <div id="sidebar" class="flex flex-col p-4">
-        <h1 class="text-xl font-bold mb-6">Gestionnaire de Taches</h1>
-        <nav class="space-y-4">
-            <a href="dashboard.html" class="block text-white hover:text-blue-400">Dashboard</a>
-            <a href="project.html" class="block text-white hover:text-blue-400">Projet</a>
-            <a href="task.html" class="block text-white hover:text-blue-400">Taches</a>
-            <a href="calendar.html" class="block text-white hover:text-blue-400">Calendrier</a>
-            <a href="profile.html" class="block text-white hover:text-blue-400">Profil</a>
-            <a href="login.html" class="block text-white hover:text-red-400">Se déconnecter</a>
-        </nav>
-    </div>
+    <div id="sidebar-container"></div>
 
+    
     <!-- Content -->
     <div id="content">
         <main class="flex-1">

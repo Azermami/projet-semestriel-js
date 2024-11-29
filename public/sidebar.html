@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sidebar</title>
+</head>
+<body>
+    <div class="sidebar">
+        <!-- User section -->
+        <div class="user">
+            <div class="icon">👤</div>
+            <span id="user-username"><strong>Chargement...</strong></span> <!-- Placeholder initial -->
+            <div class="icon">🌙</div>
+        </div>
+
+        <!-- Navigation menu -->
+        <nav>
+            <a href="dashboard.html" class="active">
+                <span class="icon">📂</span>
+                Dashboard
+            </a>
+            <a href="project.html">
+                <span class="icon">⭐</span>
+                Projet
+            </a>
+            <a href="task.html">
+                <span class="icon">✅</span>
+                Tâches
+            </a>
+            <a href="calendar.html">
+                <span class="icon">📅</span>
+                Calendrier
+            </a>
+            <a href="settings.html">
+                <span class="icon">⚙️</span>
+                Paramètres
+            </a>
+            <a href="login.html">
+                <span class="icon">🚪</span>
+                Déconnexion
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        // Fonction pour récupérer les données depuis le localStorage
+        function getDataFromLocalStorage(key) {
+            try {
+                const data = localStorage.getItem(key);
+                return data ? JSON.parse(data) : null;
+            } catch (error) {
+                console.error(`Erreur lors de la récupération des données pour la clé "${key}":`, error);
+                return null;
+            }
+        }
+
+        // Attendre que la page soit chargée
+        document.addEventListener('DOMContentLoaded', () => {
+            // Récupérer l'utilisateur depuis localStorage
+            const loggedInUser = getDataFromLocalStorage("loggedInUser");
+
+            // Vérifiez si un utilisateur est connecté
+            const usernameElement = document.getElementById('user-username');
+            if (loggedInUser && loggedInUser.username) {
+                // Afficher le nom de l'utilisateur connecté
+                usernameElement.innerHTML = `<strong>${loggedInUser.username}</strong>`;
+            } else {
+                // Si aucun utilisateur n'est connecté, afficher "Invité"
+                usernameElement.innerHTML = `<strong>Invité</strong>`;
+            }
+        });
+    </script>
+</body>
+</html>

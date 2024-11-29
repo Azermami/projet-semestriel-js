@@ -26,6 +26,22 @@
                 <input id="taskDeadline" type="date" class="w-full p-2 border rounded" required />
                 <button type="submit" class="w-full bg-green-500 text-white p-2 rounded">Add Task</button>
             </form>
+            <div class="grid grid-cols-3 gap-4">
+                <div id="todoList" class="task-list bg-gray-100 p-4 rounded shadow">
+                    <h3 class="text-lg font-bold mb-4">À faire</h3>
+                    <div class="task-items" data-status="todo"></div>
+                </div>
+                <div id="inProgressList" class="task-list bg-gray-100 p-4 rounded shadow">
+                    <h3 class="text-lg font-bold mb-4">En cours</h3>
+                    <div class="task-items" data-status="in-progress"></div>
+                </div>
+                <div id="doneList" class="task-list bg-gray-100 p-4 rounded shadow">
+                    <h3 class="text-lg font-bold mb-4">Terminé</h3>
+                    <div class="task-items" data-status="done"></div>
+                </div>
+            </div>
+            <button id="completeTaskBtn">Terminer la tâche</button>
+
             <div class="bg-white p-4 rounded shadow-md">
                 <h2 class="text-xl font-bold mb-4">Liste des Tâches</h2>
                 <table class="min-w-full table-auto">
@@ -35,11 +51,33 @@
                             <th class="px-4 py-2">Description</th>
                             <th class="px-4 py-2">Priorité</th>
                             <th class="px-4 py-2">Date Limite</th>
+                            <th>Notification</th>
                             <th class="px-4 py-2">Actions</th>
+                            <th class="px-4 py-2">Etat</th>
                         </tr>
                     </thead>
                     <tbody id="taskTableBody">
                         <!-- Les lignes de tâches seront insérées ici -->
+                        <tr>
+                            <td class="px-4 py-2">Example Task</td>
+                            <td class="px-4 py-2">Task Description</td>
+                            <td class="px-4 py-2">Haute</td>
+                            <td class="px-4 py-2">2024-12-31</td>
+                            <td class="px-4 py-2">Notification</td>
+                            <td class="px-4 py-2">
+                                <button class="text-blue-500">Edit</button>
+                                <button class="text-red-500">Delete</button>
+                            </td>
+                            <td class="px-4 py-2">
+                                <!-- Etat dropdown under Etat column -->
+                                <select class="w-full p-2 border rounded mt-2">
+                                    <option value="todo">À faire</option>
+                                    <option value="in-progress">En cours</option>
+                                    <option value="done">Terminé</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <!-- Add more rows as needed -->
                     </tbody>
                 </table>
             </div>

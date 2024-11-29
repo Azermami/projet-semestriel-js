@@ -14,50 +14,72 @@ document.addEventListener('DOMContentLoaded', () => {
             description: (document.getElementById("taskDescription") as HTMLTextAreaElement).value,
             priorite: (document.getElementById("taskPriority") as HTMLSelectElement).value,
             date_limite: (document.getElementById("taskDeadline") as HTMLInputElement).value,
-            id_utilisateur_attribue: JSON.parse(localStorage.getItem("loggedInUser") || "{}").id
+            id_utilisateur_attribue: JSON.parse(localStorage.getItem("loggedInUser") || "{}").id,
         };
 
         if (taskId) {
             updateTask(newTask);
+            showNotification("Tâche modifiée avec succès !", 'success');
         } else {
             saveTask(newTask);
+            showNotification("Tâche ajoutée avec succès !", 'success');
         }
 
         displayTasks(getTasks());
-        alert(taskId ? "Tâche modifiée avec succès !" : "Tâche enregistrée avec succès !");
+        (document.getElementById("addTaskForm") as HTMLFormElement).reset();
     });
 });
 
 // Fonction pour afficher les tâches
-function displayTasks(tasks: any[]) {
+function displayTasks(tasks: any[]): void {
     const taskTableBody = document.getElementById("taskTableBody");
     const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
 
-    if (taskTableBody) {
-        taskTableBody.innerHTML = '';
-        const userTasks = tasks.filter(task => task.id_utilisateur_attribue === loggedInUser.id);
+    if (!taskTableBody) return;
 
-        userTasks.forEach(task => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${task.nom_tache}</td>
-                <td>${task.description}</td>
-                <td>${task.priorite}</td>
-                <td>${task.date_limite}</td>
-                <td>
-                    <button class="editTaskBtn" data-id="${task.id}">Modifier</button>
-                    <button class="deleteTaskBtn" data-id="${task.id}">Supprimer</button>
-                </td>
-            `;
-            taskTableBody.appendChild(row);
-        });
+    taskTableBody.innerHTML = ''; // Reset table body
+    const userTasks = tasks.filter(task => task.id_utilisateur_attribue === loggedInUser.id);
 
-        addTaskButtonListeners();
-    }
+    userTasks.forEach(task => {
+        const now = new Date();
+        const deadline = new Date(task.date_limite);
+        const timeDiff = deadline.getTime() - now.getTime();
+        const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+        const isNearDeadline = daysLeft <= 1 && daysLeft >= 0;
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${task.nom_tache}</td>
+            <td>${task.description}</td>
+            <td>${task.priorite}</td>
+            <td>${task.date_limite}</td>
+             <td>
+                <span class="notification-icon" data-id="${task.id}" style="color: ${isNearDeadline ? 'red' : 'green'};">
+                    ${isNearDeadline ? '🔔' : '🟢'}
+                </span>
+                <span class="time-left" style="color: ${isNearDeadline ? 'red' : 'black'};">
+                    ${daysLeft <= 0 ? 'Expirée' : `${daysLeft} jour(s) restant(s)`}
+                </span>
+            </td>
+            <td>
+            <td>
+                <button class="editTaskBtn" data-id="${task.id}">Modifier</button>
+                <button class="deleteTaskBtn" data-id="${task.id}">Supprimer</button>
+                <button class="copyTaskBtn" data-id="${task.id}">Copier</button>
+                <button class="shareTaskBtn" data-id="${task.id}">Partager</button>
+            </td>
+        `;
+        taskTableBody.appendChild(row);
+    });
+
+    addTaskButtonListeners();
+    checkForNearDeadlineTasks(userTasks);
 }
 
 // Fonction pour ajouter des écouteurs d'événements aux boutons
 function addTaskButtonListeners() {
+    
+    // Boutons de suppression
     const deleteButtons = document.querySelectorAll(".deleteTaskBtn");
     deleteButtons.forEach(button => {
         button.addEventListener("click", (e) => {
@@ -65,11 +87,12 @@ function addTaskButtonListeners() {
             if (taskId) {
                 deleteTask(taskId);
                 displayTasks(getTasks());
-                alert("Tâche supprimée avec succès !");
+                showNotification("Tâche supprimée avec succès !", 'success');
             }
         });
     });
 
+    // Boutons de modification
     const editButtons = document.querySelectorAll(".editTaskBtn");
     editButtons.forEach(button => {
         button.addEventListener("click", (e) => {
@@ -94,6 +117,107 @@ function addTaskButtonListeners() {
             }
         });
     });
+
+    // Boutons de copie
+    const copyButtons = document.querySelectorAll(".copyTaskBtn");
+    copyButtons.forEach(button => {
+        button.addEventListener("click", (e) => {
+            const taskId = (e.target as HTMLButtonElement).dataset.id;
+            if (taskId) {
+                const taskToCopy = getTasks().find(task => task.id === taskId);
+                if (taskToCopy) {
+                    const taskText = `Titre: ${taskToCopy.nom_tache}\nDescription: ${taskToCopy.description}`;
+                    navigator.clipboard.writeText(taskText).then(() => {
+                        showNotification("Tâche copiée dans le presse-papier !", 'success');
+                    }).catch(err => {
+                        showNotification("Erreur lors de la copie : " + err, 'error');
+                    });
+                }
+            }
+        });
+    });
+
+    // Boutons de partage
+    const shareButtons = document.querySelectorAll(".shareTaskBtn");
+    shareButtons.forEach(button => {
+        button.addEventListener("click", (e) => {
+            const taskId = (e.target as HTMLButtonElement).dataset.id;
+            if (taskId) {
+                const taskToShare = getTasks().find(task => task.id === taskId);
+                if (taskToShare && navigator.share) {
+                    navigator.share({
+                        title: taskToShare.nom_tache,
+                        text: `Description: ${taskToShare.description}`,
+                    }).then(() => {
+                        showNotification("Tâche partagée avec succès !", 'success');
+                    }).catch(() => {
+                        showNotification("Partage annulé ou non pris en charge.", 'info');
+                    });
+                }
+            }
+        });
+    });
+}
+
+// Vérification et notification des tâches proches de la date limite
+// Vérification et notification des tâches proches de la date limite (y compris les 2 derniers jours)
+function checkForNearDeadlineTasks(tasks: any[]) {
+    const now = new Date();
+    tasks.forEach(task => {
+        const deadline = new Date(task.date_limite);
+        const timeDiff = deadline.getTime() - now.getTime();
+        const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+        if (daysLeft <= 1 && daysLeft >= 0) {
+            // Si la tâche est à 1 jour ou moins de sa date limite, afficher une notification
+            sendNotification(task);
+        }
+        else if (daysLeft === 2) {
+            // Si la tâche est à 2 jours de sa date limite, envoyer un rappel spécial
+            sendSecondLastDayReminder(task);
+        }
+    });
+}
+// Fonction pour envoyer un rappel de tâche à 2 jours de la date limite
+function sendSecondLastDayReminder(task: any) {
+    if (Notification.permission === "granted") {
+        new Notification("Rappel de tâche - Deux jours restants", {
+            body: `La tâche "${task.nom_tache}" doit être terminée dans 2 jours.`,
+            icon: "/path/to/icon.png", // Remplacez par l'URL de votre icône
+        });
+    } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+                sendSecondLastDayReminder(task);
+            }
+        });
+    }
+}
+
+
+// Envoi de notification
+function sendNotification(task: any) {
+    if (Notification.permission === "granted") {
+        new Notification("Rappel de tâche", {
+            body: `La tâche "${task.nom_tache}" approche de sa date limite !`,
+            icon: "/path/to/icon.png",  // Remplacez par l'URL de votre icône
+        });
+    } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+                sendNotification(task);
+            }
+        });
+    }
+}
+
+// Fonction pour afficher les notifications de succès ou d'erreur
+function showNotification(message: string, type: 'success' | 'info' | 'error'): void {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-5 right-5 p-4 rounded shadow text-white ${type === 'success' ? 'bg-green-500' : type === 'info' ? 'bg-blue-500' : 'bg-red-500'}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
 }
 
 // Fonction pour mettre à jour une tâche
@@ -102,3 +226,4 @@ function updateTask(updatedTask: any) {
     tasks = tasks.map(task => task.id === updatedTask.id ? updatedTask : task);
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
+

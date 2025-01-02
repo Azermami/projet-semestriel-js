@@ -1,9 +1,13 @@
 import { saveTask, getTasks, deleteTask } from './storage.js';
+import { initDarkMode } from './dark-mode.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+    
     const taskList = getTasks();
+    
     displayTasks(taskList);
-
+   
+    
     document.getElementById("addTaskForm")?.addEventListener("submit", (e) => {
         e.preventDefault();
         const taskId = (document.getElementById("taskId") as HTMLInputElement)?.value;
@@ -30,6 +34,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+
+// Fonction pour afficher les tâches
+function updateTaskCounts(tasks: any[]): void {
+    const todoCount = tasks.filter(task => task.etat_tache === 'todo').length;
+    const inProgressCount = tasks.filter(task => task.etat_tache === 'in-progress').length;
+    const doneCount = tasks.filter(task => task.etat_tache === 'done').length;
+
+    // Mettre à jour les compteurs dans le DOM
+    document.getElementById("todoCount")!.textContent = todoCount.toString();
+    document.getElementById("inProgressCount")!.textContent = inProgressCount.toString();
+    document.getElementById("doneCount")!.textContent = doneCount.toString();
+}
+
+
 // Fonction pour afficher les tâches
 function displayTasks(tasks: any[]): void {
     const taskTableBody = document.getElementById("taskTableBody");
@@ -53,20 +71,25 @@ function displayTasks(tasks: any[]): void {
             <td>${task.description}</td>
             <td>${task.priorite}</td>
             <td>${task.date_limite}</td>
-             <td>
+            <td>
                 <span class="notification-icon" data-id="${task.id}" style="color: ${isNearDeadline ? 'red' : 'green'};">
                     ${isNearDeadline ? '🔔' : '🟢'}
                 </span>
                 <span class="time-left" style="color: ${isNearDeadline ? 'red' : 'black'};">
-                    ${daysLeft <= 0 ? 'Expirée' : `${daysLeft} jour(s) restant(s)`}
-                </span>
+                    ${daysLeft <= 0 ? 'Expirée' : `${daysLeft} jour(s) restant(s)`}</span>
             </td>
-            <td>
             <td>
                 <button class="editTaskBtn" data-id="${task.id}">Modifier</button>
                 <button class="deleteTaskBtn" data-id="${task.id}">Supprimer</button>
                 <button class="copyTaskBtn" data-id="${task.id}">Copier</button>
                 <button class="shareTaskBtn" data-id="${task.id}">Partager</button>
+            </td>
+            <td>
+                <select class="status-select" data-task-id="${task.id}">
+                    <option value="todo" ${task.etat_tache === 'todo' ? 'selected' : ''}>À faire</option>
+                    <option value="in-progress" ${task.etat_tache === 'in-progress' ? 'selected' : ''}>En cours</option>
+                    <option value="done" ${task.etat_tache === 'done' ? 'selected' : ''}>Terminé</option>
+                </select>
             </td>
         `;
         taskTableBody.appendChild(row);
@@ -78,7 +101,31 @@ function displayTasks(tasks: any[]): void {
 
 // Fonction pour ajouter des écouteurs d'événements aux boutons
 function addTaskButtonListeners() {
-    
+    const statusSelects = document.querySelectorAll(".status-select");
+    statusSelects.forEach(select => {
+        select.addEventListener("change", (e) => {
+            const taskId = (e.target as HTMLSelectElement).dataset.taskId;
+            const newStatus = (e.target as HTMLSelectElement).value;
+
+            if (taskId && newStatus) {
+                // Mettre à jour l'état de la tâche dans le stockage local
+                const tasks = getTasks();
+                const updatedTasks = tasks.map(task => {
+                    if (task.id === taskId) {
+                        task.etat_tache = newStatus;  // Mettez à jour l'état
+                    }
+                    return task;
+                });
+
+                // Sauvegarder les tâches mises à jour
+                localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+
+                // Réafficher les tâches avec les nouveaux compteurs
+                displayTasks(updatedTasks);
+                updateTaskCounts(updatedTasks);
+            }
+        });
+    });
     // Boutons de suppression
     const deleteButtons = document.querySelectorAll(".deleteTaskBtn");
     deleteButtons.forEach(button => {
@@ -227,3 +274,4 @@ function updateTask(updatedTask: any) {
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
+initDarkMode();

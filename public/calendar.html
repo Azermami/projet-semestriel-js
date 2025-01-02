@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendrier Mensuel</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="/dist/calendar.js" type="module"></script>
+    <link rel="stylesheet" href="sidebar.css">
+    <style>
+        body {
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+        }
+        #sidebar {
+            min-width: 250px;
+            background-color: #1F2937;
+            color: white;
+        }
+        #content {
+            flex: 1;
+            padding: 1rem;
+        }
+        
+    </style>
+    <script>
+        import { initGoogleAPI, signIn, signOut, exportTaskToGoogleCalendar } from '/dist/calendar.js';
+      
+        // Initialiser l'API Google au chargement de la page
+        document.addEventListener("DOMContentLoaded", () => {
+          initGoogleAPI();
+        });
+      
+        // Fonction pour exporter une tâche
+        function exportTask() {
+          exportTaskToGoogleCalendar();
+        }
+      </script>
+    <script>
+        // Charger dynamiquement la sidebar
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch('sidebar.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('sidebar-container').innerHTML = data;
+                })
+                .catch(error => console.error('Erreur lors du chargement de la sidebar:', error));
+        });
+    </script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+    
+
+    <!-- Content -->
+    <div id="content">
+        <header class="bg-blue-600 p-4 text-white">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl">Calendrier Mensuel</h1>
+                <div class="flex items-center space-x-4">
+                    <button onclick="previousMonth()" class="bg-blue-500 text-white p-2 rounded">&lt;</button>
+                    <span id="month-title" class="text-lg font-bold"></span>
+                    <button onclick="nextMonth()" class="bg-blue-500 text-white p-2 rounded">&gt;</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex space-x-4 my-4">
+            <button onclick="signIn()" class="bg-blue-500 text-white p-2 rounded">Se connecter à Google Calendar</button>
+            <button onclick="signOut()" class="bg-red-500 text-white p-2 rounded">Se déconnecter</button>
+            <button onclick="exportToGoogleCalendar()" class="bg-green-500 text-white p-2 rounded">Exporter vers Google Calendar</button>
+        </div>
+
+        <div class="bg-white p-4 rounded shadow-md mt-6">
+            <table class="min-w-full table-auto border-collapse">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="px-4 py-2 border">Lundi</th>
+                        <th class="px-4 py-2 border">Mardi</th>
+                        <th class="px-4 py-2 border">Mercredi</th>
+                        <th class="px-4 py-2 border">Jeudi</th>
+                        <th class="px-4 py-2 border">Vendredi</th>
+                        <th class="px-4 py-2 border">Samedi</th>
+                        <th class="px-4 py-2 border">Dimanche</th>
+                    </tr>
+                </thead>
+                <tbody id="calendar-body">
+                    <!-- Les lignes du calendrier seront insérées ici -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let currentMonth = new Date(); // Date pour le mois en cours
+
+        // Initialisation de l'API Google Calendar
+        function initGoogleAPI() {
+            gapi.load('client:auth2', async () => {
+                await gapi.client.init({
+                    apiKey: 'AIzaSyA-9oW_gXamGa8uhHR1-y09HRZ5BJKFJd4', // Remplacez par votre clé API Google
+                    clientId: '69407124765-gkpll48nc84l3q8k8i3spvf995alasjk.apps.googleusercontent.com', // Remplacez par votre Client ID
+                    discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
+                    scope: 'https://www.googleapis.com/auth/calendar.events', // Autorisation d'ajouter des événements
+                });
+                console.log("Google API initialisée");
+            });
+        }
+
+        // Connexion à Google Calendar
+        function signIn() {
+        gapi.auth2.getAuthInstance().signIn({
+            prompt: 'select_account' // Forcer la sélection d'un compte
+        }).then(() => {
+            console.log('Connecté à Google Calendar');
+        }).catch(error => {
+            console.error('Erreur lors de la connexion :', error);
+            alert('Erreur lors de la connexion : ' + error.error);
+        });
+}
+
+        // Déconnexion de Google Calendar
+        function signOut() {
+            gapi.auth2.getAuthInstance().signOut().then(() => {
+                console.log('Déconnecté de Google Calendar');
+            });
+        }
+
+        // Exporter des événements vers Google Calendar
+        async function exportToGoogleCalendar() {
+            const tasks = getTasks(); // Récupérer les tâches du localStorage
+            const projects = getProjects(); // Récupérer les projets du localStorage
+
+            const eventsToExport = [...tasks, ...projects];
+
+            for (const event of eventsToExport) {
+                const eventDate = new Date(event.deadline);
+                const googleEvent = {
+                    summary: event.title,
+                    start: {
+                        dateTime: eventDate.toISOString(),
+                        timeZone: 'Europe/Paris',
+                    },
+                    end: {
+                        dateTime: new Date(eventDate.getTime() + 60 * 60 * 1000).toISOString(), // Durée de 1h
+                        timeZone: 'Europe/Paris',
+                    },
+                };
+
+                try {
+                    await gapi.client.calendar.events.insert({
+                        calendarId: 'primary',
+                        resource: googleEvent,
+                    });
+                    console.log(`Événement exporté : ${event.title}`);
+                } catch (error) {
+                    console.error(`Erreur lors de l'exportation de l'événement : ${event.title}`, error);
+                }
+            }
+
+            alert("Tâches et projets exportés avec succès vers Google Calendar !");
+        }
+
+       
+
+        // Récupérer les tâches et projets depuis le localStorage
+        function getTasks() {
+            return JSON.parse(localStorage.getItem("tasks") || "[]");
+        }
+
+        function getProjects() {
+            return JSON.parse(localStorage.getItem("projects") || "[]");
+        }
+
+        // Générer le calendrier mensuel
+        function generateMonthlyCalendar() {
+            const year = currentMonth.getFullYear();
+            const month = currentMonth.getMonth();
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+
+            let startDay = firstDay.getDay();
+            if (startDay === 0) startDay = 7; // Adapter pour commencer le lundi
+
+            const calendarBody = document.getElementById("calendar-body");
+            calendarBody.innerHTML = "";
+
+            const tasks = getTasks();
+            const projects = getProjects();
+
+            let row = document.createElement("tr");
+            let dayCount = 1;
+
+            // Remplir les cellules vides avant le début du mois
+            for (let i = 1; i < startDay; i++) {
+                const emptyCell = document.createElement("td");
+                emptyCell.className = "px-4 py-2 border";
+                row.appendChild(emptyCell);
+            }
+
+            // Remplir les jours du mois
+            for (let i = startDay; i <= 7; i++) {
+                createDayCell(dayCount++, row, tasks, projects, month, year);
+            }
+            calendarBody.appendChild(row);
+
+            // Remplir le reste du mois
+            while (dayCount <= daysInMonth) {
+                row = document.createElement("tr");
+                for (let i = 1; i <= 7 && dayCount <= daysInMonth; i++) {
+                    createDayCell(dayCount++, row, tasks, projects, month, year);
+                }
+                calendarBody.appendChild(row);
+            }
+
+            // Mettre à jour le titre du mois
+            document.getElementById("month-title").textContent = `${new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(currentMonth)}`;
+        }
+
+        // Créer une cellule pour un jour
+        function createDayCell(dayCount, row, tasks, projects, month, year) {
+            const cell = document.createElement("td");
+            cell.className = "px-4 py-2 border";
+            cell.id = `day-${dayCount}`;
+            const dateKey = `${year}-${String(month + 1).padStart(2, "0")}-${String(dayCount).padStart(2, "0")}`;
+            cell.innerHTML = `<div class="font-bold">${dayCount}</div>`;
+
+            const dayTasks = tasks.filter(task => task.deadline === dateKey).map(task => task.title);
+            const dayProjects = projects.filter(project => project.deadline === dateKey).map(project => project.title);
+
+            if (dayTasks.length > 0) cell.innerHTML += `<div class="text-sm text-blue-500">${dayTasks.join('<br>')}</div>`;
+            if (dayProjects.length > 0) cell.innerHTML += `<div class="text-sm text-green-500">${dayProjects.join('<br>')}</div>`;
+
+            row.appendChild(cell);
+        }
+
+        // Navigation : Mois précédent
+        function previousMonth() {
+            currentMonth.setMonth(currentMonth.getMonth() - 1);
+            generateMonthlyCalendar();
+        }
+
+        // Navigation : Mois suivant
+        function nextMonth() {
+            currentMonth.setMonth(currentMonth.getMonth() + 1);
+            generateMonthlyCalendar();
+        }
+
+        // Charger le calendrier au démarrage
+        document.addEventListener("DOMContentLoaded", () => {
+            generateMonthlyCalendar();
+            initGoogleAPI();
+        });
+    </script>
+</body>
+</html>

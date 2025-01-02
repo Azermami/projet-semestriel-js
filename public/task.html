@@ -6,8 +6,24 @@
     <title>Task Manager</title>
     <script src="/dist/taskManager.js" type="module"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="sidebar.css">
+
+    <script>
+        // Charger dynamiquement la sidebar
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch('sidebar.html')  // Charge le fichier sidebar.html
+                .then(response => response.text()) // Récupère le contenu du fichier
+                .then(data => {
+                    document.getElementById('sidebar-container').innerHTML = data;  // Insère le contenu de la sidebar dans l'élément 'sidebar-container'
+                })
+                .catch(error => console.error('Erreur lors du chargement de la sidebar:', error));
+        });
+    </script>
+    <script src="/dist/dashboard.js" type="module"></script>
+
 </head>
 <body class="bg-gray-100">
+    <div id="sidebar-container"></div> <!-- La sidebar sera insérée ici dynamiquement -->
     <div class="min-h-screen flex flex-col">
         <div id="header"></div>
         <main class="flex-1 p-4">
@@ -27,20 +43,20 @@
                 <button type="submit" class="w-full bg-green-500 text-white p-2 rounded">Add Task</button>
             </form>
             <div class="grid grid-cols-3 gap-4">
-                <div id="todoList" class="task-list bg-gray-100 p-4 rounded shadow">
-                    <h3 class="text-lg font-bold mb-4">À faire</h3>
-                    <div class="task-items" data-status="todo"></div>
+                <div id="todoList" class="task-list bg-gray-100 p-4 rounded shadow" data-status="todo">
+                    <h3 class="text-lg font-bold mb-4">À faire (<span id="todoCount">0</span>)</h3>
+                    <div class="task-items"></div>
                 </div>
-                <div id="inProgressList" class="task-list bg-gray-100 p-4 rounded shadow">
-                    <h3 class="text-lg font-bold mb-4">En cours</h3>
-                    <div class="task-items" data-status="in-progress"></div>
+                <div id="inProgressList" class="task-list bg-gray-100 p-4 rounded shadow" data-status="in-progress">
+                    <h3 class="text-lg font-bold mb-4">En cours (<span id="inProgressCount">0</span>)</h3>
+                    <div class="task-items"></div>
                 </div>
-                <div id="doneList" class="task-list bg-gray-100 p-4 rounded shadow">
-                    <h3 class="text-lg font-bold mb-4">Terminé</h3>
-                    <div class="task-items" data-status="done"></div>
+                <div id="doneList" class="task-list bg-gray-100 p-4 rounded shadow" data-status="done">
+                    <h3 class="text-lg font-bold mb-4">Terminé (<span id="doneCount">0</span>)</h3>
+                    <div class="task-items"></div>
                 </div>
             </div>
-            <button id="completeTaskBtn">Terminer la tâche</button>
+            
 
             <div class="bg-white p-4 rounded shadow-md">
                 <h2 class="text-xl font-bold mb-4">Liste des Tâches</h2>
@@ -77,20 +93,12 @@
                                 </select>
                             </td>
                         </tr>
-                        <!-- Add more rows as needed -->
+                      
                     </tbody>
                 </table>
             </div>
         </main>
     </div>
-    <script>
-        window.onload = function() {
-            fetch('header.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('header').innerHTML = data;
-                });
-        };
-    </script>
+   
 </body>
 </html>

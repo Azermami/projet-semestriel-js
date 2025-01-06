@@ -19,17 +19,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // Pré-remplir les champs
     const userNameInput = document.getElementById("userName") as HTMLInputElement;
     const userEmailInput = document.getElementById("userEmail") as HTMLInputElement;
-    const profilePhotoDisplay = document.getElementById("profilePhotoDisplay") as HTMLImageElement;
 
     userNameInput.value = user.username || "";
     userEmailInput.value = user.email || "";
 
     // Affichage de la photo de profil si elle existe
     if (user.profilePhoto) {
-        profilePhotoDisplay.src = user.profilePhoto;  // Si l'utilisateur a une photo enregistrée
-        profilePhotoDisplay.style.display = "block";
+        (document.getElementById("profilePhotoDisplay") as HTMLImageElement).src = user.profilePhoto;  // Si l'utilisateur a une photo enregistrée
+        (document.getElementById("profilePhotoDisplay") as HTMLImageElement).style.display = "block";
     } else {
-        profilePhotoDisplay.style.display = "none";  // Cacher l'image de profil si aucune photo n'est enregistrée
+        (document.getElementById("profilePhotoDisplay") as HTMLImageElement).style.display = "none";  // Cacher l'image de profil si aucune photo n'est enregistrée
     }
 
     // Gestion du téléchargement de la photo de profil
@@ -40,8 +39,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const reader = new FileReader();
             reader.onload = (e) => {
                 const imgData = e.target?.result as string;
-                profilePhotoDisplay.src = imgData;  // Afficher l'image téléchargée
-                profilePhotoDisplay.style.display = "block";
+                (document.getElementById("profilePhotoDisplay") as HTMLImageElement).src = imgData;  // Afficher l'image téléchargée
+                (document.getElementById("profilePhotoDisplay") as HTMLImageElement).style.display = "block";
 
                 // Enregistrer l'image en base64 dans les données de l'utilisateur
                 user.profilePhoto = imgData;
@@ -79,7 +78,48 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("loggedInUser", JSON.stringify(updatedUser));
         alert("Profil mis à jour avec succès !");
     });
+
+    // Gestion de la caméra
+    const startCameraButton = document.getElementById("startCamera") as HTMLButtonElement;
+    const capturePhotoButton = document.getElementById("capturePhoto") as HTMLButtonElement;
+    const video = document.getElementById("video") as HTMLVideoElement;
+    const profilePhotoDisplay = document.getElementById("profilePhotoDisplay") as HTMLImageElement;
+
+    startCameraButton.addEventListener("click", () => {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then((stream) => {
+                video.srcObject = stream;
+                video.style.display = "block";
+                capturePhotoButton.style.display = "block";
+            })
+            .catch((err) => {
+                console.error("Erreur d'accès à la caméra : ", err);
+                alert("Impossible d'accéder à la caméra.");
+            });
+    });
+
+    capturePhotoButton.addEventListener("click", () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext("2d");
+        if (context) {
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imgData = canvas.toDataURL("image/png");
+            (document.getElementById("profilePhotoDisplay") as HTMLImageElement).src = imgData;
+            (document.getElementById("profilePhotoDisplay") as HTMLImageElement).style.display = "block";
+            video.style.display = "none";
+            capturePhotoButton.style.display = "none";
+
+            // Enregistrer l'image en base64 dans les données de l'utilisateur
+            loggedInUser.profilePhoto = imgData;
+            localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
+
+            // Mettre à jour les données de l'utilisateur dans le stockage
+            user.profilePhoto = imgData;
+            updateUser(user);
+        }
+    });
 });
 
-// Initialiser le mode sombre globalement
 initDarkMode();

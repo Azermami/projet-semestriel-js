@@ -24,5 +24,37 @@
 </head>
 <body class="bg-gray-100">
     <div id="sidebar-container"></div>
+
+    <div class="min-h-screen flex">
+      
+        <div class="main-content flex-1 p-8">
+            <header class="mb-4">
+                <h1 class="text-2xl font-bold">Projet</h1>
+                <div class="search-bar flex">
+                    <input type="text" placeholder="Rechercher" class="p-2 flex-1 border rounded">
+                    <button type="submit" class="ml-2 p-2 bg-blue-500 text-white rounded">Rechercher</button>
+                </div>
+            </header>
+            <section class="project-list">
+                <h2 class="text-xl font-semibold mb-4">Mes projets</h2>
+                <button class="create-project mb-4 p-2 bg-green-500 text-white rounded">+ Créer un nouveau projet</button>
+                <div class="project-item p-4 mb-4 bg-white rounded shadow">
+                    <span class="project-name text-lg font-bold">Projet Gestion Tâche</span>
+                    <span class="task-status block mt-2">6/18</span>
+                    <div class="progress-bar bg-gray-200 h-2 rounded mt-2">
+                        <div class="progress bg-blue-500 h-full rounded" style="width: 85%;"></div>
+                    </div>
+                    <span class="completion block mt-2">85%</span>
+                    <div class="team-members flex mt-2">
+                        <img src="avatar1.png" alt="Avatar 1" class="w-8 h-8 rounded-full mr-2">
+                        <img src="avatar2.png" alt="Avatar 2" class="w-8 h-8 rounded-full mr-2">
+                        <img src="avatar3.png" alt="Avatar 3" class="w-8 h-8 rounded-full mr-2">
+                    </div>
+                    <span class="remaining-days block mt-2">3 jours restants</span>
+                </div>
+                <!-- Répétez le bloc ci-dessus pour chaque projet -->
+            </section>
+        </div>
+    </div>
 </body>
 </html>

@@ -1,4 +1,17 @@
-import { saveProject, getProjects, deleteProject } from './storage.js';
+import { saveProject, getProjects, deleteProject, getTasks } from './storage.js';
+
+// Define Project interface if not already defined in storage.js
+interface Project {
+    id: string;
+    nom_projet: string;
+    description: string;
+    priorite: string;
+    date_limite: string;
+    id_utilisateur_attribue: string;
+    date_creation: string;
+    etat_projet: string;
+    progression: number;
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     const projectList = getProjects();
@@ -7,46 +20,42 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("addProjectForm")?.addEventListener("submit", (e) => {
         e.preventDefault();
 
-        // Récupérer l'ID du projet à modifier (s'il existe)
         const projectId = (document.getElementById("projectId") as HTMLInputElement)?.value;
 
-        const newProject = {
-            id: projectId || Date.now().toString(), // Générer un ID si c'est un nouveau projet
+        const newProject: Project = {
+            id: projectId || Date.now().toString(),
             nom_projet: (document.getElementById("projectTitle") as HTMLInputElement).value.trim(),
             description: (document.getElementById("projectDescription") as HTMLTextAreaElement).value.trim(),
             priorite: (document.getElementById("projectPriority") as HTMLSelectElement).value,
             date_limite: (document.getElementById("projectDeadline") as HTMLInputElement).value,
-            id_utilisateur_attribue: JSON.parse(localStorage.getItem("loggedInUser") || "{}").id
+            id_utilisateur_attribue: JSON.parse(localStorage.getItem("loggedInUser") || "{}").id,
+            date_creation: new Date().toISOString(),
+            etat_projet: 'pending',
+            progression: 0
         };
 
-        // Vérification des champs requis
         if (!newProject.nom_projet || !newProject.description || !newProject.date_limite) {
             alert("Tous les champs sont obligatoires !");
             return;
         }
 
         if (projectId) {
-            // Mettre à jour le projet existant
             updateProject(newProject);
         } else {
-            // Ajouter un nouveau projet
             saveProject(newProject);
         }
 
-        // Actualiser l'affichage et vider le formulaire
         displayProjects(getProjects());
-        document.getElementById("addProjectForm")?.reset();
+        (document.getElementById("addProjectForm") as HTMLFormElement)?.reset();
 
-        // Supprimer l'ID caché du projet après mise à jour
         const hiddenProjectIdField = document.getElementById("projectId") as HTMLInputElement;
-        if (hiddenProjectIdField) hiddenProjectIdField.remove();
+        if (hiddenProjectIdField) hiddenProjectIdField.value = "";
 
         alert(projectId ? "Projet modifié avec succès !" : "Projet enregistré avec succès !");
     });
 });
 
-// Fonction pour afficher les projets
-function displayProjects(projects: any[]) {
+function displayProjects(projects: Project[]): void {
     const projectTableBody = document.getElementById("projectTableBody");
     const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
 
@@ -55,12 +64,22 @@ function displayProjects(projects: any[]) {
         const userProjects = projects.filter(project => project.id_utilisateur_attribue === loggedInUser.id);
 
         userProjects.forEach(project => {
+            const tasks = getTasks().filter(task => task.id_projet === project.id);
+            const completedTasks = tasks.filter(task => task.etat_tache === 'completed').length;
+            const totalTasks = tasks.length;
+            const progression = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td>${project.nom_projet || "Sans titre"}</td>
-                <td>${project.description || "Sans description"}</td>
-                <td>${project.priorite || "Non définie"}</td>
-                <td>${project.date_limite || "Non définie"}</td>
+                <td>${project.nom_projet}</td>
+                <td>${project.description}</td>
+                <td>${project.priorite}</td>
+                <td>${project.date_limite}</td>
+                <td>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: ${progression}%"></div>
+                    </div>
+                </td>
                 <td>
                     <button class="editProjectBtn bg-blue-500 text-white px-2 py-1 rounded" data-id="${project.id}">Modifier</button>
                     <button class="deleteProjectBtn bg-red-500 text-white px-2 py-1 rounded" data-id="${project.id}">Supprimer</button>
@@ -69,18 +88,15 @@ function displayProjects(projects: any[]) {
             projectTableBody.appendChild(row);
         });
 
-        // Ajouter des écouteurs aux boutons d'action
         addProjectButtonListeners();
     }
 }
 
-// Fonction pour ajouter des écouteurs d'événements aux boutons
-function addProjectButtonListeners() {
-    // Boutons de suppression
-    const deleteButtons = document.querySelectorAll(".deleteProjectBtn");
-    deleteButtons.forEach(button => {
+function addProjectButtonListeners(): void {
+    document.querySelectorAll(".deleteProjectBtn").forEach(button => {
         button.addEventListener("click", (e) => {
-            const projectId = (e.target as HTMLButtonElement).dataset.id;
+            const target = e.target as HTMLButtonElement;
+            const projectId = target.dataset.id;
             if (projectId) {
                 deleteProject(projectId);
                 displayProjects(getProjects());
@@ -89,21 +105,18 @@ function addProjectButtonListeners() {
         });
     });
 
-    // Boutons de modification
-    const editButtons = document.querySelectorAll(".editProjectBtn");
-    editButtons.forEach(button => {
+    document.querySelectorAll(".editProjectBtn").forEach(button => {
         button.addEventListener("click", (e) => {
-            const projectId = (e.target as HTMLButtonElement).dataset.id;
+            const target = e.target as HTMLButtonElement;
+            const projectId = target.dataset.id;
             if (projectId) {
                 const projectToEdit = getProjects().find(project => project.id === projectId);
                 if (projectToEdit) {
-                    // Remplir le formulaire avec les données du projet
-                    (document.getElementById("projectTitle") as HTMLInputElement).value = projectToEdit.nom_projet || "";
-                    (document.getElementById("projectDescription") as HTMLTextAreaElement).value = projectToEdit.description || "";
-                    (document.getElementById("projectPriority") as HTMLSelectElement).value = projectToEdit.priorite || "moyenne";
-                    (document.getElementById("projectDeadline") as HTMLInputElement).value = projectToEdit.date_limite || "";
+                    (document.getElementById("projectTitle") as HTMLInputElement).value = projectToEdit.nom_projet;
+                    (document.getElementById("projectDescription") as HTMLTextAreaElement).value = projectToEdit.description;
+                    (document.getElementById("projectPriority") as HTMLSelectElement).value = projectToEdit.priorite;
+                    (document.getElementById("projectDeadline") as HTMLInputElement).value = projectToEdit.date_limite;
 
-                    // Ajouter un champ caché pour stocker l'ID du projet
                     let projectIdInput = document.getElementById("projectId") as HTMLInputElement;
                     if (!projectIdInput) {
                         projectIdInput = document.createElement("input");
@@ -118,9 +131,9 @@ function addProjectButtonListeners() {
     });
 }
 
-// Fonction pour mettre à jour un projet existant
-function updateProject(updatedProject: any): void {
-    let projects = getProjects();
-    projects = projects.map(project => project.id === updatedProject.id ? updatedProject : project);
+function updateProject(updatedProject: Project): void {
+    const projects = getProjects().map(project => 
+        project.id === updatedProject.id ? updatedProject : project
+    );
     localStorage.setItem("projects", JSON.stringify(projects));
 }

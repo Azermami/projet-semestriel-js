@@ -1,5 +1,5 @@
 // Fonction générique pour récupérer des données depuis le localStorage
-function getDataFromLocalStorage(key: string): any[] {
+function getDataFromLocalStorage<T>(key: string): T[] {
     try {
         const data = localStorage.getItem(key);
         return data ? JSON.parse(data) : [];
@@ -10,7 +10,7 @@ function getDataFromLocalStorage(key: string): any[] {
 }
 
 // Fonction générique pour sauvegarder des données dans le localStorage
-function saveDataToLocalStorage(key: string, data: any[]): void {
+function saveDataToLocalStorage<T>(key: string, data: T[]): void {
     try {
         localStorage.setItem(key, JSON.stringify(data));
     } catch (error) {
@@ -19,9 +19,9 @@ function saveDataToLocalStorage(key: string, data: any[]): void {
 }
 
 // Sauvegarde d'une nouvelle tâche
-export function saveTask(task: any): void {
-    const tasks = getDataFromLocalStorage('tasks');
-    const newTask = {
+export function saveTask(task: Task): void {
+    const tasks = getDataFromLocalStorage<Task>('tasks');
+    const newTask: Task = {
         id: Date.now().toString(), // ID unique basé sur l'horodatage
         nom_tache: task.nom_tache,
         description: task.description,
@@ -38,21 +38,23 @@ export function saveTask(task: any): void {
 }
 
 // Récupération des tâches
-export function getTasks(): any[] {
-    return getDataFromLocalStorage('tasks');
+export function getTasks(): Task[] {
+    const tasks = getDataFromLocalStorage<Task>('tasks');
+    console.log('Tâches récupérées :', tasks);
+    return tasks;
 }
 
 // Suppression d'une tâche
 export function deleteTask(id: string): void {
-    const tasks = getDataFromLocalStorage('tasks');
-    const updatedTasks = tasks.filter((task: any) => task.id !== id);
+    const tasks = getDataFromLocalStorage<Task>('tasks');
+    const updatedTasks = tasks.filter(task => task.id !== id);
     saveDataToLocalStorage('tasks', updatedTasks);
 }
 
 // Sauvegarde d'un nouveau projet
-export function saveProject(project: any): void {
-    const projects = getDataFromLocalStorage('projects');
-    const newProject = {
+export function saveProject(project: Project): void {
+    const projects = getDataFromLocalStorage<Project>('projects');
+    const newProject: Project = {
         id: Date.now().toString(), // ID unique basé sur l'horodatage
         nom_projet: project.nom_projet,
         description: project.description,
@@ -68,19 +70,19 @@ export function saveProject(project: any): void {
 }
 
 // Récupération des projets
-export function getProjects(): any[] {
-    return getDataFromLocalStorage('projects');
+export function getProjects(): Project[] {
+    return getDataFromLocalStorage<Project>('projects');
 }
 
 // Suppression d'un projet
 export function deleteProject(id: string): void {
-    const projects = getDataFromLocalStorage('projects');
-    const updatedProjects = projects.filter((project: any) => project.id !== id);
+    const projects = getDataFromLocalStorage<Project>('projects');
+    const updatedProjects = projects.filter(project => project.id !== id);
     saveDataToLocalStorage('projects', updatedProjects);
 }
 
 // Sauvegarde de la liste des utilisateurs
-export function saveUsers(users: any[]): void {
+export function saveUsers(users: User[]): void {
     if (!Array.isArray(users)) {
         console.error("Les données à sauvegarder ne sont pas un tableau valide.");
         return;
@@ -89,6 +91,38 @@ export function saveUsers(users: any[]): void {
 }
 
 // Récupération de la liste des utilisateurs
-export function getUsers(): any[] {
-    return getDataFromLocalStorage('users');
+export function getUsers(): User[] {
+    return getDataFromLocalStorage<User>('users');
+}
+
+// Définition des interfaces Task, Project et User
+export interface Task {
+    id: string;
+    nom_tache: string;
+    description: string;
+    date_creation: string;
+    date_limite: string;
+    etat_tache: string;
+    priorite: string;
+    progression: number;
+    id_projet: string;
+    id_utilisateur_attribue: string;
+}
+
+export interface Project {
+    id: string;
+    nom_projet: string;
+    description: string;
+    date_creation: string;
+    date_limite: string;
+    etat_projet: string;
+    priorite: string;
+    progression: number;
+    id_utilisateur_attribue: string;
+}
+
+export interface User {
+    id: string;
+    username: string;
+    email: string;
 }

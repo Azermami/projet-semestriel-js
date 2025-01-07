@@ -1,216 +1,92 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="sidebar.css">
-    <style>
-        body {
-            display: flex;
-            min-height: 100vh;
-            margin: 0;
-        }
-        #content {
-            flex: 1;
-            padding: 1rem;
-        }
-    </style>
-    <script>
-        // Charger dynamiquement la sidebar
-        document.addEventListener("DOMContentLoaded", () => {
-            fetch('sidebar.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('sidebar-container').innerHTML = data;
-                })
-                .catch(error => console.error('Erreur lors du chargement de la sidebar:', error));
-        });
-    </script>
+    <title>ToDo Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <script defer src="dist/dashboard.js"></script> 
+    <script defer src="dist/user.js"></script> 
+    <script defer src="dist/projectManager.js"></script>
 </head>
 <body>
-    <!-- Sidebar -->
-    <div id="sidebar-container"></div>
-
-    <!-- Main Content -->
-    <div id="content">
-        <div id="user-info" class="mt-4"></div>
-
-        <!-- Section Projets en cours -->
-        <div id="projets-en-cours" class="mt-8 p-4 bg-white rounded shadow">
-            <h2 class="text-xl font-bold mb-4">
-                <a href="project.html" class="text-blue-500 hover:underline">Projets en cours ></a>
-            </h2>
-            <div id="projets-liste">
-                <p class="text-gray-600">Chargement des projets en cours...</p>
+    <div class="container">
+        <nav class="sidebar">
+            <div class="logo-container">
+                <div class="logo">
+                    <img src="assets/TO.png" alt="Logo">
+                </div>
+                <div class="dark-mode-switch">
+                    <img src="assets/darktheme.png" alt="Dark Mode Switch">
+                </div>
             </div>
-        </div>
+            <ul class="nav-items">
+                <li class="active"><button onclick="location.href='dashboard.html'"><span class="icon"><img src="assets/dashboard.png" alt="Logo dashboard"></span>Dashboard</button></li>
+                <li><button onclick="location.href='project.html'"><span class="icon"><img src="assets/project.png" alt="Logo project"></span>Projet</button></li>
+                <li><button onclick="location.href='task.html'"><span class="icon"><img src="assets/task.png" alt="Logo task"></span>Tâches</button></li>
+                <li><button onclick="location.href='calendar.html'"><span class="icon"><img src="assets/calendar.png" alt="Logo calendar"></span>Calendrier</button></li>
+                <li><button onclick="location.href='settings.html'"><span class="icon"><img src="assets/setting.png" alt="Logo setting"></span>Settings</button></li>
+            </ul>
+        </nav>
 
-        <!-- Section Tâches arrivant à échéance -->
-        <div id="taches-echances" class="mt-8 p-4 bg-white rounded shadow">
-            <h2 class="text-xl font-bold mb-4">
-                <a href="task.html" class="text-blue-500 hover:underline">Tâches arrivant à échéance ></a>
-            </h2>
-            <div id="taches-liste">
-                <p class="text-gray-600">Chargement des tâches...</p>
+        <main class="main-content">
+            <header>
+                <h1>Dashboard</h1>
+                <div class="user-info">
+                    <img src="" alt="Profile" class="avatar">
+                    <span id="user-username"><strong>Chargement...</strong></span>
+                    <button class="notification-button" onclick="location.href='notification.html'">
+                        <img src="assets/cloche.png" alt="Notification">
+                    </button>
+                </div>
+            </header>
+
+            <div class="dashboard-grid">
+                <div class="top-section">
+                    <div class="welcome-card">
+                        <h2>Bonjour <span id="welcomeUserName"></span> !</h2>
+                        <p>Bienvenue sur votre Tableau de bord, l'endroit où toutes vos informations sont réunies.</p>
+                        <div class="action-buttons">
+                            <button class="btn-dark" id="newProjectButton" onclick="location.href='Project.html'">Créer un nouveau projet</button>
+                            <button class="btn-dark" id="newTaskButton" onclick="location.href='Task.html'">Ajouter une nouvelle tâche</button>
+                        </div>
+                    </div>
+                    <div class="stat-card blue">
+                        <h3>Tâches en cours</h3>
+                        <span class="number" id="inProgressTasks"></span>
+                    </div>
+                    <div class="stat-card green">
+                        <h3>Projets en cours</h3>
+                        <span class="number" id="inProgressProjects"></span>
+                    </div>                    
+                </div>
+
+                <div class="bottom-section">
+                    <div class="projects-card">
+                        <h2>Mes projets</h2>
+                        <div class="projects-list" id="projectsList"></div>
+                    </div>
+
+                    <div class="tasks-card">
+                        <div class="tasks-header">
+                            <h2>Tâches du jour</h2>
+                            <div class="date-nav">
+                                <button class="nav-btn">←</button>
+                                <span id="currentDate">vendredi 27 décembre 2024</span>
+                                <button class="nav-btn">→</button>
+                            </div>
+                        </div>
+                        <div class="tasks-list" id="tasksList"></div>
+                      <!-- <div class="pagination">
+                            <span class="active">1</span>
+                            <span>2</span>
+                            <span>3</span>
+                            <span>4</span>
+                        </div>-->
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <!-- Section Calendrier Hebdomadaire -->
-        <div id="calendrier-semaine" class="mt-8 p-4 bg-white rounded shadow">
-            <h2 class="text-xl font-bold mb-4">
-                <a href="calendar.html" class="text-blue-500 hover:underline">Calendrier de la semaine ></a>
-            </h2>
-            <table class="min-w-full table-auto border-collapse">
-                <thead>
-                    <tr class="bg-gray-200">
-                        <th class="px-4 py-2 border">Lundi</th>
-                        <th class="px-4 py-2 border">Mardi</th>
-                        <th class="px-4 py-2 border">Mercredi</th>
-                        <th class="px-4 py-2 border">Jeudi</th>
-                        <th class="px-4 py-2 border">Vendredi</th>
-                        <th class="px-4 py-2 border">Samedi</th>
-                        <th class="px-4 py-2 border">Dimanche</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="px-4 py-2 border" id="monday">Aucune tâche</td>
-                        <td class="px-4 py-2 border" id="tuesday">Aucune tâche</td>
-                        <td class="px-4 py-2 border" id="wednesday">Aucune tâche</td>
-                        <td class="px-4 py-2 border" id="thursday">Aucune tâche</td>
-                        <td class="px-4 py-2 border" id="friday">Aucune tâche</td>
-                        <td class="px-4 py-2 border" id="saturday">Aucune tâche</td>
-                        <td class="px-4 py-2 border" id="sunday">Aucune tâche</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        </main>
     </div>
-
-    <script>
-        // Charger l'utilisateur et les données du dashboard
-        document.addEventListener('DOMContentLoaded', () => {
-            const userInfoDiv = document.getElementById('user-info');
-            const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-            if (loggedInUser) {
-                userInfoDiv.innerHTML = `<h1 class="text-2xl font-bold">Bienvenue sur le Dashboard <strong>${loggedInUser.username}</strong></h1>`;
-            } else {
-                userInfoDiv.innerHTML = `<p class="text-lg">Vous n'êtes pas connecté.</p>`;
-            }
-            displayProjects();
-            displayTasks();
-            displayCalendar();
-        });
-
-        function getProjects() {
-            return JSON.parse(localStorage.getItem("projects") || "[]");
-        }
-
-        function getTasks() {
-            return JSON.parse(localStorage.getItem("tasks") || "[]");
-        }
-
-        // Fonction pour afficher les 3 projets avec les échéances les plus proches
-        function displayProjects() {
-            const projetsListeDiv = document.getElementById('projets-liste');
-            const projects = getProjects()
-                .sort((a, b) => new Date(a.date_limite) - new Date(b.date_limite))
-                .slice(0, 3);
-
-            projetsListeDiv.innerHTML = '';
-            if (projects.length === 0) {
-                projetsListeDiv.innerHTML = `<p class="text-gray-600">Aucun projet en cours pour le moment.</p>`;
-                return;
-            }
-
-            projects.forEach(project => {
-                const projetItem = document.createElement('div');
-                projetItem.className = "mb-2 p-2 border border-gray-200 rounded";
-                projetItem.innerHTML = `
-                    <h3 class="font-bold">${project.nom_projet || "Sans titre"}</h3>
-                    <p class="text-gray-600">${project.description || "Pas de description"}</p>
-                    <p class="text-gray-500">Date limite : ${project.date_limite || "Non définie"}</p>
-                `;
-                projetsListeDiv.appendChild(projetItem);
-            });
-        }
-
-        // Fonction pour afficher les 3 tâches avec les échéances les plus proches
-        function displayTasks() {
-            const tachesListeDiv = document.getElementById('taches-liste');
-            const tasks = getTasks()
-                .sort((a, b) => new Date(a.deadline) - new Date(b.deadline))
-                .slice(0, 3);
-
-            tachesListeDiv.innerHTML = '';
-            if (tasks.length === 0) {
-                tachesListeDiv.innerHTML = `<p class="text-gray-600">Aucune tâche à échéance proche pour le moment.</p>`;
-                return;
-            }
-
-            tasks.forEach(task => {
-                const tacheItem = document.createElement('div');
-                tacheItem.className = "mb-2 p-2 border border-gray-200 rounded";
-                tacheItem.innerHTML = `
-                    <h3 class="font-bold">${task.title || "Sans titre"}</h3>
-                    <p class="text-gray-600">${task.description || "Pas de description"}</p>
-                    <p class="text-gray-500">Date limite : ${task.deadline || "Non définie"}</p>
-                `;
-                tachesListeDiv.appendChild(tacheItem);
-            });
-        }
-
-        // Fonction pour organiser et afficher le calendrier hebdomadaire
-        function displayCalendar() {
-            const tasks = getTasks();
-            const projects = getProjects();
-
-            const now = new Date();
-            const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + 1));
-            const daysOfWeek = Array.from({ length: 7 }, (_, i) => {
-                const date = new Date(startOfWeek);
-                date.setDate(date.getDate() + i);
-                return date.toISOString().split("T")[0];
-            });
-
-            const itemsByDay = {
-                monday: [],
-                tuesday: [],
-                wednesday: [],
-                thursday: [],
-                friday: [],
-                saturday: [],
-                sunday: [],
-            };
-
-            tasks.forEach(task => {
-                if (daysOfWeek.includes(task.deadline)) {
-                    const dayKey = getDayKey(new Date(task.deadline));
-                    itemsByDay[dayKey].push(`Tâche: ${task.title || "Sans titre"}`);
-                }
-            });
-
-            projects.forEach(project => {
-                if (daysOfWeek.includes(project.date_limite)) {
-                    const dayKey = getDayKey(new Date(project.date_limite));
-                    itemsByDay[dayKey].push(`Projet: ${project.nom_projet || "Sans titre"}`);
-                }
-            });
-
-            Object.entries(itemsByDay).forEach(([day, items]) => {
-                const cell = document.getElementById(day);
-                if (cell) {
-                    cell.innerHTML = items.length > 0 ? items.join('<br>') : "Aucune tâche";
-                }
-            });
-        }
-
-        function getDayKey(date) {
-            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-            return days[date.getDay() - 1] || 'sunday';
-        }
-    </script>
 </body>
 </html>

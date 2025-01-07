@@ -1,180 +1,126 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendrier Mensuel</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Calendrier Inspiré</title>
     <script src="/dist/calendar.js" type="module"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="sidebar.css">
+    <script src="sidebar.js"></script>
+
     <style>
-        body {
-            display: flex;
-            min-height: 100vh;
-            margin: 0;
+        :root {
+            --dark: #1B1B1B;
+            --light: #FFFFFF;
+            --sidebar-border: #292929;
         }
-        #sidebar {
-            min-width: 250px;
-            background-color: #1F2937;
+
+        .min-h-screen {
+            padding-left: 280px;
+        }
+
+        main {
+            width: 100%;
+            max-width: calc(100vw - 280px);
+        }
+
+        .calendar-container {
+            background-color: var(--light);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+        }
+
+        .bg-blue-600 {
+            background-color: var(--dark);
+        }
+
+        .month-navigation button {
+            background-color: #1B1B1B;
             color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
         }
-        #content {
-            flex: 1;
+
+        .month-navigation button:hover {
+            background-color: #292929;
+        }
+
+        .calendar-table th {
+            background-color: #f3f4f6;
+            padding: 0.75rem;
+            border-bottom: 2px solid #e5e7eb;
+            text-align: center;
+        }
+
+        .calendar-table td {
             padding: 1rem;
+            border: 1px solid #e5e7eb;
+            text-align: center;
+            vertical-align: top;
         }
-        
+
+        .day-tasks {
+            margin-top: 0.5rem;
+        }
+
+        .day-tasks .task {
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .task-high {
+            color: #f87171; /* Rouge pour priorité haute */
+        }
+
+        .task-medium {
+            color: #facc15; /* Jaune pour priorité moyenne */
+        }
+
+        .task-low {
+            color: #34d399; /* Vert pour priorité basse */
+        }
     </style>
-    <script>
-        import { initGoogleAPI, signIn, signOut, exportTaskToGoogleCalendar } from '/dist/calendar.js';
-      
-        // Initialiser l'API Google au chargement de la page
-        document.addEventListener("DOMContentLoaded", () => {
-          initGoogleAPI();
-        });
-      
-        // Fonction pour exporter une tâche
-        function exportTask() {
-          exportTaskToGoogleCalendar();
-        }
-      </script>
-    <script>
-        // Charger dynamiquement la sidebar
-        document.addEventListener("DOMContentLoaded", () => {
-            fetch('sidebar.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('sidebar-container').innerHTML = data;
-                })
-                .catch(error => console.error('Erreur lors du chargement de la sidebar:', error));
-        });
-    </script>
 </head>
-<body>
-    <!-- Sidebar -->
+<body class="bg-gray-100">
     <div id="sidebar-container"></div>
-    
-
-    <!-- Content -->
-    <div id="content">
-        <header class="bg-blue-600 p-4 text-white">
-            <div class="flex justify-between items-center">
+    <div class="min-h-screen flex flex-col">
+        <main class="flex-1 p-4">
+            <header class="bg-blue-600 p-4 text-white rounded-lg mb-6">
                 <h1 class="text-2xl">Calendrier Mensuel</h1>
-                <div class="flex items-center space-x-4">
-                    <button onclick="previousMonth()" class="bg-blue-500 text-white p-2 rounded">&lt;</button>
-                    <span id="month-title" class="text-lg font-bold"></span>
-                    <button onclick="nextMonth()" class="bg-blue-500 text-white p-2 rounded">&gt;</button>
+            </header>
+
+            <div class="calendar-container">
+                <div class="month-navigation flex justify-between mb-4">
+                    <button onclick="previousMonth()">&lt; Mois Précédent</button>
+                    <h2 id="month-title" class="text-xl font-bold"></h2>
+                    <button onclick="nextMonth()">Mois Suivant &gt;</button>
                 </div>
+
+                <table class="calendar-table w-full">
+                    <thead>
+                        <tr>
+                            <th>Lundi</th>
+                            <th>Mardi</th>
+                            <th>Mercredi</th>
+                            <th>Jeudi</th>
+                            <th>Vendredi</th>
+                            <th>Samedi</th>
+                            <th>Dimanche</th>
+                        </tr>
+                    </thead>
+                    <tbody id="calendar-body">
+                        <!-- Jours du mois générés dynamiquement -->
+                    </tbody>
+                </table>
             </div>
-        </header>
-
-        <div class="flex space-x-4 my-4">
-            <button onclick="signIn()" class="bg-blue-500 text-white p-2 rounded">Se connecter à Google Calendar</button>
-            <button onclick="signOut()" class="bg-red-500 text-white p-2 rounded">Se déconnecter</button>
-            <button onclick="exportToGoogleCalendar()" class="bg-green-500 text-white p-2 rounded">Exporter vers Google Calendar</button>
-        </div>
-
-        <div class="bg-white p-4 rounded shadow-md mt-6">
-            <table class="min-w-full table-auto border-collapse">
-                <thead>
-                    <tr class="bg-gray-200">
-                        <th class="px-4 py-2 border">Lundi</th>
-                        <th class="px-4 py-2 border">Mardi</th>
-                        <th class="px-4 py-2 border">Mercredi</th>
-                        <th class="px-4 py-2 border">Jeudi</th>
-                        <th class="px-4 py-2 border">Vendredi</th>
-                        <th class="px-4 py-2 border">Samedi</th>
-                        <th class="px-4 py-2 border">Dimanche</th>
-                    </tr>
-                </thead>
-                <tbody id="calendar-body">
-                    <!-- Les lignes du calendrier seront insérées ici -->
-                </tbody>
-            </table>
-        </div>
+        </main>
     </div>
-
     <script>
-        let currentMonth = new Date(); // Date pour le mois en cours
+        let currentMonth = new Date();
 
-        // Initialisation de l'API Google Calendar
-        function initGoogleAPI() {
-            gapi.load('client:auth2', async () => {
-                await gapi.client.init({
-                    apiKey: 'AIzaSyA-9oW_gXamGa8uhHR1-y09HRZ5BJKFJd4', // Remplacez par votre clé API Google
-                    clientId: '69407124765-gkpll48nc84l3q8k8i3spvf995alasjk.apps.googleusercontent.com', // Remplacez par votre Client ID
-                    discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
-                    scope: 'https://www.googleapis.com/auth/calendar.events', // Autorisation d'ajouter des événements
-                });
-                console.log("Google API initialisée");
-            });
-        }
-
-        // Connexion à Google Calendar
-        function signIn() {
-        gapi.auth2.getAuthInstance().signIn({
-            prompt: 'select_account' // Forcer la sélection d'un compte
-        }).then(() => {
-            console.log('Connecté à Google Calendar');
-        }).catch(error => {
-            console.error('Erreur lors de la connexion :', error);
-            alert('Erreur lors de la connexion : ' + error.error);
-        });
-}
-
-        // Déconnexion de Google Calendar
-        function signOut() {
-            gapi.auth2.getAuthInstance().signOut().then(() => {
-                console.log('Déconnecté de Google Calendar');
-            });
-        }
-
-        // Exporter des événements vers Google Calendar
-        async function exportToGoogleCalendar() {
-            const tasks = getTasks(); // Récupérer les tâches du localStorage
-            const projects = getProjects(); // Récupérer les projets du localStorage
-
-            const eventsToExport = [...tasks, ...projects];
-
-            for (const event of eventsToExport) {
-                const eventDate = new Date(event.deadline);
-                const googleEvent = {
-                    summary: event.title,
-                    start: {
-                        dateTime: eventDate.toISOString(),
-                        timeZone: 'Europe/Paris',
-                    },
-                    end: {
-                        dateTime: new Date(eventDate.getTime() + 60 * 60 * 1000).toISOString(), // Durée de 1h
-                        timeZone: 'Europe/Paris',
-                    },
-                };
-
-                try {
-                    await gapi.client.calendar.events.insert({
-                        calendarId: 'primary',
-                        resource: googleEvent,
-                    });
-                    console.log(`Événement exporté : ${event.title}`);
-                } catch (error) {
-                    console.error(`Erreur lors de l'exportation de l'événement : ${event.title}`, error);
-                }
-            }
-
-            alert("Tâches et projets exportés avec succès vers Google Calendar !");
-        }
-
-       
-
-        // Récupérer les tâches et projets depuis le localStorage
-        function getTasks() {
-            return JSON.parse(localStorage.getItem("tasks") || "[]");
-        }
-
-        function getProjects() {
-            return JSON.parse(localStorage.getItem("projects") || "[]");
-        }
-
-        // Générer le calendrier mensuel
         function generateMonthlyCalendar() {
             const year = currentMonth.getFullYear();
             const month = currentMonth.getMonth();
@@ -183,76 +129,72 @@
             const daysInMonth = lastDay.getDate();
 
             let startDay = firstDay.getDay();
-            if (startDay === 0) startDay = 7; // Adapter pour commencer le lundi
+            if (startDay === 0) startDay = 7;
 
             const calendarBody = document.getElementById("calendar-body");
             calendarBody.innerHTML = "";
 
-            const tasks = getTasks();
-            const projects = getProjects();
-
             let row = document.createElement("tr");
             let dayCount = 1;
 
-            // Remplir les cellules vides avant le début du mois
             for (let i = 1; i < startDay; i++) {
-                const emptyCell = document.createElement("td");
-                emptyCell.className = "px-4 py-2 border";
-                row.appendChild(emptyCell);
+                row.appendChild(document.createElement("td"));
             }
 
-            // Remplir les jours du mois
-            for (let i = startDay; i <= 7; i++) {
-                createDayCell(dayCount++, row, tasks, projects, month, year);
-            }
-            calendarBody.appendChild(row);
-
-            // Remplir le reste du mois
             while (dayCount <= daysInMonth) {
-                row = document.createElement("tr");
-                for (let i = 1; i <= 7 && dayCount <= daysInMonth; i++) {
-                    createDayCell(dayCount++, row, tasks, projects, month, year);
+                for (let i = startDay; i <= 7 && dayCount <= daysInMonth; i++) {
+                    const cell = document.createElement("td");
+                    cell.innerHTML = `<div>${dayCount}</div>`;
+                    cell.className = "relative";
+
+                    const tasks = getTasksForDate(year, month + 1, dayCount);
+                    const tasksContainer = document.createElement("div");
+                    tasksContainer.className = "day-tasks";
+
+                    tasks.forEach(task => {
+                        const taskElement = document.createElement("div");
+                        taskElement.textContent = task.title;
+                        taskElement.className = `task task-${task.priority}`;
+                        tasksContainer.appendChild(taskElement);
+                    });
+
+                    cell.appendChild(tasksContainer);
+                    row.appendChild(cell);
+                    dayCount++;
                 }
                 calendarBody.appendChild(row);
+                row = document.createElement("tr");
+                startDay = 1;
             }
 
-            // Mettre à jour le titre du mois
             document.getElementById("month-title").textContent = `${new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(currentMonth)}`;
         }
 
-        // Créer une cellule pour un jour
-        function createDayCell(dayCount, row, tasks, projects, month, year) {
-            const cell = document.createElement("td");
-            cell.className = "px-4 py-2 border";
-            cell.id = `day-${dayCount}`;
-            const dateKey = `${year}-${String(month + 1).padStart(2, "0")}-${String(dayCount).padStart(2, "0")}`;
-            cell.innerHTML = `<div class="font-bold">${dayCount}</div>`;
-
-            const dayTasks = tasks.filter(task => task.deadline === dateKey).map(task => task.title);
-            const dayProjects = projects.filter(project => project.deadline === dateKey).map(project => project.title);
-
-            if (dayTasks.length > 0) cell.innerHTML += `<div class="text-sm text-blue-500">${dayTasks.join('<br>')}</div>`;
-            if (dayProjects.length > 0) cell.innerHTML += `<div class="text-sm text-green-500">${dayProjects.join('<br>')}</div>`;
-
-            row.appendChild(cell);
+        function getTasksForDate(year, month, day) {
+            const dateKey = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const allTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+            return allTasks.filter(task => task.deadline === dateKey);
         }
 
-        // Navigation : Mois précédent
         function previousMonth() {
             currentMonth.setMonth(currentMonth.getMonth() - 1);
             generateMonthlyCalendar();
         }
 
-        // Navigation : Mois suivant
         function nextMonth() {
             currentMonth.setMonth(currentMonth.getMonth() + 1);
             generateMonthlyCalendar();
         }
 
-        // Charger le calendrier au démarrage
-        document.addEventListener("DOMContentLoaded", () => {
-            generateMonthlyCalendar();
-            initGoogleAPI();
+        document.addEventListener("DOMContentLoaded", generateMonthlyCalendar);
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('sidebar.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('sidebar-container').innerHTML = data;
+                });
         });
     </script>
 </body>

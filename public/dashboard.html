@@ -1,95 +1,81 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <script src="/dist/dashboard.js" type="module"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="sidebar.css">
-    <style>
-        body {
-            display: flex;
-            min-height: 100vh;
-            margin: 0;
-        }
-        #content {
-            flex: 1;
-            padding: 1rem;
-        }
-    </style>
+    <title>ToDo Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <script defer src="dist/dashboard.js"></script> 
+    <script defer src="dist/user.js"></script> 
+    <script defer src="dist/projectManager.js"></script>
+    <script src="sidebar.js"></script>
+
+</head>
+<body>
+    <div class="container">
+        <div id="sidebar-container"></div>
+
+        <main class="main-content">
+            <header>
+                <h1>Dashboard</h1>
+                <div class="user-info">
+                    <img src="" alt="Profile" class="avatar">
+                    <span id="user-username"><strong>Chargement...</strong></span>
+                    <button class="notification-button" onclick="location.href='notification.html'">
+                        <img src="assets/cloche.png" alt="Notification">
+                    </button>
+                </div>
+            </header>
+
+            <div class="dashboard-grid">
+                <div class="top-section">
+                    <div class="welcome-card">
+                        <h2>Bonjour <span id="welcomeUserName"></span> !</h2>
+                        <p>Bienvenue sur votre Tableau de bord, l'endroit où toutes vos informations sont réunies.</p>
+                        <div class="action-buttons">
+                            <button class="btn-dark" id="newProjectButton" onclick="location.href='Project.html'">Créer un nouveau projet</button>
+                            <button class="btn-dark" id="newTaskButton" onclick="location.href='Task.html'">Ajouter une nouvelle tâche</button>
+                        </div>
+                    </div>
+                    <div class="stat-card blue">
+                        <h3>Tâches en cours</h3>
+                        <span class="number" id="inProgressTasks"></span>
+                    </div>
+                    <div class="stat-card green">
+                        <h3>Projets en cours</h3>
+                        <span class="number" id="inProgressProjects"></span>
+                    </div>                    
+                </div>
+
+                <div class="bottom-section">
+                    <div class="projects-card">
+                        <h2>Mes projets</h2>
+                        <div class="projects-list" id="projectsList"></div>
+                    </div>
+
+                    <div class="tasks-card">
+                        <div class="tasks-header">
+                            <h2>Mes prochaines tâches</h2>
+                            <div class="date-nav">
+                                <button class="nav-btn"></button>
+                                <button class="nav-btn"></button>
+                            </div>
+                        </div>
+                        <div class="tasks-list" id="tasksList"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
     <script>
-        // Charger dynamiquement la sidebar
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener('DOMContentLoaded', function() {
             fetch('sidebar.html')
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById('sidebar-container').innerHTML = data;
-                })
-                .catch(error => console.error('Erreur lors du chargement de la sidebar:', error));
+                });
         });
     </script>
-</head>
-
-<body>
-    <!-- Sidebar -->
-    <div id="sidebar-container"></div>
-
-    <!-- Main Content -->
-    <div id="content">
-        <div id="user-info" class="mt-4"></div>
-
-        <!-- Section Projets en cours -->
-        <div id="projets-en-cours" class="mt-8 p-4 bg-white rounded shadow">
-            <h2 class="text-xl font-bold mb-4">
-                <a href="project.html" class="text-blue-500 hover:underline">Projets en cours ></a>
-            </h2>
-            <div id="projets-liste">
-                <p class="text-gray-600">Chargement des projets en cours...</p>
-            </div>
-        </div>
-
-        <!-- Section Tâches arrivant à échéance -->
-        <div id="taches-echances" class="mt-8 p-4 bg-white rounded shadow">
-            <h2 class="text-xl font-bold mb-4">
-                <a href="task.html" class="text-blue-500 hover:underline">Tâches arrivant à échéance ></a>
-            </h2>
-            <div id="taches-liste" class="recent-tasks">
-                <p class="text-gray-600">Chargement des tâches...</p>
-            </div>
-        </div>
-        <!-- Section Calendrier Hebdomadaire -->
-        <div id="calendrier-semaine" class="mt-8 p-4 bg-white rounded shadow">
-            <h2 class="text-xl font-bold mb-4">
-                <a href="calendar.html" class="text-blue-500 hover:underline">Calendrier de la semaine ></a>
-            </h2>
-            <table class="min-w-full table-auto border-collapse">
-                <thead>
-                    <tr class="bg-gray-200">
-                        <th class="px-4 py-2 border">Lundi</th>
-                        <th class="px-4 py-2 border">Mardi</th>
-                        <th class="px-4 py-2 border">Mercredi</th>
-                        <th class="px-4 py-2 border">Jeudi</th>
-                        <th class="px-4 py-2 border">Vendredi</th>
-                        <th class="px-4 py-2 border">Samedi</th>
-                        <th class="px-4 py-2 border">Dimanche</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="px-4 py-2 border" id="monday">Aucune tâche</td>
-                        <td class="px-4 py-2 border" id="tuesday">Aucune tâche</td>
-                        <td class="px-4 py-2 border" id="wednesday">Aucune tâche</td>
-                        <td class="px-4 py-2 border" id="thursday">Aucune tâche</td>
-                        <td class="px-4 py-2 border" id="friday">Aucune tâche</td>
-                        <td class="px-4 py-2 border" id="saturday">Aucune tâche</td>
-                        <td class="px-4 py-2 border" id="sunday">Aucune tâche</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-  
 </body>
 </html>

@@ -4,48 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sidebar</title>
+    <link rel="stylesheet" href="sidebar.css">
 </head>
 <body>
-    
-    <div class="sidebar">
-        <!-- User section -->
-        <div class="user">
-            <div class="icon">👤</div>
-            <span id="user-username"><strong>Chargement...</strong></span> <!-- Placeholder initial -->
-            <div class="icon">🌙</div>
+    <nav class="sidebar">
+        <div class="logo-container">
+            <div class="logo">
+                <img src="assets/TO.png" alt="Logo">
+            </div>
+            <div class="dark-mode-switch">
+                <img src="assets/darktheme.png" alt="Dark Mode Switch" id="darkModeToggle">
+            </div>
         </div>
 
-        <!-- Navigation menu -->
-        <nav>
-            <a href="dashboard.html" class="active">
-                <span class="icon">📂</span>
-                Dashboard
-            </a>
-            <a href="project.html">
-                <span class="icon">⭐</span>
-                Projet
-            </a>
-            <a href="task.html">
-                <span class="icon">✅</span>
-                Tâches
-            </a>
-            <a href="calendar.html">
-                <span class="icon">📅</span>
-                Calendrier
-            </a>
-            <a href="profile.html">
-                <span class="icon">⚙️</span>
-                Paramètres
-            </a>
-            <a href="login.html">
-                <span class="icon">🚪</span>
-                Déconnexion
-            </a>
-        </nav>
-    </div>
+        <div class="user">
+        </div>
+
+        <ul class="nav-items">
+            <li><button onclick="location.href='dashboard.html'"><span class="icon"><img src="assets/dashboard.png" alt="Logo dashboard"></span>Dashboard</button></li>
+            <li><button onclick="location.href='project.html'"><span class="icon"><img src="assets/project.png" alt="Logo project"></span>Projet</button></li>
+            <li><button onclick="location.href='task.html'"><span class="icon"><img src="assets/task.png" alt="Logo task"></span>Tâches</button></li>
+            <li><button onclick="location.href='calendar.html'"><span class="icon"><img src="assets/calendar.png" alt="Logo calendar"></span>Calendrier</button></li>
+            <li><button onclick="location.href='settings.html'"><span class="icon"><img src="assets/setting.png" alt="Logo setting"></span>Settings</button></li>
+        </ul>
+    </nav>
 
     <script>
-        // Fonction pour récupérer les données depuis le localStorage
+        // Fonction utilitaire pour récupérer des données du localStorage
         function getDataFromLocalStorage(key) {
             try {
                 const data = localStorage.getItem(key);
@@ -55,22 +40,38 @@
                 return null;
             }
         }
-
-        // Attendre que la page soit chargée
+    
+        // Fonction exécutée après le chargement du DOM
         document.addEventListener('DOMContentLoaded', () => {
-            // Récupérer l'utilisateur depuis localStorage
+            // Gestion des informations utilisateur
             const loggedInUser = getDataFromLocalStorage("loggedInUser");
-
-            // Vérifiez si un utilisateur est connecté
             const usernameElement = document.getElementById('user-username');
+            
             if (loggedInUser && loggedInUser.username) {
-                // Afficher le nom de l'utilisateur connecté
                 usernameElement.innerHTML = `<strong>${loggedInUser.username}</strong>`;
             } else {
-                // Si aucun utilisateur n'est connecté, afficher "Invité"
                 usernameElement.innerHTML = `<strong>Invité</strong>`;
             }
+    
+            // Gestion du mode sombre
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            darkModeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+            });
+    
+            // Déterminer la page actuelle et gérer la classe active
+            const currentPage = window.location.pathname.split('/').pop(); // Récupère le fichier HTML actuel
+            document.querySelectorAll('.nav-items li').forEach(item => {
+                const button = item.querySelector('button'); // Trouve le bouton dans chaque élément de la liste
+                const targetPage = button.getAttribute('onclick')?.match(/'([^']+)'/)[1]; // Extrait le nom de la page cible
+                if (targetPage === currentPage) {
+                    item.classList.add('active'); // Ajoute la classe active à l'élément correspondant
+                } else {
+                    item.classList.remove('active'); // Retire la classe active des autres éléments
+                }
+            });
         });
     </script>
+    
 </body>
 </html>

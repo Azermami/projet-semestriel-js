@@ -1,168 +1,244 @@
-import { initDarkMode } from './dark-mode.js';
-
-interface User {
-    username: string;
-    password: string;
-    id_utilisateur: string;
-}
-
+// Interface pour définir la structure d'un projet
 interface Project {
-    nom_projet?: string;
-    description?: string;
-    date_limite?: string;
-    id_utilisateur?: string;
+    id: string;
+    title: string;
+    description: string;
+    priority?: string;
+    deadline?: string;
+    date_creation: string;
+    date_limite: string;
 }
 
+// Interface pour définir la structure d'une tâche
 interface Task {
-    nom_tache?: string;
-    description?: string;
-    date_limite?: string;
-    id_utilisateur?: string;
+    id: string;
+    nom_tache: string;
+    description: string;
+    priorite?: string;
+    etat_tache?: string;
+    deadline?: string;
+    date_creation: string;
+    date_limite: string;
+    id_utilisateur_attribue: string;
 }
 
-// Charger dynamiquement la sidebar
-document.addEventListener("DOMContentLoaded", () => {
-    fetch('sidebar.html')
-        .then(response => response.text())
-        .then(data => {
-            const sidebarContainer = document.getElementById('sidebar-container');
-            if (sidebarContainer) {
-                sidebarContainer.innerHTML = data;
-            }
-        })
-        .catch(error => console.error('Erreur lors du chargement de la sidebar:', error));
-
-    loadDashboard();
+// Initialisation après le chargement du DOM
+document.addEventListener('DOMContentLoaded', () => {
+    displayProjectsInDashboard();
+    displayAllTasks(); // Affiche toutes les tâches, sans filtre de date
+    updateDashboardStats();
+    displayUsername(); // Affiche le nom d'utilisateur
+    initDateNavigation(); // Gère la navigation par date
 });
 
-// Charger le tableau de bord
-function loadDashboard(): void {
-    const userInfoDiv = document.getElementById('user-info') as HTMLDivElement;
-    const loggedInUser: User | null = JSON.parse(localStorage.getItem("loggedInUser") || "null");
-
-    if (loggedInUser) {
-        userInfoDiv.innerHTML = `<h1 class="text-2xl font-bold">Bienvenue sur le Dashboard <strong>${loggedInUser.username}</strong></h1>`;
-    } else {
-        userInfoDiv.innerHTML = `<p class="text-lg">Vous n'êtes pas connecté.</p>`;
-    }
-
-    loadTasks();  // Charger les tâches après l'authentification
-    displayCalendar();
-}
-
-// Récupérer les projets de l'utilisateur connecté
-function getProjectsByUser(userId: string): Project[] {
-    const allProjects: Project[] = JSON.parse(localStorage.getItem("projects") || "[]");
-    return allProjects.filter(project => project.id_utilisateur === userId);
-}
-
-// Récupérer les tâches de l'utilisateur connecté
-function getTasksByUser(userId: string): Task[] {
-    const allTasks: Task[] = JSON.parse(localStorage.getItem("tasks") || "[]");
-    return allTasks.filter(task => task.id_utilisateur === userId);
-}
-
-// Filtrer les éléments à venir et trier par date limite
-function filterUpcomingItems<T extends { date_limite?: string }>(items: T[], daysAhead: number = 7): T[] {
-    const now = new Date().getTime();
-    const futureDate = new Date();
-    futureDate.setDate(futureDate.getDate() + daysAhead);
-
-    return items.filter(item => {
-        const itemDate = new Date(item.date_limite || "").getTime();
-        if (isNaN(itemDate)) {
-            console.error(`Date invalide pour l'élément: ${item.date_limite}`);
-            return false;
-        }
-        return itemDate >= now && itemDate <= futureDate.getTime();
-    }).sort((a, b) => new Date(a.date_limite || "").getTime() - new Date(b.date_limite || "").getTime());
-}
-
-// Fonction pour charger les tâches
-function loadTasks() {
-    const loggedInUser: User | null = JSON.parse(localStorage.getItem("loggedInUser") || "null");
-
-    if (!loggedInUser) return;
-
-    const userTasks = getTasksByUser(loggedInUser.id_utilisateur);  // Récupérer les tâches de l'utilisateur connecté
-    const upcomingTasks = filterUpcomingItems(userTasks);  // Filtrer les tâches à venir
-    displayTasks(upcomingTasks);
-}
-
-// Fonction pour afficher les tâches dans le DOM
-function displayTasks(tasks: Task[] = []) {
-    const tachesListeDiv = document.getElementById('taches-liste');
-    if (tachesListeDiv) {
-        tachesListeDiv.innerHTML = ''; // Efface les tâches existantes
-        if (tasks.length === 0) {
-            tachesListeDiv.innerHTML = `<p class="text-gray-600">Aucune tâche à venir.</p>`;
-        } else {
-            tasks.forEach(task => {
-                const tacheElement = document.createElement('div');
-                tacheElement.classList.add('task');
-                tacheElement.innerHTML = `
-                    <p><strong>${task.nom_tache || "Sans titre"}</strong></p>
-                    <p>${task.description || "Aucune description"}</p>
-                    <p>Limite: ${task.date_limite ? new Date(task.date_limite).toLocaleDateString() : "Non définie"}</p>
-                `;
-                tachesListeDiv.appendChild(tacheElement);
-            });
-        }
+// Affiche le nom d'utilisateur connecté
+function displayUsername(): void {
+    const username = localStorage.getItem('currentUser');
+    const usernameElement = document.getElementById('usernameDisplay');
+    if (usernameElement && username) {
+        usernameElement.textContent = `Bienvenue, ${username}!`;
     }
 }
 
-// Afficher le calendrier hebdomadaire
-function displayCalendar(): void {
-    const loggedInUser: User | null = JSON.parse(localStorage.getItem("loggedInUser") || "null");
+// Récupère tous les projets depuis le stockage local
+function getProjects(): Project[] {
+    const projectsJson = localStorage.getItem('projects');
+    return projectsJson ? JSON.parse(projectsJson) : [];
+}
 
-    if (!loggedInUser) return;
+// Récupère toutes les tâches depuis le stockage local
+function getTasks(): Task[] {
+    const tasksJson = localStorage.getItem('tasks');
+    return tasksJson ? JSON.parse(tasksJson) : [];
+}
 
-    const tasks = getTasksByUser(loggedInUser.id_utilisateur);  // Utilisation de l'ID utilisateur
-    const projects = getProjectsByUser(loggedInUser.id_utilisateur);
+// Affiche tous les projets sur le tableau de bord
+function displayProjectsInDashboard(): void {
+    const projects = getProjects();
+    const projectsList = document.getElementById('projectsList');
+    if (!projectsList) {
+        console.error('Élément #projectsList introuvable.');
+        return;
+    }
 
+    projectsList.innerHTML = '';
+    projects.forEach((project: Project) => {
+        const projectElement = document.createElement('div');
+        projectElement.className = 'project-item';
+        const progress = calculateProgress(project.date_creation, project.date_limite);
+
+        projectElement.innerHTML = `
+            <div class="project-indicator" style="background-color: ${getRandomColor()}"></div>
+            <div class="project-content">
+                <div class="project-title">${project.title}</div>
+                <div class="project-description">${project.description}</div>
+                <div class="project-progress">Progression: ${progress}%</div>
+            </div>
+        `;
+        projectsList.appendChild(projectElement);
+    });
+}
+
+// Affiche toutes les tâches dans la liste des tâches
+function displayAllTasks(): void {
+    const tasks = getTasks();
+    displayTasks(tasks);
+}
+
+// Affiche les tâches filtrées ou triées
+function displayTasks(tasks: Task[]): void {
+    const tasksList = document.getElementById('tasksList');
+    if (!tasksList) {
+        console.error('Élément #tasksList introuvable.');
+        return;
+    }
+
+    tasks.sort((a, b) => new Date(a.date_limite).getTime() - new Date(b.date_limite).getTime());
+    tasksList.innerHTML = '';
+    if (tasks.length === 0) {
+        tasksList.innerHTML = '<p>Aucune tâche disponible.</p>';
+        return;
+    }
+
+    tasks.forEach((task: Task) => {
+        const daysLeft = calculateDaysLeft(task.date_limite);
+        const isNearDeadline = daysLeft <= 1;
+
+        const taskElement = document.createElement('div');
+        taskElement.className = 'task-item';
+
+        taskElement.innerHTML = `
+            <div class="task-content">
+                <div class="task-title">${task.nom_tache}</div>
+                <div class="task-project">${task.description}</div>
+                    ${daysLeft <= 0 ? 'Expirée' : `${daysLeft} jour(s) restant(s)`}
+                </div>
+            </div>
+        `;
+        tasksList.appendChild(taskElement);
+    });
+}
+
+// Calcul du nombre de jours restants pour une date limite
+function calculateDaysLeft(deadline: string): number {
     const now = new Date();
-    const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + 1));
-    const daysOfWeek = Array.from({ length: 7 }, (_, i) => {
-        const date = new Date(startOfWeek);
-        date.setDate(date.getDate() + i);
-        return date.toISOString().split("T")[0];
-    });
+    const deadlineDate = new Date(deadline);
+    const timeDiff = deadlineDate.getTime() - now.getTime();
+    return Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+}
 
-    const itemsByDay: { [key: string]: string[] } = {
-        monday: [],
-        tuesday: [],
-        wednesday: [],
-        thursday: [],
-        friday: [],
-        saturday: [],
-        sunday: [],
-    };
+// Calcule le pourcentage de progression entre deux dates
+function calculateProgress(dateCreation: string, date_limite: string): number {
+    const creationDate = new Date(dateCreation);
+    const deadlineDate = new Date(date_limite);
+    const currentDate = new Date();
 
-    tasks.forEach(task => {
-        if (task.date_limite && daysOfWeek.includes(task.date_limite)) {
-            const dayKey = getDayKey(new Date(task.date_limite));
-            itemsByDay[dayKey].push(`Tâche: ${task.nom_tache || "Sans titre"}`);
-        }
-    });
+    if (currentDate >= deadlineDate) return 100;
+    if (currentDate <= creationDate) return 0;
 
-    projects.forEach(project => {
-        if (project.date_limite && daysOfWeek.includes(project.date_limite)) {
-            const dayKey = getDayKey(new Date(project.date_limite));
-            itemsByDay[dayKey].push(`Projet: ${project.nom_projet || "Sans titre"}`);
-        }
-    });
+    const totalDuration = deadlineDate.getTime() - creationDate.getTime();
+    const elapsedDuration = currentDate.getTime() - creationDate.getTime();
 
-    Object.entries(itemsByDay).forEach(([day, items]) => {
-        const cell = document.getElementById(day) as HTMLTableCellElement;
-        if (cell) {
-            cell.innerHTML = items.length > 0 ? items.join('<br>') : "Aucun élément.";
-        }
+    return Math.round((elapsedDuration / totalDuration) * 100);
+}
+
+// Gère la navigation entre les dates sur le tableau de bord
+function initDateNavigation(): void {
+    const currentDateElement = document.getElementById('currentDate');
+    if (currentDateElement) {
+        currentDateElement.textContent = formatDisplayDate(new Date());
+    }
+
+    const prevButton = document.querySelector('.nav-btn:first-child');
+    const nextButton = document.querySelector('.nav-btn:last-child');
+
+    if (prevButton && nextButton) {
+        prevButton.addEventListener('click', () => {
+            navigateToPreviousDate();
+        });
+
+        nextButton.addEventListener('click', () => {
+            navigateToNextDate();
+        });
+    }
+}
+
+// Formate une date pour l'affichage
+function formatDisplayDate(date: Date): string {
+    return date.toLocaleDateString('fr-FR', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
     });
 }
 
-function getDayKey(date: Date): string {
-    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-    return days[date.getDay() - 1] || 'sunday';
+// Navigue vers la date précédente
+function navigateToPreviousDate(): void {
+    const tasks = getTasks();
+    const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() - 1);
+    updateDateAndTasks(currentDate, tasks);
 }
 
-initDarkMode();
+// Navigue vers la date suivante
+function navigateToNextDate(): void {
+    const tasks = getTasks();
+    const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + 1);
+    updateDateAndTasks(currentDate, tasks);
+}
+
+// Met à jour l'affichage pour une nouvelle date
+function updateDateAndTasks(date: Date, tasks: Task[]): void {
+    const currentDateElement = document.getElementById('currentDate');
+    if (currentDateElement) {
+        currentDateElement.textContent = formatDisplayDate(date);
+    }
+    const filteredTasks = filterTasksForToday(tasks, date);
+    displayTasks(filteredTasks);
+}
+
+// Filtre les tâches pour la date donnée
+function filterTasksForToday(tasks: Task[], date: Date): Task[] {
+    const formattedDate = formatDate(date);
+    return tasks.filter(task => formatDate(new Date(task.date_limite)) === formattedDate);
+}
+
+// Formate une date au format AAAA-MM-JJ
+function formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+// Met à jour les statistiques du tableau de bord
+function updateDashboardStats(): void {
+    try {
+        const tasks = getTasks();
+        const projects = getProjects();
+        const inProgressTasksElement = document.getElementById('inProgressTasks');
+        const inProgressProjectsElement = document.getElementById('inProgressProjects');
+
+        if (inProgressTasksElement) {
+            inProgressTasksElement.textContent = tasks.length.toString();
+        }
+
+        if (inProgressProjectsElement) {
+            inProgressProjectsElement.textContent = projects.length.toString();
+        }
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour des statistiques:', error);
+    }
+}
+
+// Génère une couleur aléatoire pour les projets
+function getRandomColor(): string {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}

@@ -1,4 +1,4 @@
-// Interface pour définir la structure d'un projet
+import { initDarkMode } from './dark-mode.js';
 interface Project {
     id: string;
     title: string;
@@ -242,3 +242,4 @@ function getRandomColor(): string {
     }
     return color;
 }
+initDarkMode();

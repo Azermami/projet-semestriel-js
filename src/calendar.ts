@@ -1,4 +1,5 @@
 import { gapi } from 'gapi-script';
+
 import { initDarkMode } from './dark-mode.js';
 
 // Types for events (you can expand this based on your needs)

@@ -394,3 +394,89 @@ header {
     color: var(--light);
 }
 */
+
+/* Styles pour les éléments spécifiques */
+.dark-mode .bg-white {
+    background-color: #1e1e1e;
+}
+
+.dark-mode .text-gray-700 {
+    color: #b0b0b0;
+}
+
+.dark-mode .border {
+    border-color: #333;
+}
+
+.dark-mode input,
+.dark-mode button {
+    background-color: #2c2c2c;
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+.dark-mode input::placeholder {
+    color: #888;
+}
+
+.dark-mode .toggle span.slider {
+    background-color: #444;
+}
+
+.dark-mode .toggle input:checked + span.slider {
+    background-color: #2196F3;
+}
+
+/* Styles pour les images */
+.dark-mode img {
+    filter: brightness(0.8);
+}
+/* Ajouté pour aligner le bouton de mode sombre et le formulaire */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.settings {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Ajustez selon vos besoins */
+}
+
+:root {
+    --dark: #1B1B1B;
+    --light: #FFFFFF;
+    --sidebar-border: #292929;
+}
+
+.min-h-screen {
+    padding-left: 280px;
+}
+
+main {
+    width: 100%;
+    max-width: calc(100vw - 280px);
+}
+
+.task-list {
+    background-color: var(--light);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.bg-blue-600 {
+    background-color: var(--dark);
+}
+
+.task-items {
+    min-height: 200px;
+}
+
+#addTaskForm {
+    background-color: var(--light);
+}
+
+.table-auto {
+    margin-top: 2rem;
+}

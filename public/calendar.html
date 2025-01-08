@@ -6,87 +6,17 @@
     <title>Calendrier Inspiré</title>
     <script src="/dist/calendar.js" type="module"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="sidebar.css">
+    <link rel="stylesheet" href="calendar.css">
     <script src="sidebar.js"></script>
 
     <style>
-        :root {
-            --dark: #1B1B1B;
-            --light: #FFFFFF;
-            --sidebar-border: #292929;
-        }
-
-        .min-h-screen {
-            padding-left: 280px;
-        }
-
-        main {
-            width: 100%;
-            max-width: calc(100vw - 280px);
-        }
-
-        .calendar-container {
-            background-color: var(--light);
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 1.5rem;
-        }
-
-        .bg-blue-600 {
-            background-color: var(--dark);
-        }
-
-        .month-navigation button {
-            background-color: #1B1B1B;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .month-navigation button:hover {
-            background-color: #292929;
-        }
-
-        .calendar-table th {
-            background-color: #f3f4f6;
-            padding: 0.75rem;
-            border-bottom: 2px solid #e5e7eb;
-            text-align: center;
-        }
-
-        .calendar-table td {
-            padding: 1rem;
-            border: 1px solid #e5e7eb;
-            text-align: center;
-            vertical-align: top;
-        }
-
-        .day-tasks {
-            margin-top: 0.5rem;
-        }
-
-        .day-tasks .task {
-            font-size: 0.85rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .task-high {
-            color: #f87171; /* Rouge pour priorité haute */
-        }
-
-        .task-medium {
-            color: #facc15; /* Jaune pour priorité moyenne */
-        }
-
-        .task-low {
-            color: #34d399; /* Vert pour priorité basse */
-        }
+       
     </style>
 </head>
 <body class="bg-gray-100">
     <div id="sidebar-container"></div>
     <div class="min-h-screen flex flex-col">
+        
         <main class="flex-1 p-4">
             <header class="bg-blue-600 p-4 text-white rounded-lg mb-6">
                 <h1 class="text-2xl">Calendrier Mensuel</h1>

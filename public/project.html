@@ -4,102 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projet</title>
-    <script src="project.js"></script>
+    <script src="/dist/project.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="sidebar.css">
-    <script src="sidebar.js"></script>
-
-    <style>
-        :root {
-            --dark: #1B1B1B;
-            --light: #FFFFFF;
-            --sidebar-border: #292929;
-        }
-
-        .min-h-screen {
-            padding-left: 280px;
-        }
-
-        .main-content {
-            width: 100%;
-            max-width: calc(100vw - 280px);
-        }
-
-        .project-item {
-            transition: transform 0.2s;
-        }
-
-        .project-item:hover {
-            transform: translateY(-2px);
-        }
-
-        .progress-bar {
-            height: 8px;
-        }
-
-        .team-members img {
-            border: 2px solid white;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        }
-    </style>
+    <script src="/dist/sidebar.js"></script>
+    <script src="/dist/dashboard.js" type="module"></script>
 </head>
 <body class="bg-gray-100">
     <div id="sidebar-container"></div>
 
-    <div class="min-h-screen flex">
-        <div class="main-content flex-1 p-8">
-            <header class="mb-6">
-                <h1 class="text-2xl font-bold mb-4">Projet</h1>
-                <div class="search-bar flex gap-2">
-                    <input type="text" 
-                           placeholder="Rechercher un projet..." 
-                           class="p-2 flex-1 border rounded shadow-sm focus:ring-2 focus:ring-blue-300 focus:outline-none">
-                    <button type="submit" 
-                            class="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
-                        Rechercher
-                    </button>
-                </div>
+    <div class="min-h-screen flex flex-col">
+        <div id="header"></div>
+        <main class="flex-1 p-4">
+            <header class="bg-blue-600 p-4 text-white rounded-lg mb-6">
+                <h1 class="text-2xl">Projet</h1>
             </header>
 
-            <section class="project-list space-y-6">
-                <div class="flex justify-between items-center">
-                    <h2 class="text-xl font-semibold">Mes projets</h2>
-                    <button class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors flex items-center gap-2">
-                        <span>+</span> Créer un nouveau projet
-                    </button>
-                </div>
+<form id="addProjectForm" class="space-y-4 bg-white p-4 rounded shadow-md mb-6">
+    <input id="projectTitle" type="text" placeholder="Nom du projet" class="w-full p-2 border rounded" required />
+    <textarea id="projectDescription" placeholder="Description du projet" class="w-full p-2 border rounded" required></textarea>
+    <div class="flex items-center gap-2">
+        <label for="projectPriority">Priorité:</label>
+        <select id="projectPriority" name="projectPriority" class="p-2 border rounded">
+            <option value="haute">Haute</option>
+            <option value="moyenne">Moyenne</option>
+            <option value="basse">Basse</option>
+        </select>
+    </div>
+    <div class="flex items-center gap-2">
+        <label for="projectStatus">Statut:</label>
+        <select id="projectStatus" class="p-2 border rounded">
+            <option value="todo">À faire</option>
+            <option value="en cours">En cours</option>
+            <option value="terminé">Terminé</option>
+        </select>
+    </div>
+    <input id="projectStartDate" type="date" class="w-full p-2 border rounded" required />
+    <input id="projectEndDate" type="date" class="w-full p-2 border rounded" required />
+    <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white p-2 rounded transition-colors">
+        Ajouter Projet
+    </button>
+</form>
 
-                <div class="grid gap-6">
-                    <div class="project-item p-6 bg-white rounded-lg shadow-md">
-                        <div class="flex justify-between items-start mb-4">
-                            <span class="project-name text-xl font-bold">Projet Gestion Tâche</span>
-                            <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">6/18</span>
-                        </div>
-                        
-                        <div class="space-y-4">
-                            <div>
-                                <div class="flex justify-between text-sm text-gray-600 mb-1">
-                                    <span>Progression</span>
-                                    <span>85%</span>
-                                </div>
-                                <div class="progress-bar bg-gray-200 rounded-full overflow-hidden">
-                                    <div class="progress bg-blue-500 h-full rounded-full" style="width: 85%"></div>
-                                </div>
-                            </div>
 
-                            <div class="flex justify-between items-center">
-                                <div class="team-members flex -space-x-2">
-                                    <img src="avatar1.png" alt="Membre 1" class="w-8 h-8 rounded-full">
-                                    <img src="avatar2.png" alt="Membre 2" class="w-8 h-8 rounded-full">
-                                    <img src="avatar3.png" alt="Membre 3" class="w-8 h-8 rounded-full">
-                                </div>
-                                <span class="text-sm text-gray-600">3 jours restants</span>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Task Lists (À faire, En cours, Terminé) -->
+            <div class="grid grid-cols-3 gap-4 mb-8">
+                <div id="todoList" class="task-list p-4 rounded shadow" data-status="todo">
+                    <h3 class="text-lg font-bold mb-4">À faire (<span id="todoCount">0</span>)</h3>
+                    <div class="task-items"></div>
                 </div>
-            </section>
-        </div>
+                <div id="inProgressList" class="task-list p-4 rounded shadow" data-status="in-progress">
+                    <h3 class="text-lg font-bold mb-4">En cours (<span id="inProgressCount">0</span>)</h3>
+                    <div class="task-items"></div>
+                </div>
+                <div id="doneList" class="task-list p-4 rounded shadow" data-status="done">
+                    <h3 class="text-lg font-bold mb-4">Terminé (<span id="doneCount">0</span>)</h3>
+                    <div class="task-items"></div>
+                </div>
+                
+            </div>
+
+            <!-- Task Table -->
+            <div class="bg-white p-4 rounded shadow-md">
+                <h2 class="text-xl font-bold mb-4">Liste des Projets</h2>
+                <table class="min-w-full table-auto">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 text-left">Nom du projet</th>
+                            <th class="px-4 py-2 text-left">Description</th>
+                            <th class="px-4 py-2 text-left">Priorité</th>
+                            <th class="px-4 py-2 text-left">Date debut</th>
+                            <th class="px-4 py-2 text-left">Date fin</th>
+                            <th class="px-4 py-2 text-left">Actions</th>
+                            <th class="px-4 py-2 text-left">Etat</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projectTableBody">
+                        <!-- Les projets seront insérés ici dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
     </div>
 
     <script>

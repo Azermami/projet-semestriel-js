@@ -8,16 +8,19 @@
         <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
         <link rel="stylesheet" href="sidebar.css">
         <script>
-            // Charger dynamiquement la sidebar
             document.addEventListener("DOMContentLoaded", () => {
                 fetch('sidebar.html')  // Charge le fichier sidebar.html
-                    .then(response => response.text()) // Récupère le contenu du fichier
-                    .then(data => {
-                        document.getElementById('sidebar-container').innerHTML = data;  // Insère le contenu de la sidebar dans l'élément 'sidebar-container'
+                    .then(response => {
+                        if (!response.ok) throw new Error('Erreur lors du chargement de la sidebar');
+                        return response.text();
                     })
-                    .catch(error => console.error('Erreur lors du chargement de la sidebar:', error));
+                    .then(data => {
+                        document.getElementById('sidebar-container').innerHTML = data; 
+                    })
+                    .catch(error => console.error('Erreur:', error));
             });
         </script>
+       
     </head>
 <body class="bg-gray-100">
     <div id="sidebar-container"></div> 
@@ -29,7 +32,7 @@
                 <input type="email" id="userEmail" placeholder="Email" class="w-full p-2 border rounded" required />
                 <input type="password" id="currentPassword" placeholder="Mot de passe actuel" class="w-full p-2 border rounded" required />
                 <input type="password" id="newPassword" placeholder="Nouveau mot de passe" class="w-full p-2 border rounded" />
-                
+    
                 <!-- Section pour télécharger la photo de profil -->
                 <div class="mt-4">
                     <label for="profilePhoto" class="block text-sm font-medium text-gray-700">Photo de Profil</label>
@@ -37,31 +40,30 @@
                     <div class="mt-2">
                         <img id="profilePhotoDisplay" src="" alt="Photo de profil" class="rounded-full w-32 h-32 object-cover" style="display: none;" />
                     </div>
-                   <!----> 
                 </div>
+    
                 <div class="mt-4">
-                  
                     <!-- Ajout de ces lignes pour la caméra -->
                     <button id="startCamera" class="mt-4 p-2 bg-green-500 text-white rounded">Prendre une photo</button>
                     <video id="video" width="320" height="240" autoplay class="mt-2" style="display: none;"></video>
                     <button id="capturePhoto" class="mt-2 p-2 bg-blue-500 text-white rounded" style="display: none;">Capturer</button>
-                    <!----> 
                 </div>
-                
+    
                 <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded">Mettre à jour</button>
+    
+                <!-- Ajouter le bouton Mode Sombre ici -->
+                <div class="settings mt-6 p-4">
+                    <h3 class="text-lg font-semibold">Paramètre application</h3>
+                    <label class="toggle flex items-center space-x-2">
+                        <span>Mode Sombre</span>
+                        <input type="checkbox" id="darkModeToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </form>
         </div>
     </div>
-
-    <div class="settings mt-6 p-4">
-        <h3 class="text-lg font-semibold">Paramètre application</h3>
-        
-        <label class="toggle flex items-center space-x-2">
-          <span>Mode Sombre</span>
-          <input type="checkbox" id="darkModeToggle">
-          <span class="slider"></span>
-        </label>
-    </div>
+    
 
 </body>
 </html>

@@ -1,0 +1,230 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* Responsive Grid for Task Lists */
+.task-list {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb; /* Light gray */
+    min-height: 300px;
+}
+
+.task-items {
+    min-height: 200px;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+@media screen and (max-width: 1024px) {
+    .grid {
+        grid-template-columns: 1fr 1fr; /* 2 columns for medium screens */
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .grid {
+        grid-template-columns: 1fr; /* Single column for smaller screens */
+    }
+}
+
+/* Add Task Form */
+#addTaskForm {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Task Table */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 14px;
+}
+
+table thead tr {
+    background-color: #f3f4f6;
+    border-bottom: 2px solid #d1d5db; /* Gray */
+}
+
+table th,
+table td {
+    border-bottom: 1px solid #e5e7eb; /* Light gray */
+    padding: 8px;
+    text-align: left;
+}
+
+table tbody tr:hover {
+    background-color: #f9fafb; /* Lighter gray */
+}
+
+select {
+    background-color: #f9fafb;
+    cursor: pointer;
+}
+
+button {
+    font-weight: bold;
+}
+
+/* Notifications and States */
+.text-blue-500:hover {
+    color: #2563eb;
+}
+
+.text-red-500:hover {
+    color: #b91c1c;
+}
+
+/* Sidebar and Header */
+#sidebar-container {
+    width: 100%;
+    background-color: #1e3a8a; /* Navy Blue */
+    color: white;
+}
+
+@media (min-width: 768px) {
+    #sidebar-container {
+        width: 20%;
+    }
+}
+/* Table General Styling */
+table {
+    border-collapse: separate;
+    border-spacing: 0 10px; /* Espace entre les lignes */
+    width: 100%;
+    font-size: 14px;
+    background-color: #E7E7E7; /* Couleur de fond générale */
+}
+
+table thead tr {
+    background-color: #dbeafe; /* Bleu clair pour l'en-tête */
+    border: none;
+}
+
+table th {
+    padding: 10px;
+    text-align: left;
+    font-weight: bold;
+    color: #1f2937; /* Texte gris foncé */
+}
+
+table tbody tr {
+    background-color: #ffffff; /* Fond blanc pour les lignes */
+    border: 1px solid #e5e7eb; /* Bordures gris clair */
+    border-radius: 8px; /* Arrondi des coins */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Effet d'ombre */
+    overflow: hidden; /* Éviter les débordements */
+}
+
+table tbody td {
+    padding: 12px;
+    text-align: left;
+    color: #030303; /* Texte gris */
+}
+
+table tbody tr:hover {
+    background-color: #f3f4f6; /* Gris clair au survol */
+}
+
+/* Notifications */
+table .notification {
+    color: #6366f1; /* Texte violet */
+    font-weight: bold;
+}
+
+/* Buttons Styling */
+table .actions button {
+    background-color: #f3f4f6; /* Fond gris clair */
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    margin-right: 5px;
+    color: #4b5563; /* Texte gris */
+    cursor: pointer;
+    font-size: 12px;
+}
+
+table .actions button:hover {
+    background-color: #e5e7eb; /* Gris plus clair au survol */
+    color: #1f2937; /* Texte plus foncé */
+}
+
+/* State Dropdown */
+table .state-select {
+    background-color: #ffffff;
+    border: 1px solid #d1d5db; /* Gris clair */
+    border-radius: 4px;
+    padding: 6px 12px;
+    color: #4b5563; /* Texte gris */
+    font-size: 12px;
+}
+
+/* Boutons dans le tableau */
+table .actions button {
+    background-color: transparent; /* Fond transparent */
+    border: 1px solid #d1d5db; /* Bordure gris clair */
+    border-radius: 4px; /* Coins légèrement arrondis */
+    padding: 6px 10px; /* Espacement interne */
+    color: #4b5563; /* Texte gris foncé */
+    font-size: 12px; /* Taille du texte */
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-right: 4px; /* Espacement entre les boutons */
+}
+
+/* Effet au survol */
+table .actions button:hover {
+    background-color: #e5e7eb; /* Fond gris clair au survol */
+    color: #1f2937; /* Texte plus foncé */
+}
+
+/* Désactiver les ombres ou autres effets pour correspondre au style minimal */
+table .actions button:focus {
+    outline: none; /* Pas de contour */
+    box-shadow: none; /* Pas d'ombre */
+}
+.task-list {
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    width: 150px; /* Ajustez la largeur selon vos besoins */
+    height: 59px; /* Ajustez la hauteur selon vos besoins */
+    line-height: 75px; /* Centrage vertical */
+    display: inline-block;
+    margin: 10px; /* Espace entre les divs */
+}
+
+#todoList {
+    background-color: #d3b3e5; /* Couleur violette claire */
+}
+
+#inProgressList {
+    background-color: #f7f3b6; /* Couleur jaune clair */
+}
+
+#doneList {
+    background-color: #c8e6c9; /* Couleur verte claire */
+}
+
+button#showAddTaskForm {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    margin-top: 20px;
+}

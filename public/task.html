@@ -6,13 +6,13 @@
     <title>Task Manager</title>
     <script src="/dist/taskManager.js" type="module"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="sidebar.css">
-    <script src="sidebar.js"></script>
-
     
+    <link rel="stylesheet" href="taskManager.css">
+
+    <script src="sidebar.js"></script>
     <script src="/dist/dashboard.js" type="module"></script>
 </head>
-<body class="bg-gray-100"> 
+<body class="bg-gray-100">
     <div id="sidebar-container"></div>
     <div class="min-h-screen flex flex-col">
         <div id="header"></div>
@@ -20,7 +20,12 @@
             <header class="bg-blue-600 p-4 text-white rounded-lg mb-6">
                 <h1 class="text-2xl">Task Manager</h1>
             </header>
-            <form id="addTaskForm" class="space-y-4 bg-white p-4 rounded shadow-md mb-6">
+
+            <!-- Button to add task -->
+            <button id="showAddTaskForm" class="bg-blue-500 text-white p-2 rounded mb-6">Ajouter une tâche</button>
+
+            <!-- Add Task Form (hidden by default) -->
+            <form id="addTaskForm" class="space-y-4 bg-white p-4 rounded shadow-md mb-6 hidden">
                 <input id="taskTitle" type="text" placeholder="Task Title" class="w-full p-2 border rounded" required />
                 <textarea id="taskDescription" placeholder="Task Description" class="w-full p-2 border rounded" required></textarea>
                 <div class="flex items-center gap-2">
@@ -33,25 +38,28 @@
                 </div>
                 <input id="taskDeadline" type="date" class="w-full p-2 border rounded" required />
                 <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white p-2 rounded transition-colors">
-                    Add Task
+                    Ajouter la tâche
                 </button>
             </form>
 
-            <div class="grid grid-cols-3 gap-4 mb-8">
-                <div id="todoList" class="task-list p-4 rounded shadow" data-status="todo">
-                    <h3 class="text-lg font-bold mb-4">À faire (<span id="todoCount">0</span>)</h3>
+            <!-- Task Lists -->
+            <div class="grid grid-cols-3 gap-2 mb-4">
+                <div id="todoList" class="task-list p-1 rounded shadow-sm" data-status="todo">
+                    <h3 class="text-xs font-bold mb-1">À faire (<span id="todoCount">0</span>)</h3>
                     <div class="task-items"></div>
                 </div>
-                <div id="inProgressList" class="task-list p-4 rounded shadow" data-status="in-progress">
-                    <h3 class="text-lg font-bold mb-4">En cours (<span id="inProgressCount">0</span>)</h3>
+                <div id="inProgressList" class="task-list p-1 rounded shadow-sm" data-status="in-progress">
+                    <h3 class="text-xs font-bold mb-1">En cours (<span id="inProgressCount">0</span>)</h3>
                     <div class="task-items"></div>
                 </div>
-                <div id="doneList" class="task-list p-4 rounded shadow" data-status="done">
-                    <h3 class="text-lg font-bold mb-4">Terminé (<span id="doneCount">0</span>)</h3>
+                <div id="doneList" class="task-list p-1 rounded shadow-sm" data-status="done">
+                    <h3 class="text-xs font-bold mb-1">Terminé (<span id="doneCount">0</span>)</h3>
                     <div class="task-items"></div>
                 </div>
             </div>
-
+            
+            
+            <!-- Task Table -->
             <div class="bg-white p-4 rounded shadow-md">
                 <h2 class="text-xl font-bold mb-4">Liste des Tâches</h2>
                 <table class="min-w-full table-auto">
@@ -74,8 +82,8 @@
                             <td class="px-4 py-2">2024-12-31</td>
                             <td class="px-4 py-2">Notification</td>
                             <td class="px-4 py-2">
-                                <button class="text-blue-500 hover:text-blue-700 mr-2">Edit</button>
-                                <button class="text-red-500 hover:text-red-700">Delete</button>
+                                <button class="text-blue-500 hover:text-blue-700 mr-2" onclick="editTask(this)">Modifier</button>
+                                <button class="text-red-500 hover:text-red-700">Supprimer</button>
                             </td>
                             <td class="px-4 py-2">
                                 <select class="w-full p-2 border rounded">
@@ -90,14 +98,41 @@
             </div>
         </main>
     </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Load the sidebar
             fetch('sidebar.html')
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById('sidebar-container').innerHTML = data;
                 });
+
+            // Show/Hide Add Task Form
+            document.getElementById('showAddTaskForm').addEventListener('click', function() {
+                const form = document.getElementById('addTaskForm');
+                form.classList.toggle('hidden');
+            });
         });
+
+        // Edit Task (sample function)
+        function editTask(button) {
+            const row = button.closest('tr');
+            const title = row.querySelector('td:nth-child(1)').textContent;
+            const description = row.querySelector('td:nth-child(2)').textContent;
+            const priority = row.querySelector('td:nth-child(3)').textContent;
+            const deadline = row.querySelector('td:nth-child(4)').textContent;
+
+            // Populate the form with current task data
+            document.getElementById('taskTitle').value = title;
+            document.getElementById('taskDescription').value = description;
+            document.getElementById('taskPriority').value = priority;
+            document.getElementById('taskDeadline').value = deadline;
+
+            // Show the form to edit the task
+            const form = document.getElementById('addTaskForm');
+            form.classList.remove('hidden');
+        }
     </script>
 </body>
 </html>

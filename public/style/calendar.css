@@ -1,0 +1,163 @@
+:root {
+    --dark: #1B1B1B;
+    --light: #FFFFFF;
+    --sidebar-border: #292929;
+}
+
+.min-h-screen {
+    padding-left: 280px;
+}
+
+main {
+    width: 100%;
+    max-width: calc(100vw - 280px);
+}
+
+.calendar-container {
+    background-color: var(--light);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+}
+
+.bg-blue-600 {
+    background-color: var(--dark);
+}
+
+.month-navigation button {
+    background-color: #1B1B1B;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.month-navigation button:hover {
+    background-color: #292929;
+}
+
+.calendar-table th {
+    background-color: #f3f4f6;
+    padding: 0.75rem;
+    border-bottom: 2px solid #e5e7eb;
+    text-align: center;
+}
+
+.calendar-table td {
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+    text-align: center;
+    vertical-align: top;
+}
+
+.day-number {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+.day-tasks {
+    max-height: 80px;
+    overflow-y: auto;
+}
+
+.task-item {
+    font-size: 0.75rem;
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+    padding: 0.25rem;
+    border-radius: 4px;
+}
+
+.task-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.task-deadline {
+    opacity: 0.7;
+}
+
+/* Smartphones */
+@media screen and (max-width: 768px) {
+    header {
+        flex-direction: column;
+        gap: 16px;
+        padding: 0;
+    }
+
+    .user-info {
+        width: 100%;
+        justify-content: space-between;
+        gap: 16px;
+    }
+
+    .welcome-card h2 {
+        font-size: 24px;
+        margin-bottom: 24px;
+    }
+
+    .stat-card {
+        padding: 16px;
+    }
+
+    .number {
+        font-size: 48px;
+        margin-top: 24px;
+    }
+
+    .project-item {
+        padding: 1rem;
+    }
+
+    .team-members {
+        margin: 0.5rem 0;
+    }
+
+    .task-item {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .task-description {
+        margin-left: 0;
+    }
+}
+
+/* Très petits écrans */
+@media screen and (max-width: 480px) {
+    .main-content {
+        padding: 8px;
+    }
+
+    .welcome-card {
+        padding: 16px;
+    }
+
+    .stat-card h3 {
+        font-size: 20px;
+    }
+
+    .number {
+        font-size: 36px;
+    }
+
+    .projects-card, .tasks-card {
+        padding: 16px;
+    }
+
+    .member-avatar {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+
+.task-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.task-link:hover {
+    text-decoration: none;
+}

@@ -96,7 +96,7 @@ function displayTasks(tasks: Task[]): void {
     tasks.sort((a, b) => new Date(a.date_limite).getTime() - new Date(b.date_limite).getTime());
     tasksList.innerHTML = '';
     if (tasks.length === 0) {
-        tasksList.innerHTML = '<p>Aucune tâche disponible.</p>';
+        tasksList.innerHTML = "<p>Vous n'avez aucune tâche.</p>";
         return;
     }
 
@@ -108,12 +108,13 @@ function displayTasks(tasks: Task[]): void {
         taskElement.className = 'task-item';
 
         taskElement.innerHTML = `
-            <div class="task-content">
-                <div class="task-title">${task.nom_tache}</div>
-                <div class="task-project">${task.description}</div>
-                    ${daysLeft <= 0 ? 'Expirée' : `${daysLeft} jour(s) restant(s)`}
+            <a href="task.html" class="task-link">
+                <div class="task-content">
+                    <div class="task-title">${task.nom_tache}</div>
+                    <div class="task-project">${task.description}</div>
                 </div>
-            </div>
+            </a>
+
         `;
         tasksList.appendChild(taskElement);
     });

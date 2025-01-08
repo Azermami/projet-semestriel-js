@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ToDo Dashboard</title>
-    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="style/dashboard.css">
+    <link rel="stylesheet" href="style/sidebar.css">
+
     <script defer src="dist/dashboard.js"></script> 
     <script defer src="dist/user.js"></script> 
     <script defer src="dist/projectManager.js"></script>
@@ -56,10 +59,10 @@
                     <div class="tasks-card">
                         <div class="tasks-header">
                             <h2>Mes prochaines tâches</h2>
-                            <div class="date-nav">
+                            <!--<div class="date-nav">
                                 <button class="nav-btn"></button>
                                 <button class="nav-btn"></button>
-                            </div>
+                            </div>-->
                         </div>
                         <div class="tasks-list" id="tasksList"></div>
                     </div>
@@ -70,12 +73,33 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            fetch('sidebar.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('sidebar-container').innerHTML = data;
-                });
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isMobile) {
+                // Charge le menu mobile
+                fetch('menu.html')
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('sidebar-container').innerHTML = data;
+                    });
+            } else {
+                // Charge la sidebar desktop
+                fetch('sidebar.html')
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('sidebar-container').innerHTML = data;
+                    });
+            }
+    
+            // Écoute les changements de taille d'écran
+            window.addEventListener('resize', function() {
+                const newIsMobile = window.innerWidth <= 768;
+                if (newIsMobile !== isMobile) {
+                    location.reload();
+                }
+            });
         });
     </script>
+    
 </body>
 </html>

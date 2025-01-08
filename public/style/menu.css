@@ -1,0 +1,150 @@
+:root {
+    --sidebar-bg: #1a1a1a;
+    --icon-color: #ffffff;
+    --sidebar-border: #292929;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.sidebar {
+    width: 280px;
+    background-color: var(--sidebar-bg);
+    color: var(--icon-color);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: fixed;
+    border-right: 1px solid var(--sidebar-border);
+    z-index: 1000;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    width: 150px;
+    height: auto;
+}
+
+.nav-items {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-items li {
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border: 1px solid transparent;
+}
+
+.nav-items button {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 16px;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.nav-items li.active {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 2px solid #ffffff;
+    color: #ffffff;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.nav-items li.active button {
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.icon img {
+    width: 24px;
+    height: 24px;
+    filter: invert(1);
+}
+
+@media screen and (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: 60px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        padding: 0;
+        background-color: var(--sidebar-bg);
+        border-top: none;
+    }
+
+    .nav-items {
+        width: 100%;
+        height: 100%;
+        flex-direction: row;
+        justify-content: center;
+        gap: 32px;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+    }
+
+    .nav-items li {
+        flex: initial;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        border: none;
+        width: auto;
+    }
+
+    .nav-items li button {
+        padding: 18px 12px;
+        height: 100%;
+        width: auto;
+    }
+
+    .icon img {
+        width: 24px;
+        height: 24px;
+        filter: invert(1);
+        opacity: 0.7;
+    }
+
+    .nav-items li.active {
+        background-color: transparent;
+        border: none;
+    }
+
+    .nav-items li.active img {
+        opacity: 1;
+    }
+}

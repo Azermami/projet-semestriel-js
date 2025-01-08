@@ -6,21 +6,11 @@
         <title>Task Manager</title>
         <script src="/dist/profile.js" type="module"></script>
         <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="sidebar.css">
-        <script>
-            // Charger dynamiquement la sidebar
-            document.addEventListener("DOMContentLoaded", () => {
-                fetch('sidebar.html')  // Charge le fichier sidebar.html
-                    .then(response => response.text()) // Récupère le contenu du fichier
-                    .then(data => {
-                        document.getElementById('sidebar-container').innerHTML = data;  // Insère le contenu de la sidebar dans l'élément 'sidebar-container'
-                    })
-                    .catch(error => console.error('Erreur lors du chargement de la sidebar:', error));
-            });
-        </script>
+        <link rel="stylesheet" href="style/sidebar.css">
+        <link rel="stylesheet" href="style/profile.css">
     </head>
 <body class="bg-gray-100">
-    <div id="sidebar-container"></div> 
+    <div id="sidebar-container"></div> <!-- Conteneur de la sidebar -->
     <div class="min-h-screen flex justify-center items-center">
         <div class="bg-white p-8 rounded shadow-md w-96">
             <h2 class="text-2xl font-bold text-center mb-6">Modifier le Profil </h2>
@@ -37,15 +27,12 @@
                     <div class="mt-2">
                         <img id="profilePhotoDisplay" src="" alt="Photo de profil" class="rounded-full w-32 h-32 object-cover" style="display: none;" />
                     </div>
-                   <!----> 
                 </div>
                 <div class="mt-4">
-                  
                     <!-- Ajout de ces lignes pour la caméra -->
                     <button id="startCamera" class="mt-4 p-2 bg-green-500 text-white rounded">Prendre une photo</button>
                     <video id="video" width="320" height="240" autoplay class="mt-2" style="display: none;"></video>
                     <button id="capturePhoto" class="mt-2 p-2 bg-blue-500 text-white rounded" style="display: none;">Capturer</button>
-                    <!----> 
                 </div>
                 
                 <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded">Mettre à jour</button>
@@ -55,18 +42,16 @@
 
     <div class="settings mt-6 p-4">
         <h3 class="text-lg font-semibold">Paramètre application</h3>
-        
-        <label class="toggle flex items-center space-x-2">
-          <span>Mode Sombre</span>
-          <input type="checkbox" id="darkModeToggle">
-          <span class="slider"></span>
-        </label>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('sidebar.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('sidebar-container').innerHTML = data;
+                });
+        });
+    </script>
 </body>
 </html>
-
-
-
-
-

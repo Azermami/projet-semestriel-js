@@ -33,6 +33,12 @@
     height: auto;
 }
 
+.logout-icon {
+    width: 25px !important;
+    height: auto;
+}
+
+
 /* Dark Mode Switch */
 .dark-mode-switch {
     width: auto;
@@ -60,19 +66,12 @@
     height: auto;
 }
 
-.nav-items li {
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    border: 1px solid transparent; /* Bordure par défaut */
-}
-
 .nav-items li button {
     text-decoration: none;
     color: inherit;
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     gap: 20px;
     padding: 16px;
     width: 100%;
@@ -83,6 +82,15 @@
     cursor: pointer;
     font-size: 16px;
 }
+
+.nav-items .icon {
+    width: 40px;
+    min-width: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 
 /* Style pour l'élément actif */
 .nav-items li.active {
@@ -95,4 +103,11 @@
 .nav-items li.active button {
     font-weight: bold; /* Texte en gras */
     color: #ffffff; /* Texte en surbrillance */
+}
+
+/* Media query pour mobile */
+@media screen and (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
 }

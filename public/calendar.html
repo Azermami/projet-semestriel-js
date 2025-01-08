@@ -6,83 +6,9 @@
     <title>Calendrier Inspiré</title>
     <script src="/dist/calendar.js" type="module"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="sidebar.css">
+    <link rel="stylesheet" href="style/sidebar.css">
+    <link rel="stylesheet" href="style/calendar.css">
     <script src="sidebar.js"></script>
-
-    <style>
-        :root {
-            --dark: #1B1B1B;
-            --light: #FFFFFF;
-            --sidebar-border: #292929;
-        }
-
-        .min-h-screen {
-            padding-left: 280px;
-        }
-
-        main {
-            width: 100%;
-            max-width: calc(100vw - 280px);
-        }
-
-        .calendar-container {
-            background-color: var(--light);
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 1.5rem;
-        }
-
-        .bg-blue-600 {
-            background-color: var(--dark);
-        }
-
-        .month-navigation button {
-            background-color: #1B1B1B;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .month-navigation button:hover {
-            background-color: #292929;
-        }
-
-        .calendar-table th {
-            background-color: #f3f4f6;
-            padding: 0.75rem;
-            border-bottom: 2px solid #e5e7eb;
-            text-align: center;
-        }
-
-        .calendar-table td {
-            padding: 1rem;
-            border: 1px solid #e5e7eb;
-            text-align: center;
-            vertical-align: top;
-        }
-
-        .day-tasks {
-            margin-top: 0.5rem;
-        }
-
-        .day-tasks .task {
-            font-size: 0.85rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .task-high {
-            color: #f87171; /* Rouge pour priorité haute */
-        }
-
-        .task-medium {
-            color: #facc15; /* Jaune pour priorité moyenne */
-        }
-
-        .task-low {
-            color: #34d399; /* Vert pour priorité basse */
-        }
-    </style>
 </head>
 <body class="bg-gray-100">
     <div id="sidebar-container"></div>
@@ -94,21 +20,21 @@
 
             <div class="calendar-container">
                 <div class="month-navigation flex justify-between mb-4">
-                    <button onclick="previousMonth()">&lt; Mois Précédent</button>
+                    <button onclick="previousMonth()" class="bg-blue-500 text-white px-4 py-2 rounded">&lt; Mois Précédent</button>
                     <h2 id="month-title" class="text-xl font-bold"></h2>
-                    <button onclick="nextMonth()">Mois Suivant &gt;</button>
+                    <button onclick="nextMonth()" class="bg-blue-500 text-white px-4 py-2 rounded">Mois Suivant &gt;</button>
                 </div>
 
-                <table class="calendar-table w-full">
+                <table class="calendar-table w-full border-collapse border border-gray-300">
                     <thead>
-                        <tr>
-                            <th>Lundi</th>
-                            <th>Mardi</th>
-                            <th>Mercredi</th>
-                            <th>Jeudi</th>
-                            <th>Vendredi</th>
-                            <th>Samedi</th>
-                            <th>Dimanche</th>
+                        <tr class="bg-gray-200">
+                            <th class="p-2 border border-gray-300">Lundi</th>
+                            <th class="p-2 border border-gray-300">Mardi</th>
+                            <th class="p-2 border border-gray-300">Mercredi</th>
+                            <th class="p-2 border border-gray-300">Jeudi</th>
+                            <th class="p-2 border border-gray-300">Vendredi</th>
+                            <th class="p-2 border border-gray-300">Samedi</th>
+                            <th class="p-2 border border-gray-300">Dimanche</th>
                         </tr>
                     </thead>
                     <tbody id="calendar-body">
@@ -121,6 +47,7 @@
     <script>
         let currentMonth = new Date();
 
+        // Génération du calendrier mensuel
         function generateMonthlyCalendar() {
             const year = currentMonth.getFullYear();
             const month = currentMonth.getMonth();
@@ -137,24 +64,31 @@
             let row = document.createElement("tr");
             let dayCount = 1;
 
+            // Ajout des cellules vides avant le premier jour
             for (let i = 1; i < startDay; i++) {
                 row.appendChild(document.createElement("td"));
             }
 
+            // Remplissage des jours du mois
             while (dayCount <= daysInMonth) {
                 for (let i = startDay; i <= 7 && dayCount <= daysInMonth; i++) {
                     const cell = document.createElement("td");
-                    cell.innerHTML = `<div>${dayCount}</div>`;
-                    cell.className = "relative";
+                    cell.innerHTML = `<div class="day-number font-bold">${dayCount}</div>`;
+                    cell.className = "relative p-4 border border-gray-300";
 
+                    // Récupérer les tâches pour la date actuelle
                     const tasks = getTasksForDate(year, month + 1, dayCount);
                     const tasksContainer = document.createElement("div");
-                    tasksContainer.className = "day-tasks";
+                    tasksContainer.className = "day-tasks mt-2";
 
+                    // Afficher les tâches dans la cellule
                     tasks.forEach(task => {
                         const taskElement = document.createElement("div");
-                        taskElement.textContent = task.title;
-                        taskElement.className = `task task-${task.priority}`;
+                        taskElement.className = `task-item mb-2 p-2 rounded text-sm ${getPriorityClass(task.priorite)}`;
+                        taskElement.innerHTML = `
+                            <div class="task-title font-semibold">${task.nom_tache}</div>
+                            <div class="task-deadline text-xs">${formatDate(task.date_limite)}</div>
+                        `;
                         tasksContainer.appendChild(taskElement);
                     });
 
@@ -170,26 +104,49 @@
             document.getElementById("month-title").textContent = `${new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(currentMonth)}`;
         }
 
+        // Récupère les tâches pour une date spécifique
         function getTasksForDate(year, month, day) {
-            const dateKey = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-            const allTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-            return allTasks.filter(task => task.deadline === dateKey);
+            const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+            return tasks.filter(task => task.date_limite === formattedDate);
         }
 
+        // Retourne la classe CSS pour une priorité
+        function getPriorityClass(priority) {
+            switch (priority) {
+                case 'high': return 'bg-red-200 text-red-800';
+                case 'medium': return 'bg-yellow-200 text-yellow-800';
+                case 'low': return 'bg-green-200 text-green-800';
+                default: return 'bg-gray-200 text-gray-800';
+            }
+        }
+
+        // Formate une date pour l'affichage
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+        }
+
+        // Navigation vers le mois précédent
         function previousMonth() {
             currentMonth.setMonth(currentMonth.getMonth() - 1);
             generateMonthlyCalendar();
         }
 
+        // Navigation vers le mois suivant
         function nextMonth() {
             currentMonth.setMonth(currentMonth.getMonth() + 1);
             generateMonthlyCalendar();
         }
 
-        document.addEventListener("DOMContentLoaded", generateMonthlyCalendar);
+        // Initialisation du calendrier
+        document.addEventListener("DOMContentLoaded", () => {
+            generateMonthlyCalendar();
+        });
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        // Chargement du menu latéral
+        document.addEventListener('DOMContentLoaded', function () {
             fetch('sidebar.html')
                 .then(response => response.text())
                 .then(data => {

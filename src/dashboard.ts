@@ -72,7 +72,7 @@ function displayProjectsInDashboard(): void {
             <div class="project-content">
                 <div class="project-title">${project.title}</div>
                 <div class="project-description">${project.description}</div>
-                <div class="project-progress">Progression: ${progress}%</div>
+                <div class="project-progress">${project.deadline}</div>
             </div>
         `;
         projectsList.appendChild(projectElement);

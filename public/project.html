@@ -3,69 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projet</title>
-    <script src="project.js"></script>
+    <title>Project Manager</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style/sidebar.css">
     <link rel="stylesheet" href="style/project.css">
+    <script src="/dist/projectManager.js" type="module"></script>
 </head>
 <body class="bg-gray-100">
     <div id="sidebar-container"></div>
-
-    <div class="min-h-screen flex">
-        <div class="main-content flex-1 p-8">
-            <header class="mb-6">
-                <h1 class="text-2xl font-bold mb-4">Projet</h1>
-                <div class="search-bar flex gap-2">
-                    <input type="text" 
-                           placeholder="Rechercher un projet..." 
-                           class="p-2 flex-1 border rounded shadow-sm focus:ring-2 focus:ring-blue-300 focus:outline-none">
-                    <button type="submit" 
-                            class="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
-                        Rechercher
-                    </button>
-                </div>
+    <div class="min-h-screen flex flex-col">
+        <main class="flex-1 p-4">
+            <header class="bg-blue-600 p-4 text-white rounded-lg mb-6">
+                <h1 class="text-2xl">Project Manager</h1>
             </header>
-
-            <section class="project-list space-y-6">
-                <div class="flex justify-between items-center">
-                    <h2 class="text-xl font-semibold">Mes projets</h2>
-                    <button class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors flex items-center gap-2">
-                        <span>+</span> Créer un nouveau projet
-                    </button>
+            <form id="addProjectForm" class="space-y-4 bg-white p-4 rounded shadow-md mb-6">
+                <input id="projectTitle" type="text" placeholder="Project Title" class="w-full p-2 border rounded" required />
+                <textarea id="projectDescription" placeholder="Project Description" class="w-full p-2 border rounded" required></textarea>
+                <div class="flex items-center gap-2">
+                    <label for="projectPriority">Priorité:</label>
+                    <select id="projectPriority" name="projectPriority" class="p-2 border rounded">
+                        <option value="haute">Haute</option>
+                        <option value="moyenne">Moyenne</option>
+                        <option value="basse">Basse</option>
+                    </select>
                 </div>
+                <input id="projectDeadline" type="date" class="w-full p-2 border rounded" required />
+                <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white p-2 rounded transition-colors">
+                    Add Project
+                </button>
+            </form>
 
-                <div class="grid gap-6">
-                    <div class="project-item p-6 bg-white rounded-lg shadow-md">
-                        <div class="flex justify-between items-start mb-4">
-                            <span class="project-name text-xl font-bold">Projet Gestion Tâche</span>
-                            <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">6/18</span>
-                        </div>
-                        
-                        <div class="space-y-4">
-                            <div>
-                                <div class="flex justify-between text-sm text-gray-600 mb-1">
-                                    <span>Progression</span>
-                                    <span>85%</span>
-                                </div>
-                                <div class="progress-bar bg-gray-200 rounded-full overflow-hidden">
-                                    <div class="progress bg-blue-500 h-full rounded-full" style="width: 85%"></div>
-                                </div>
-                            </div>
-
-                            <div class="flex justify-between items-center">
-                                <div class="team-members flex -space-x-2">
-                                    <img src="avatar1.png" alt="Membre 1" class="w-8 h-8 rounded-full">
-                                    <img src="avatar2.png" alt="Membre 2" class="w-8 h-8 rounded-full">
-                                    <img src="avatar3.png" alt="Membre 3" class="w-8 h-8 rounded-full">
-                                </div>
-                                <span class="text-sm text-gray-600">3 jours restants</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
+            <div class="bg-white p-4 rounded shadow-md">
+                <h2 class="text-xl font-bold mb-4">Liste des Projets</h2>
+                <table class="min-w-full table-auto">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 text-left">Titre</th>
+                            <th class="px-4 py-2 text-left">Description</th>
+                            <th class="px-4 py-2 text-left">Priorité</th>
+                            <th class="px-4 py-2 text-left">Date Limite</th>
+                            <th class="px-4 py-2 text-left">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projectTableBody"></tbody>
+                </table>
+            </div>
+        </main>
     </div>
 
     <script>
@@ -75,7 +58,97 @@
                 .then(data => {
                     document.getElementById('sidebar-container').innerHTML = data;
                 });
+            displayProjects();
         });
     </script>
 </body>
+<script>
+    // Récupérer les projets depuis le localStorage
+    function getProjects() {
+        try {
+            return JSON.parse(localStorage.getItem("projects") || "[]");
+        } catch (error) {
+            console.error("Erreur lors de la récupération des projets :", error);
+            return [];
+        }
+    }
+
+    // Sauvegarder un projet dans le localStorage
+    function saveProject(project) {
+        const projects = getProjects();
+        projects.push(project);
+        localStorage.setItem("projects", JSON.stringify(projects));
+    }
+
+    // Afficher les projets dans le tableau
+    function displayProjects() {
+        const projects = getProjects();
+        const projectTableBody = document.getElementById("projectTableBody");
+        projectTableBody.innerHTML = "";
+
+        if (projects.length === 0) {
+            projectTableBody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center py-4">Aucun projet trouvé.</td>
+                </tr>`;
+            return;
+        }
+
+        projects.forEach((project, index) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td class="px-4 py-2">${project.title}</td>
+                <td class="px-4 py-2">${project.description}</td>
+                <td class="px-4 py-2">${project.priority}</td>
+                <td class="px-4 py-2">${project.deadline}</td>
+                <td class="px-4 py-2">
+                    <button onclick="editProject(${index})" class="bg-blue-500 text-white px-2 py-1 rounded mr-2">Modifier</button>
+                    <button onclick="deleteProject(${index})" class="bg-red-500 text-white px-2 py-1 rounded">Supprimer</button>
+                </td>
+            `;
+            projectTableBody.appendChild(row);
+        });
+    }
+
+    // Supprimer un projet
+    function deleteProject(index) {
+        const projects = getProjects();
+        projects.splice(index, 1);
+        localStorage.setItem("projects", JSON.stringify(projects));
+        displayProjects();
+    }
+
+    // Éditer un projet
+    function editProject(index) {
+        const projects = getProjects();
+        const project = projects[index];
+        
+        document.getElementById("projectTitle").value = project.title;
+        document.getElementById("projectDescription").value = project.description;
+        document.getElementById("projectPriority").value = project.priority;
+        document.getElementById("projectDeadline").value = project.deadline;
+        
+        // Supprimer l'ancien projet
+        projects.splice(index, 1);
+        localStorage.setItem("projects", JSON.stringify(projects));
+        displayProjects();
+    }
+
+    // Gestion du formulaire d'ajout de projet
+    document.getElementById("addProjectForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const newProject = {
+            title: document.getElementById("projectTitle").value,
+            description: document.getElementById("projectDescription").value,
+            priority: document.getElementById("projectPriority").value,
+            deadline: document.getElementById("projectDeadline").value
+        };
+
+        saveProject(newProject);
+        displayProjects();
+        this.reset();
+    });
+</script>
+
 </html>

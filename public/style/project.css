@@ -8,108 +8,50 @@
     padding-left: 280px;
 }
 
-.main-content {
+main {
     width: 100%;
     max-width: calc(100vw - 280px);
 }
 
-.project-item {
-    transition: transform 0.2s;
+.bg-blue-600 {
+    background-color: var(--dark);
 }
 
-.project-item:hover {
-    transform: translateY(-2px);
+table {
+    border-collapse: collapse;
+    width: 100%;
 }
 
-.progress-bar {
-    height: 8px;
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
 }
 
-.team-members img {
-    border: 2px solid white;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+th {
+    background-color: #f2f2f2;
 }
 
-/* Smartphones */
+.project-actions button {
+    margin-right: 8px;
+}
+
 @media screen and (max-width: 768px) {
-    header {
-        flex-direction: column;
-        gap: 16px;
-        padding: 0;
+    .min-h-screen {
+        padding-left: 0;
     }
 
-    .user-info {
-        width: 100%;
-        justify-content: space-between;
-        gap: 16px;
-    }
-
-    .welcome-card h2 {
-        font-size: 24px;
-        margin-bottom: 24px;
-    }
-
-    .stat-card {
+    main {
+        max-width: 100%;
         padding: 16px;
     }
 
-    .number {
-        font-size: 48px;
-        margin-top: 24px;
+    table {
+        display: block;
+        overflow-x: auto;
     }
 
-    .project-item {
-        padding: 1rem;
+    th, td {
+        min-width: 120px;
     }
-
-    .team-members {
-        margin: 0.5rem 0;
-    }
-
-    .task-item {
-        grid-template-columns: 1fr;
-        gap: 0.5rem;
-    }
-
-    .task-description {
-        margin-left: 0;
-    }
-}
-
-/* Très petits écrans */
-@media screen and (max-width: 480px) {
-    .main-content {
-        padding: 8px;
-    }
-
-    .welcome-card {
-        padding: 16px;
-    }
-
-    .stat-card h3 {
-        font-size: 20px;
-    }
-
-    .number {
-        font-size: 36px;
-    }
-
-    .projects-card, .tasks-card {
-        padding: 16px;
-    }
-
-    .member-avatar {
-        width: 30px;
-        height: 30px;
-    }
-}
-
-
-.task-link {
-    text-decoration: none;
-    color: inherit;
-}
-
-.task-link:hover {
-    text-decoration: none;
 }

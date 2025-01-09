@@ -4,6 +4,10 @@
     --sidebar-border: #292929;
 }
 
+.min-h-screen {
+    padding-left: 280px;
+}
+
 
 /* General Styles */
 body {

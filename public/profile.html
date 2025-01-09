@@ -6,55 +6,66 @@
         <title>Task Manager</title>
         <script src="/dist/profile.js" type="module"></script>
         <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="style/sidebar.css">
         <link rel="stylesheet" href="style/profile.css">
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                fetch('sidebar.html')  // Charge le fichier sidebar.html
+                    .then(response => {
+                        if (!response.ok) throw new Error('Erreur lors du chargement de la sidebar');
+                        return response.text();
+                    })
+                    .then(data => {
+                        document.getElementById('sidebar-container').innerHTML = data; 
+                    })
+                    .catch(error => console.error('Erreur:', error));
+            });
+        </script>
+       
     </head>
-<body class="bg-gray-100">
-    <div id="sidebar-container"></div> <!-- Conteneur de la sidebar -->
-    <div class="min-h-screen flex justify-center items-center">
-        <div class="bg-white p-8 rounded shadow-md w-96">
-            <h2 class="text-2xl font-bold text-center mb-6">Modifier le Profil </h2>
-            <form id="profileForm" class="space-y-4">
-                <input type="text" id="userName" placeholder="Nom d'utilisateur" class="w-full p-2 border rounded" required minlength="3" />
-                <input type="email" id="userEmail" placeholder="Email" class="w-full p-2 border rounded" required />
-                <input type="password" id="currentPassword" placeholder="Mot de passe actuel" class="w-full p-2 border rounded" required />
-                <input type="password" id="newPassword" placeholder="Nouveau mot de passe" class="w-full p-2 border rounded" />
-                
-                <!-- Section pour télécharger la photo de profil -->
-                <div class="mt-4">
-                    <label for="profilePhoto" class="block text-sm font-medium text-gray-700">Photo de Profil</label>
-                    <input type="file" id="profilePhoto" accept="image/*" class="w-full p-2 border rounded mt-2" />
-                    <div class="mt-2">
-                        <img id="profilePhotoDisplay" src="" alt="Photo de profil" class="rounded-full w-32 h-32 object-cover" style="display: none;" />
+    <body class="bg-gray-100">
+        <div id="sidebar-container"></div> 
+        <div class="min-h-screen flex justify-center items-center relative">
+            <!-- Bouton Mode Sombre à droite en haut -->
+            <div class="absolute top-4 right-4 flex items-center space-x-2">
+                <span class="text-gray-700">Mode Sombre</span>
+                <label class="relative inline-block w-10 h-6">
+                    <input type="checkbox" id="darkModeToggle" class="sr-only">
+                    <span class="block w-full h-full bg-gray-300 rounded-full cursor-pointer transition duration-300"></span>
+                    <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-md transform transition duration-300"></span>
+                </label>
+            </div>
+    
+            <div class="bg-white p-8 rounded shadow-md w-96">
+                <h2 class="text-2xl font-bold text-center mb-6">Modifier le Profil</h2>
+                <form id="profileForm" class="space-y-4">
+                    <input type="text" id="userName" placeholder="Nom d'utilisateur" class="w-full p-2 border rounded" required minlength="3" />
+                    <input type="email" id="userEmail" placeholder="Email" class="w-full p-2 border rounded" required />
+                    <input type="password" id="currentPassword" placeholder="Mot de passe actuel" class="w-full p-2 border rounded" required />
+                    <input type="password" id="newPassword" placeholder="Nouveau mot de passe" class="w-full p-2 border rounded" />
+    
+                    <!-- Section pour télécharger la photo de profil -->
+                    <div class="mt-4">
+                        <label for="profilePhoto" class="block text-sm font-medium text-gray-700">Photo de Profil</label>
+                        <input type="file" id="profilePhoto" accept="image/*" class="w-full p-2 border rounded mt-2" />
+                        <div class="mt-2">
+                            <img id="profilePhotoDisplay" src="" alt="Photo de profil" class="rounded-full w-32 h-32 object-cover" style="display: none;" />
+                        </div>
                     </div>
-                </div>
-                <div class="mt-4">
-                    <!-- Ajout de ces lignes pour la caméra -->
-                    <button id="startCamera" class="mt-4 p-2 bg-green-500 text-white rounded">Prendre une photo</button>
-                    <video id="video" width="320" height="240" autoplay class="mt-2" style="display: none;"></video>
-                    <button id="capturePhoto" class="mt-2 p-2 bg-blue-500 text-white rounded" style="display: none;">Capturer</button>
-                </div>
-                
-                <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded">Mettre à jour</button>
-            </form>
+    
+                    <div class="mt-4">
+                        <button id="startCamera" class="mt-4 p-2 bg-green-500 text-white rounded">Prendre une photo</button>
+                        <video id="video" width="320" height="240" autoplay class="mt-2" style="display: none;"></video>
+                        <button id="capturePhoto" class="mt-2 p-2 bg-blue-500 text-white rounded" style="display: none;">Capturer</button>
+                    </div>
+    
+                    <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded">Mettre à jour</button>
+                </form>
+            </div>
         </div>
-    </div>
-    <div class="settings mt-6 p-4">x
-        <h3 class="text-lg font-semibold">Paramètre application</h3>
-        <label class="toggle flex items-center space-x-2">
-            <span>Mode Sombre</span>
-            <input type="checkbox" id="darkModeToggle">
-            <span class="slider"></span>
-        </label>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            fetch('sidebar.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('sidebar-container').innerHTML = data;
-                });
-        });
-    </script>
-</body>
+    </body>
+    
 </html>
+
+
+
+

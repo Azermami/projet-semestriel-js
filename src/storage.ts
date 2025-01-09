@@ -1,3 +1,5 @@
+import { Project } from ".";
+
 const data = localStorage.getItem("key");
 const parsedData = data ? JSON.parse(data) : [];
 
@@ -67,5 +69,61 @@ function fixUsersWithoutId(): void {
     console.log("Utilisateurs corrigés :", users);
 }
 
-// Appelle cette fonction une seule fois pour corriger les utilisateurs existants
+// Fonction pour récupérer les projets filtrés par utilisateur
+export const getProjects = (userId?: string): Project[] => {
+    try {
+        const projects: Project[] = JSON.parse(localStorage.getItem("projects") || "[]");
+        return userId ? projects.filter(project => project.utilisateur_id === userId) : projects;
+    } catch (error) {
+        console.error("Erreur lors de la récupération des projets :", error);
+        return [];
+    }
+};
+
+
+// Fonction pour sauvegarder un tableau de projets
+export const saveProjects = (projects: Project[]): void => {
+    localStorage.setItem("projects", JSON.stringify(projects));
+};
+
+// Fonction pour ajouter un projet
+// Lors de l'ajout d'un projet, inclure l'ID de l'utilisateur connecté
+export const addProject = (
+    project: Omit<Project, "id" | "utilisateur_id">,
+    userId: string
+): void => {
+    const projects = getProjects();
+    const newProject: Project = {
+        ...project,
+        id: Date.now().toString() + Math.random().toString(36).substring(2, 9),
+        utilisateur_id: userId,
+    };
+    projects.push(newProject);
+    saveProjects(projects);
+    console.log("Projet ajouté :", newProject);
+};
+
+
+
+// Fonction pour mettre à jour un projet
+export const updateProject = (updatedProject: Project): void => {
+    const projects = getProjects();
+    const index = projects.findIndex(project => project.id === updatedProject.id);
+
+    if (index !== -1) {
+        projects[index] = updatedProject;
+        saveProjects(projects);
+        console.log("Projet mis à jour :", updatedProject);
+    } else {
+        console.error("Projet introuvable :", updatedProject.id);
+    }
+};
+// Fonction pour supprimer un projet
+export const deleteProject = (projectId: string): void => {
+    const projects = getProjects();
+    const updatedProjects = projects.filter(project => project.id !== projectId);
+    saveProjects(updatedProjects);
+    console.log("Projet supprimé :", projectId);
+};
+
 fixUsersWithoutId();

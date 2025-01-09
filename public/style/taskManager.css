@@ -85,11 +85,6 @@ body {
 
 /* Conteneur du bouton */
 /* Conteneur pour aligner le bouton à droite */
-.button-container {
-    display: flex;
-    justify-content: flex-end; /* Place le bouton à droite */
-    margin-bottom: 16px; /* Espacement inférieur */
-}
 
 #showAddTaskForm {
     background-color: transparent; /* Fond transparent */
@@ -108,11 +103,25 @@ body {
 }
 
 .button-container {
-    display: flex;
-    justify-content: flex-end; /* Place le bouton complètement à droite */
-    margin-bottom: 16px; /* Espacement inférieur */
-    padding-right: 20px; /* Ajustez pour aligner avec le contenu de la page */
+    text-align: right; /* Aligne le contenu à droite */
+    margin-bottom: 16px; /* Ajoute un espacement sous le conteneur (facultatif) */
 }
+
+.button-container button {
+    padding: 10px 20px; /* Espacement interne du bouton */
+    background-color: #007bff; /* Couleur de fond */
+    color: #fff; /* Couleur du texte */
+    border: none; /* Supprime la bordure */
+    border-radius: 5px; /* Coins arrondis */
+    font-size: 16px; /* Taille de la police */
+    cursor: pointer; /* Change le curseur pour indiquer un clic */
+    transition: background-color 0.3s ease; /* Animation au survol */
+}
+
+.button-container button:hover {
+    background-color: #0056b3; /* Couleur du bouton au survol */
+}
+
 
 @media screen and (max-width: 1024px) {
     .grid {
@@ -270,101 +279,7 @@ button {
     }
 }
 /* Table General Styling */
-table {
-    border-collapse: separate;
-    border-spacing: 0 10px; /* Espace entre les lignes */
-    width: 100%;
-    font-size: 14px;
-    background-color: #E7E7E7; /* Couleur de fond générale */
-}
-
-table thead tr {
-    background-color: #dbeafe; /* Bleu clair pour l'en-tête */
-    border: none;
-}
-
-table th {
-    padding: 10px;
-    text-align: left;
-    font-weight: bold;
-    color: #1f2937; /* Texte gris foncé */
-}
-
-table tbody tr {
-    background-color: #ffffff; /* Fond blanc pour les lignes */
-    border: 1px solid #e5e7eb; /* Bordures gris clair */
-    border-radius: 8px; /* Arrondi des coins */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Effet d'ombre */
-    overflow: hidden; /* Éviter les débordements */
-}
-
-table tbody td {
-    padding: 12px;
-    text-align: left;
-    color: #030303; /* Texte gris */
-}
-
-table tbody tr:hover {
-    background-color: #f3f4f6; /* Gris clair au survol */
-}
-
-/* Notifications */
-table .notification {
-    color: #6366f1; /* Texte violet */
-    font-weight: bold;
-}
-
-/* Buttons Styling */
-table .actions button {
-    background-color: #f3f4f6; /* Fond gris clair */
-    border: none;
-    border-radius: 4px;
-    padding: 6px 12px;
-    margin-right: 5px;
-    color: #4b5563; /* Texte gris */
-    cursor: pointer;
-    font-size: 12px;
-}
-
-table .actions button:hover {
-    background-color: #e5e7eb; /* Gris plus clair au survol */
-    color: #1f2937; /* Texte plus foncé */
-}
-
-/* State Dropdown */
-table .state-select {
-    background-color: #ffffff;
-    border: 1px solid #d1d5db; /* Gris clair */
-    border-radius: 4px;
-    padding: 6px 12px;
-    color: #4b5563; /* Texte gris */
-    font-size: 12px;
-}
-
-/* Boutons dans le tableau */
-table .actions button {
-    background-color: transparent; /* Fond transparent */
-    border: 1px solid #d1d5db; /* Bordure gris clair */
-    border-radius: 4px; /* Coins légèrement arrondis */
-    padding: 6px 10px; /* Espacement interne */
-    color: #4b5563; /* Texte gris foncé */
-    font-size: 12px; /* Taille du texte */
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    margin-right: 4px; /* Espacement entre les boutons */
-}
-
-/* Effet au survol */
-table .actions button:hover {
-    background-color: #e5e7eb; /* Fond gris clair au survol */
-    color: #1f2937; /* Texte plus foncé */
-}
-
-/* Désactiver les ombres ou autres effets pour correspondre au style minimal */
-table .actions button:focus {
-    outline: none; /* Pas de contour */
-    box-shadow: none; /* Pas d'ombre */
-}
+/* Task Table */ table { border-collapse: collapse; width: 100%; font-size: 14px; background-color: #E7E7E7; } table thead tr { background-color: #dbeafe; border: none; } table th { padding: 10px; text-align: left; font-weight: bold; color: #1f2937; } table tbody tr { background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); overflow: hidden; } table tbody td { padding: 12px; } /* Rendre le tableau responsive */ @media (max-width: 1024px) { table { font-size: 12px; } table th, table td { padding: 8px; } } @media (max-width: 768px) { table, thead, tbody, th, td, tr { display: block; } thead tr { position: absolute; top: -9999px; left: -9999px; } tr { border: 1px solid #ccc; margin-bottom: 10px; background-color: #fff; padding: 10px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); } td { display: flex; justify-content: space-between; padding: 10px 0; text-align: right; position: relative; } td::before { content: attr(data-label); position: absolute; left: 0; font-weight: bold; text-transform: uppercase; color: #6b7280; } td:first-child { border-top: none; }}
 .task-list {
     padding: 20px;
     border-radius: 5px;
@@ -410,44 +325,18 @@ button#showAddTaskForm {
 
 /* On small screens, hide the sidebar and show the bottom bar */
 @media (max-width: 768px) {
-    /* Hide the sidebar on mobile */
-    #sidebar-container {
-        display: none;
+    .logo-container { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 10px; } .logo { font-size: 24px; font-weight: bold; display: flex; align-items: center; } .logo img { width: 150px; height: auto; } .logout-icon { width: 25px !important; height: auto; } .dark-mode-switch { width: auto; display: flex; align-items: center; justify-content: center; } .dark-mode-switch img { width: 20px; height: auto; cursor: pointer; } .nav-items { list-style: none; display: flex; flex-direction: column; gap: 16px; } .nav-items img { width: 40px; height: auto; } .nav-items li button { text-decoration: none; color: inherit; display: flex; align-items: center; justify-content: flex-start; gap: 20px; padding: 16px; width: 100%; height: 100%; border: none; background: none; border-radius: 8px; cursor: pointer; font-size: 16px; } .nav-items .icon { width: 40px; min-width: 40px; display: flex; justify-content: center; align-items: center; } .nav-items li.active { background-color: rgba(255, 255, 255, 0.1); border: 2px solid #ffffff; color: #ffffff; transition: border-color 0.3s ease, background-color 0.3s ease; } .nav-items li.active button { font-weight: bold; color: #ffffff; } /* Mobile Sidebar */ .sidebar-mobile { display: none; } .mobile-nav { background-color: var(--dark); color: var(--light); display: flex; justify-content: space-around; align-items: center; padding: 10px 0; position: fixed; bottom: 0; width: 100%; z-index: 1000; border-top: 1px solid var(--sidebar-border); } .mobile-nav-items { list-style: none; display: flex; justify-content: space-around; width: 100%; } .mobile-nav-items li { display: flex; justify-content: center; align-items: center; } .mobile-nav-items li button { background: none; border: none; color:inherit; display: flex; flex-direction: column; align-items: center; font-size: 14px; cursor: pointer; } /* Media Queries */ @media screen and (max-width: 768px) { .sidebar { display: none; } .sidebar-mobile { display: flex; } .min-h-screen { padding-left: 0; } main { max-width: 100%; } table, thead, tbody, th, td, tr { display: block; } table tr { margin-bottom: 15px; } table th, table td { text-align: right; padding-left: 50%; position: relative; } table th::before, table td::before { content: attr(data-label); position: absolute; left: 0; width: 50%; padding-left: 15px; font-weight: bold; text-align: left; } .task-list { width: 100%; margin-bottom: 20px; } .button-container { margin-bottom: 20px; } } @media screen and (max-width: 480px) { table { font-size: 10px; } td { padding: 6px; }}}
+    header {
+        background-color: #000; /* Fond noir */
+        color: #fff; /* Texte blanc */
+        padding: 16px; /* Espacement interne */
+        border-radius: 8px; /* Coins arrondis */
+        margin-bottom: 24px; /* Espacement en bas */
     }
-
-    /* Create bottom bar for mobile */
-    #mobile-sidebar {
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background-color: #f7f9fe;
-        color: white;
-        justify-content: space-around;
-        padding: 10px;
-        box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+    
+    header h1 {
+        font-size: 32px; /* Taille du texte */
+        font-family: 'Arial', sans-serif; /* Police (changez si vous souhaitez une autre) */
+        margin: 0; /* Supprime le marges par défaut */
     }
-
-    /* Style for each button or link in the bottom bar */
-    #mobile-sidebar a {
-        text-decoration: none;
-        color: #333;
-        font-weight: bold;
-    }
-
-    /* Add hover effect */
-    #mobile-sidebar a:hover {
-        color: #0056b3;
-    }
-}
-
-/* Additional customization for the sidebar links on mobile */
-@media (max-width: 768px) {
-    /* Sidebar content should be rearranged to the bottom */
-    .sidebar-links {
-        display: flex;
-        justify-content: space-around;
-        width: 100%;
-    }
-}
+    

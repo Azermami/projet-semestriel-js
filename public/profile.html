@@ -9,7 +9,7 @@
         <link rel="stylesheet" href="style/profile.css">
         <script>
             document.addEventListener("DOMContentLoaded", () => {
-                fetch('sidebar.html')  // Charge le fichier sidebar.html
+                fetch('sidebar.html')  
                     .then(response => {
                         if (!response.ok) throw new Error('Erreur lors du chargement de la sidebar');
                         return response.text();
@@ -25,7 +25,8 @@
     <body class="bg-gray-100">
         <div id="sidebar-container"></div> 
         <div class="min-h-screen flex justify-center items-center relative">
-            <!-- Bouton Mode Sombre à droite en haut -->
+
+           
             <div class="absolute top-4 right-4 flex items-center space-x-2">
                 <span class="text-gray-700">Mode Sombre</span>
                 <label class="relative inline-block w-10 h-6">
@@ -33,6 +34,7 @@
                     <span class="block w-full h-full bg-gray-300 rounded-full cursor-pointer transition duration-300"></span>
                     <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-md transform transition duration-300"></span>
                 </label>
+               
             </div>
     
             <div class="bg-white p-8 rounded shadow-md w-96">
@@ -63,7 +65,7 @@
             </div>
         </div>
     </body>
-    
+    <div class="sidebar-mobile"> <nav class="mobile-nav"> <ul class="mobile-nav-items"> <li><button onclick="location.href='dashboard.html'"><span class="icon"><img src="assets/dashboard.png" alt="Dashboard"></span></button></li> <li><button onclick="location.href='project.html'"><span class="icon"><img src="assets/project.png" alt="Projet"></span></button></li> <li><button onclick="location.href='task.html'"><span class="icon"><img src="assets/task.png" alt="Tâches"></span></button></li> <li><button onclick="location.href='calendar.html'"><span class="icon"><img src="assets/calendar.png" alt="Calendrier"></span></button></li> <li><button onclick="location.href='profile.html'"><span class="icon"><img src="assets/setting.png" alt="Settings"></span></button></li> <li><button onclick="location.href='login.html'"><span class="icon"><img src="assets/logout.png" alt="Déconnexion"></span></button></li> </ul> </nav> </div> </div>
 </html>
 
 

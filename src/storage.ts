@@ -1,4 +1,4 @@
-import { Project } from ".";
+
 
 const data = localStorage.getItem("key");
 const parsedData = data ? JSON.parse(data) : [];
@@ -86,8 +86,7 @@ export const saveProjects = (projects: Project[]): void => {
     localStorage.setItem("projects", JSON.stringify(projects));
 };
 
-// Fonction pour ajouter un projet
-// Lors de l'ajout d'un projet, inclure l'ID de l'utilisateur connecté
+
 export const addProject = (
     project: Omit<Project, "id" | "utilisateur_id">,
     userId: string

@@ -1,16 +1,4 @@
-interface Project {
-    id: string;
-    title: string;
-    description: string;
-    priority: string;
-    startDate: string;
-    endDate: string;
-    status: string;
-  
-}
-
 document.addEventListener("DOMContentLoaded", () => {
-    // Afficher les projets dès que la page est prête
     displayProjects();
 
     // Écouter la soumission du formulaire d'ajout de projet
@@ -42,6 +30,9 @@ document.addEventListener("DOMContentLoaded", () => {
         // Afficher les projets après l'ajout
         displayProjects();
 
+        // Afficher une notification de succès
+        showNotification("Projet ajouté avec succès !", "success");
+
         // Réinitialiser le formulaire
         form.reset();
     });
@@ -67,9 +58,6 @@ function displayProjects() {
                 <button class="edit-btn" data-id="${project.id}">Modifier</button>
                 <button class="delete-btn" data-id="${project.id}">Supprimer</button>
             </td>
-            <td>
-    <button class="join-btn" data-id="${project.id}">Rejoindre</button>
-</td>
             <td>${project.status}</td>
         `;
         tableBody.appendChild(row);
@@ -95,7 +83,7 @@ function displayProjects() {
     });
 }
 
-// Récupérer les projets depuis le stockage local (ou une base de données)
+// Récupérer les projets depuis le stockage local
 function getProjects(): Project[] {
     const projects = JSON.parse(localStorage.getItem("projects") || "[]");
     return projects;
@@ -111,7 +99,7 @@ function addProject(project: Project) {
 // Modifier un projet
 function editProject(id: string) {
     const projects = getProjects();
-    const project = projects.find(p => p.id === id);
+    const project = projects.find((p) => p.id === id);
 
     if (project) {
         // Mettre à jour les champs du formulaire avec les informations du projet
@@ -123,15 +111,36 @@ function editProject(id: string) {
 
         // Supprimer le projet original pour le remplacer plus tard
         deleteProject(id);
+
+        // Afficher une notification de modification
+        showNotification("Projet modifié avec succès !", "info");
     }
 }
 
 // Supprimer un projet
 function deleteProject(id: string) {
     let projects = getProjects();
-    projects = projects.filter(p => p.id !== id);
+    projects = projects.filter((p) => p.id !== id);
     localStorage.setItem("projects", JSON.stringify(projects));
 
     // Afficher les projets après suppression
     displayProjects();
+
+    // Afficher une notification de suppression
+    showNotification("Projet supprimé avec succès !", "danger");
+}
+
+// Fonction pour afficher une notification
+function showNotification(message: string, type: "success" | "info" | "danger") {
+    const notification = document.createElement("div");
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+
+    // Ajouter la notification au corps de la page
+    document.body.appendChild(notification);
+
+    // Supprimer la notification après 3 secondes
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
 }

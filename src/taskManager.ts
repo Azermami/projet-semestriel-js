@@ -1,6 +1,5 @@
 import { saveTask, getTasks, deleteTask } from './storage.js';
 import { initDarkMode } from './dark-mode.js';
-
 document.addEventListener('DOMContentLoaded', () => {
     
     const taskList = getTasks();

@@ -4,16 +4,103 @@ body {
 }
 
 /* Responsive Grid for Task Lists */
+/* Style des colonnes */
 .task-list {
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb; /* Light gray */
-    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: #f8f8f8;
+    text-align: center;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-family: Arial, sans-serif;
 }
 
-.task-items {
-    min-height: 200px;
-    padding: 10px;
-    overflow-y: auto;
+.task-list h3 {
+    font-size: 16px;
+    margin: 0;
+}
+
+#todoList {
+    background-color: #dcd6f7; /* Violet clair */
+}
+
+#inProgressList {
+    background-color: #fff3b0; /* Jaune clair */
+}
+
+#doneList {
+    background-color: #d4f7d4; /* Vert clair */
+}
+
+/* Réactivité */
+.grid-cols-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+@media (max-width: 768px) {
+    .grid-cols-3 {
+        grid-template-columns: 1fr; /* Une colonne sur écrans étroits */
+    }
+}
+
+.task-list:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Bouton pour ajouter une nouvelle tâche */
+#showAddTaskForm {
+    display: block;
+    margin: auto;
+    padding: 8px 16px;
+    background-color: #eeeff0;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+#showAddTaskForm:hover {
+    background-color: #eaeef1;
+}
+
+/* Conteneur du bouton */
+/* Conteneur pour aligner le bouton à droite */
+.button-container {
+    display: flex;
+    justify-content: flex-end; /* Place le bouton à droite */
+    margin-bottom: 16px; /* Espacement inférieur */
+}
+
+#showAddTaskForm {
+    background-color: transparent; /* Fond transparent */
+    color: #333; /* Couleur du texte noir/gris foncé */
+    font-size: 14px;
+    font-weight: bold;
+    border: none; /* Pas de bordure */
+    cursor: pointer;
+    text-decoration: none; /* Pas de soulignement */
+    transition: all 0.3s ease;
+}
+
+#showAddTaskForm:hover {
+    color: #000; /* Couleur plus foncée au survol */
+    text-decoration: underline; /* Ajout de soulignement au survol */
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-end; /* Place le bouton complètement à droite */
+    margin-bottom: 16px; /* Espacement inférieur */
+    padding-right: 20px; /* Ajustez pour aligner avec le contenu de la page */
 }
 
 @media screen and (max-width: 1024px) {
@@ -45,27 +132,101 @@ body {
 }
 
 /* Task Table */
+/* Task Table */
 table {
     border-collapse: collapse;
     width: 100%;
     font-size: 14px;
+    background-color: #E7E7E7; /* Couleur de fond générale */
 }
 
 table thead tr {
-    background-color: #f3f4f6;
-    border-bottom: 2px solid #d1d5db; /* Gray */
+    background-color: #dbeafe; /* Bleu clair pour l'en-tête */
+    border: none;
 }
 
-table th,
-table td {
-    border-bottom: 1px solid #e5e7eb; /* Light gray */
-    padding: 8px;
+table th {
+    padding: 10px;
     text-align: left;
+    font-weight: bold;
+    color: #1f2937; /* Texte gris foncé */
 }
 
-table tbody tr:hover {
-    background-color: #f9fafb; /* Lighter gray */
+table tbody tr {
+    background-color: #ffffff; /* Fond blanc pour les lignes */
+    border: 1px solid #e5e7eb; /* Bordures gris clair */
+    border-radius: 8px; /* Arrondi des coins */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Effet d'ombre */
+    overflow: hidden; /* Éviter les débordements */
 }
+
+table tbody td {
+    padding: 12px;
+}
+
+/* Rendre le tableau responsive */
+@media (max-width: 1024px) {
+    table {
+        font-size: 12px; /* Réduit la taille de police sur les écrans plus petits */
+    }
+
+    table th, table td {
+        padding: 8px; /* Ajuste le padding pour plus de lisibilité sur les écrans plus petits */
+    }
+}
+
+@media (max-width: 768px) {
+    /* Convertir le tableau en format vertical sur petits écrans */
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    tr {
+        border: 1px solid #ccc;
+        margin-bottom: 10px;
+        background-color: #fff;
+        padding: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    td {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        text-align: right;
+        position: relative;
+    }
+
+    td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: #6b7280;
+    }
+
+    td:first-child {
+        border-top: none;
+    }
+}
+
+@media (max-width: 480px) {
+    table {
+        font-size: 10px; /* Réduit la taille de police encore plus sur les écrans très petits */
+    }
+
+    td {
+        padding: 6px; /* Réduit le padding sur les écrans très petits */
+    }
+}
+
 
 select {
     background-color: #f9fafb;
@@ -78,7 +239,7 @@ button {
 
 /* Notifications and States */
 .text-blue-500:hover {
-    color: #2563eb;
+    color: #e9ecf0;
 }
 
 .text-red-500:hover {
@@ -88,7 +249,7 @@ button {
 /* Sidebar and Header */
 #sidebar-container {
     width: 100%;
-    background-color: #1e3a8a; /* Navy Blue */
+    background-color: #f7f9fe; /* Navy Blue */
     color: white;
 }
 
@@ -219,12 +380,63 @@ table .actions button:focus {
 }
 
 button#showAddTaskForm {
-    background-color: #007bff;
-    color: white;
+    background-color: #ebeef0;
+    color: rgb(9, 4, 4);
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
     font-family: Arial, sans-serif;
     font-size: 16px;
     margin-top: 20px;
+}
+/* Sidebar on large screens */
+#sidebar-container {
+    width: 250px; /* Large sidebar */
+    background-color: #f7f9fe;
+    color: white;
+    position: relative; /* Normal position for desktop */
+}
+
+/* On small screens, hide the sidebar and show the bottom bar */
+@media (max-width: 768px) {
+    /* Hide the sidebar on mobile */
+    #sidebar-container {
+        display: none;
+    }
+
+    /* Create bottom bar for mobile */
+    #mobile-sidebar {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: #f7f9fe;
+        color: white;
+        justify-content: space-around;
+        padding: 10px;
+        box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Style for each button or link in the bottom bar */
+    #mobile-sidebar a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+    }
+
+    /* Add hover effect */
+    #mobile-sidebar a:hover {
+        color: #0056b3;
+    }
+}
+
+/* Additional customization for the sidebar links on mobile */
+@media (max-width: 768px) {
+    /* Sidebar content should be rearranged to the bottom */
+    .sidebar-links {
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+    }
 }

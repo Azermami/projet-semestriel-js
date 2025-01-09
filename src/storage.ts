@@ -69,8 +69,6 @@ function fixUsersWithoutId(): void {
     console.log("Utilisateurs corrigés :", users);
 }
 
-
-
 // Fonction pour récupérer les projets filtrés par utilisateur
 export const getProjects = (userId?: string): Project[] => {
     try {
@@ -90,18 +88,21 @@ export const saveProjects = (projects: Project[]): void => {
 
 // Fonction pour ajouter un projet
 // Lors de l'ajout d'un projet, inclure l'ID de l'utilisateur connecté
-export const addProject = (project: Omit<Project, "id" | "date_creation" | "utilisateur_id">, userId: string): void => {
+export const addProject = (
+    project: Omit<Project, "id" | "utilisateur_id">,
+    userId: string
+): void => {
     const projects = getProjects();
     const newProject: Project = {
         ...project,
-        id: Date.now().toString() + Math.random().toString(36).substr(2, 9), // Générer un ID unique
-        date_creation: new Date().toISOString(),
-        utilisateur_id: userId, // Ajouter l'ID de l'utilisateur
+        id: Date.now().toString() + Math.random().toString(36).substring(2, 9),
+        utilisateur_id: userId,
     };
     projects.push(newProject);
     saveProjects(projects);
     console.log("Projet ajouté :", newProject);
 };
+
 
 
 // Fonction pour mettre à jour un projet
@@ -117,7 +118,6 @@ export const updateProject = (updatedProject: Project): void => {
         console.error("Projet introuvable :", updatedProject.id);
     }
 };
-
 // Fonction pour supprimer un projet
 export const deleteProject = (projectId: string): void => {
     const projects = getProjects();
@@ -126,7 +126,4 @@ export const deleteProject = (projectId: string): void => {
     console.log("Projet supprimé :", projectId);
 };
 
-
-
-// Appelle cette fonction une seule fois pour corriger les utilisateurs existants
 fixUsersWithoutId();

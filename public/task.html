@@ -18,12 +18,14 @@
         <div id="header"></div>
         <main class="flex-1 p-4">
             <header class="bg-blue-600 p-4 text-white rounded-lg mb-6">
-                <h1 class="text-2xl">Task Manager</h1>
+                <h1 class="text-2xl">Tâches</h1>
             </header>
 
             <!-- Button to add task -->
-            <button id="showAddTaskForm" class="bg-blue-500 text-white p-2 rounded mb-6">Ajouter une tâche</button>
-
+            <div class="button-container">
+                <button id="showAddTaskForm">+ Créer une nouvelle tâche</button>
+            </div>
+            
             <!-- Add Task Form (hidden by default) -->
             <form id="addTaskForm" class="space-y-4 bg-white p-4 rounded shadow-md mb-6 hidden">
                 <input id="taskTitle" type="text" placeholder="Task Title" class="w-full p-2 border rounded" required />
@@ -98,6 +100,14 @@
             </div>
         </main>
     </div>
+    <!-- Mobile Bottom Bar (Sidebar) -->
+<div id="mobile-sidebar" class="hidden md:flex">
+    <a href="#home">Home</a>
+    <a href="#tasks">Tâches</a>
+    <a href="#profile">Profil</a>
+    <a href="#settings">Paramètres</a>
+</div>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

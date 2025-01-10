@@ -1,5 +1,3 @@
-
-
 const data = localStorage.getItem("key");
 const parsedData = data ? JSON.parse(data) : [];
 
@@ -29,7 +27,6 @@ export function getTasks(): any[] {
     }
 }
 
-
 export function deleteTask(id: string): void {
     let tasks = getTasks();
     tasks = tasks.filter((task: any) => task.id !== id);
@@ -52,12 +49,10 @@ export function updateUser(updatedUser: any): void {
     }
 }
 
-
-
-
 export function saveUserProfile(profile: any): void {
     localStorage.setItem('userProfile', JSON.stringify(profile));
 }
+
 function fixUsersWithoutId(): void {
     const users = JSON.parse(localStorage.getItem("users") || "[]").map((user: any) => {
         if (!user.id) {
@@ -80,12 +75,10 @@ export const getProjects = (userId?: string): Project[] => {
     }
 };
 
-
 // Fonction pour sauvegarder un tableau de projets
 export const saveProjects = (projects: Project[]): void => {
     localStorage.setItem("projects", JSON.stringify(projects));
 };
-
 
 export const addProject = (
     project: Omit<Project, "id" | "utilisateur_id">,
@@ -102,8 +95,6 @@ export const addProject = (
     console.log("Projet ajouté :", newProject);
 };
 
-
-
 // Fonction pour mettre à jour un projet
 export const updateProject = (updatedProject: Project): void => {
     const projects = getProjects();
@@ -117,6 +108,7 @@ export const updateProject = (updatedProject: Project): void => {
         console.error("Projet introuvable :", updatedProject.id);
     }
 };
+
 // Fonction pour supprimer un projet
 export const deleteProject = (projectId: string): void => {
     const projects = getProjects();

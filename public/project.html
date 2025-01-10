@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projet</title>
-    <!-- Styles and Scripts -->
+    <!-- Styles et Scripts -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="Style/project.css">
     <script src="/dist/project.js" type="module"></script>
@@ -12,23 +12,22 @@
     <script src="/dist/dashboard.js" type="module"></script>
 </head>
 <body class="bg-gray-100">
-    <!-- Sidebar -->
+    <!-- Sidebar mobile -->
     <div id="sidebar-container"></div>
 
     <!-- Main Content -->
     <div class="min-h-screen flex flex-col">
         <!-- Header -->
         <div id="header"></div>
-        
+
         <!-- Main Section -->
         <main class="flex-1 p-4">
             <header class="custom-header">
                 <h1 class="text-2xl">Projet</h1>
             </header>
 
-            
-             <!-- Project Lists -->
-             <div class="grid grid-cols-3 gap-4 mb-8">
+            <!-- Liste des projets -->
+            <div class="grid grid-cols-3 gap-4 mb-8">
                 <div id="todoList" class="task-list p-4 bg-white rounded shadow" data-status="todo">
                     <h3 class="text-lg font-bold mb-2">À faire (<span id="todoCount">0</span>)</h3>
                     <div class="task-items"></div>
@@ -42,15 +41,15 @@
                     <div class="task-items"></div>
                 </div>
             </div>
-            <!-- Add Project Button -->
+
+            <!-- Bouton pour ajouter un projet -->
             <div class="mb-4" style="text-align: right;">
                 <button id="toggleFormButton" class="right-align-button">
                     + Crée un Nouveau projet
                 </button>
             </div>
-            
 
-            <!-- Add Project Form -->
+            <!-- Formulaire d'ajout de projet -->
             <form id="addProjectForm" class="space-y-4 bg-white p-4 rounded shadow-md hidden">
                 <input id="projectTitle" type="text" placeholder="Nom du projet" class="w-full p-2 border rounded" required />
                 <textarea id="projectDescription" placeholder="Description du projet" class="w-full p-2 border rounded" required></textarea>
@@ -77,9 +76,7 @@
                 </button>
             </form>
 
-           
-
-            <!-- Project Table -->
+            <!-- Table des projets -->
             <div class="bg-white p-4 rounded shadow-md">
                 <h2 class="text-xl font-bold mb-4">Liste des Projets</h2>
                 <table class="min-w-full table-auto">
@@ -95,7 +92,7 @@
                         </tr>
                     </thead>
                     <tbody id="projectTableBody">
-                        <!-- Example Row -->
+                        <!-- Exemple de ligne -->
                         <tr>
                             <td class="px-4 py-2">Exemple de Projet</td>
                             <td class="px-4 py-2">Description du projet</td>
@@ -119,8 +116,21 @@
             </div>
         </main>
     </div>
-    <div class="sidebar-mobile"> <nav class="mobile-nav"> <ul class="mobile-nav-items"> <li><button onclick="location.href='dashboard.html'"><span class="icon"><img src="assets/dashboard.png" alt="Dashboard"></span></button></li> <li><button onclick="location.href='project.html'"><span class="icon"><img src="assets/project.png" alt="Projet"></span></button></li> <li><button onclick="location.href='task.html'"><span class="icon"><img src="assets/task.png" alt="Tâches"></span></button></li> <li><button onclick="location.href='calendar.html'"><span class="icon"><img src="assets/calendar.png" alt="Calendrier"></span></button></li> <li><button onclick="location.href='profile.html'"><span class="icon"><img src="assets/setting.png" alt="Settings"></span></button></li> <li><button onclick="location.href='login.html'"><span class="icon"><img src="assets/logout.png" alt="Déconnexion"></span></button></li> </ul> </nav> </div>
-    <!-- JavaScript -->
+
+    <!-- Sidebar mobile -->
+    <div class="sidebar-mobile">
+        <nav class="mobile-nav">
+            <ul class="mobile-nav-items">
+                <li><button onclick="location.href='dashboard.html'"><span class="icon"><img src="assets/dashboard.png" alt="Dashboard"></span></button></li>
+                <li><button onclick="location.href='project.html'"><span class="icon"><img src="assets/project.png" alt="Projet"></span></button></li>
+                <li><button onclick="location.href='task.html'"><span class="icon"><img src="assets/task.png" alt="Tâches"></span></button></li>
+                <li><button onclick="location.href='calendar.html'"><span class="icon"><img src="assets/calendar.png" alt="Calendrier"></span></button></li>
+                <li><button onclick="location.href='profile.html'"><span class="icon"><img src="assets/setting.png" alt="Settings"></span></button></li>
+                <li><button onclick="location.href='login.html'"><span class="icon"><img src="assets/logout.png" alt="Déconnexion"></span></button></li>
+            </ul>
+        </nav>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Sidebar

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ToDo Dashboard</title>
     <link rel="stylesheet" href="style/dashboard.css">
     <link rel="stylesheet" href="style/sidebar.css">
@@ -15,8 +16,8 @@
 </head>
 <body>
     <div class="container">
-        <div id="sidebar-container"></div> <!-- Sidebar mobile ou desktop sera injecté ici -->
-        
+        <div id="sidebar-container"></div>
+
         <main class="main-content">
             <header>
                 <h1>Dashboard</h1>
@@ -58,6 +59,10 @@
                     <div class="tasks-card">
                         <div class="tasks-header">
                             <h2>Mes prochaines tâches</h2>
+                            <!--<div class="date-nav">
+                                <button class="nav-btn"></button>
+                                <button class="nav-btn"></button>
+                            </div>-->
                         </div>
                         <div class="tasks-list" id="tasksList"></div>
                     </div>
@@ -65,21 +70,7 @@
             </div>
         </main>
     </div>
-
-    <!-- Sidebar mobile -->
-    <div class="sidebar-mobile"> 
-        <nav class="mobile-nav"> 
-            <ul class="mobile-nav-items"> 
-                <li><button onclick="location.href='dashboard.html'"><span class="icon"><img src="assets/dashboard.png" alt="Dashboard"></span></button></li> 
-                <li><button onclick="location.href='project.html'"><span class="icon"><img src="assets/project.png" alt="Projet"></span></button></li> 
-                <li><button onclick="location.href='task.html'"><span class="icon"><img src="assets/task.png" alt="Tâches"></span></button></li> 
-                <li><button onclick="location.href='calendar.html'"><span class="icon"><img src="assets/calendar.png" alt="Calendrier"></span></button></li> 
-                <li><button onclick="location.href='profile.html'"><span class="icon"><img src="assets/setting.png" alt="Settings"></span></button></li> 
-                <li><button onclick="location.href='login.html'"><span class="icon"><img src="assets/logout.png" alt="Déconnexion"></span></button></li> 
-            </ul> 
-        </nav> 
-    </div>
-
+    <div class="sidebar-mobile"> <nav class="mobile-nav"> <ul class="mobile-nav-items"> <li><button onclick="location.href='dashboard.html'"><span class="icon"><img src="assets/dashboard.png" alt="Dashboard"></span></button></li> <li><button onclick="location.href='project.html'"><span class="icon"><img src="assets/project.png" alt="Projet"></span></button></li> <li><button onclick="location.href='task.html'"><span class="icon"><img src="assets/task.png" alt="Tâches"></span></button></li> <li><button onclick="location.href='calendar.html'"><span class="icon"><img src="assets/calendar.png" alt="Calendrier"></span></button></li> <li><button onclick="location.href='profile.html'"><span class="icon"><img src="assets/setting.png" alt="Settings"></span></button></li> <li><button onclick="location.href='login.html'"><span class="icon"><img src="assets/logout.png" alt="Déconnexion"></span></button></li> </ul> </nav> </div> </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const isMobile = window.innerWidth <= 768;
@@ -91,8 +82,15 @@
                     .then(data => {
                         document.getElementById('sidebar-container').innerHTML = data;
                     });
-            } 
-
+            } else {
+                // Charge la sidebar desktop
+                fetch('sidebar.html')
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('sidebar-container').innerHTML = data;
+                    });
+            }
+    
             // Écoute les changements de taille d'écran
             window.addEventListener('resize', function() {
                 const newIsMobile = window.innerWidth <= 768;
@@ -102,5 +100,6 @@
             });
         });
     </script>
+    
 </body>
 </html>

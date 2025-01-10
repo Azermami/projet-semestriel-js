@@ -14,6 +14,12 @@
 		"typescript": "^5.6.2"
 	},
 	"dependencies": {
-		"undici": "^6.19.8"
+		"@fullcalendar/core": "^6.1.15",
+		"@fullcalendar/daygrid": "^6.1.15",
+		"@types/gapi": "^0.0.47",
+		"@types/gapi.auth2": "^0.0.61",
+		"gapi-script": "^1.2.0",
+		"undici": "^6.19.8",
+		"web-push": "^3.6.7"
 	}
 }

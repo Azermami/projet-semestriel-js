@@ -1,108 +1,167 @@
-import { saveProject, getProjects, deleteProject } from './storage.js';
+// Définition des interfaces Task, Project et User
+export interface Task {
+    id: string;
+    nom_tache: string;
+    description: string;
+    date_creation: string;
+    date_limite: string;
+    etat_tache: string;
+    priorite: string;
+    progression: number;
+    id_projet: string;
+    id_utilisateur_attribue: string;
+}
 
-document.addEventListener('DOMContentLoaded', () => {
-    const projectList = getProjects();
-    displayProjects(projectList);
+export interface Project {
+    id: string;
+    nom_projet: string;
+    description: string;
+    date_creation: string;
+    date_limite: string;
+    etat_projet: string;
+    priorite: string;
+    progression: number;
+    id_utilisateur_attribue: string;
+}
 
-    document.getElementById("addProjectForm")?.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const projectId = (document.getElementById("projectId") as HTMLInputElement)?.value; // Récupérez l'ID du projet à modifier
+export interface User {
+    id: string;
+    username: string;
+    email: string;
+    password: string;
+    profilePhoto?: string;
+}
 
-        const newProject = {
-            id: projectId || Date.now().toString(), // Utiliser l'ID existant ou créer un nouvel ID
-            nom_projet: (document.getElementById("projectTitle") as HTMLInputElement).value,
-            description: (document.getElementById("projectDescription") as HTMLTextAreaElement).value,
-            priorite: (document.getElementById("projectPriority") as HTMLSelectElement).value,
-            date_limite: (document.getElementById("projectDeadline") as HTMLInputElement).value,
-            id_utilisateur_attribue: JSON.parse(localStorage.getItem("loggedInUser") || "{}").id
-        };
-
-        // Vérifiez si nous modifions un projet existant ou en ajoutons un nouveau
-        if (projectId) {
-            updateProject(newProject); // Appel de la fonction de mise à jour
-        } else {
-            saveProject(newProject);
-        }
-
-        displayProjects(getProjects());
-        alert(projectId ? "Projet modifié avec succès !" : "Projet enregistré avec succès !");
-    });
-});
-
-// Fonction pour afficher les projets
-function displayProjects(projects: any[]) {
-    const projectTableBody = document.getElementById("projectTableBody");
-    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
-
-    if (projectTableBody) {
-        projectTableBody.innerHTML = '';
-        const userProjects = projects.filter(project => project.id_utilisateur_attribue === loggedInUser.id);
-
-        userProjects.forEach(project => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${project.nom_projet}</td>
-                <td>${project.description}</td>
-                <td>${project.priorite}</td>
-                <td>${project.date_limite}</td>
-                <td>
-                    <button class="editProjectBtn" data-id="${project.id}">Modifier</button>
-                    <button class="deleteProjectBtn" data-id="${project.id}">Supprimer</button>
-                </td>
-            `;
-            projectTableBody.appendChild(row);
-        });
-
-        // Ajoutez des gestionnaires d'événements pour les boutons
-        addProjectButtonListeners();
+// Fonction générique pour récupérer des données depuis le localStorage
+function getDataFromLocalStorage<T>(key: string): T[] {
+    try {
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : [];
+    } catch (error) {
+        console.error(`Erreur lors de la récupération des données pour la clé "${key}":`, error);
+        return [];
     }
 }
 
-// Fonction pour ajouter des écouteurs d'événements aux boutons
-function addProjectButtonListeners() {
-    const deleteButtons = document.querySelectorAll(".deleteProjectBtn");
-    deleteButtons.forEach(button => {
-        button.addEventListener("click", (e) => {
-            const projectId = (e.target as HTMLButtonElement).dataset.id;
-            if (projectId) {
-                deleteProject(projectId);
-                displayProjects(getProjects());
-                alert("Projet supprimé avec succès !");
-            }
-        });
-    });
-
-    const editButtons = document.querySelectorAll(".editProjectBtn");
-    editButtons.forEach(button => {
-        button.addEventListener("click", (e) => {
-            const projectId = (e.target as HTMLButtonElement).dataset.id;
-            if (projectId) {
-                const projectToEdit = getProjects().find(project => project.id === projectId);
-                if (projectToEdit) {
-                    // Remplir le formulaire avec les données du projet à modifier
-                    (document.getElementById("projectTitle") as HTMLInputElement).value = projectToEdit.nom_projet;
-                    (document.getElementById("projectDescription") as HTMLTextAreaElement).value = projectToEdit.description;
-                    (document.getElementById("projectPriority") as HTMLSelectElement).value = projectToEdit.priorite;
-                    (document.getElementById("projectDeadline") as HTMLInputElement).value = projectToEdit.date_limite;
-
-                    // Ajouter un champ caché pour l'ID du projet à modifier
-                    let projectIdInput = document.getElementById("projectId") as HTMLInputElement;
-                    if (!projectIdInput) {
-                        projectIdInput = document.createElement("input");
-                        projectIdInput.type = "hidden";
-                        projectIdInput.id = "projectId";
-                        document.getElementById("addProjectForm")?.appendChild(projectIdInput);
-                    }
-                    projectIdInput.value = projectToEdit.id;
-                }
-            }
-        });
-    });
+// Fonction générique pour sauvegarder des données dans le localStorage
+function saveDataToLocalStorage<T>(key: string, data: T[]): void {
+    try {
+        localStorage.setItem(key, JSON.stringify(data));
+    } catch (error) {
+        console.error(`Erreur lors de la sauvegarde des données pour la clé "${key}":`, error);
+    }
 }
 
-// Fonction pour mettre à jour un projet
-function updateProject(updatedProject: any) {
-    let projects = getProjects();
-    projects = projects.map(project => project.id === updatedProject.id ? updatedProject : project);
-    localStorage.setItem('projects', JSON.stringify(projects));
+// Sauvegarde d'une nouvelle tâche
+export function saveTask(task: Task): void {
+    const tasks = getDataFromLocalStorage<Task>('tasks');
+    const newTask: Task = {
+        id: Date.now().toString(), // ID unique basé sur l'horodatage
+        nom_tache: task.nom_tache,
+        description: task.description,
+        date_creation: new Date().toISOString(),
+        date_limite: task.date_limite,
+        etat_tache: "pending",
+        priorite: task.priorite,
+        progression: 0,
+        id_projet: task.id_projet,
+        id_utilisateur_attribue: task.id_utilisateur_attribue
+    };
+    tasks.push(newTask);
+    saveDataToLocalStorage('tasks', tasks);
 }
+
+// Récupération des tâches
+export function getTasks(): Task[] {
+    const tasks = getDataFromLocalStorage<Task>('tasks');
+    console.log('Tâches récupérées :', tasks);
+    return tasks;
+}
+
+// Suppression d'une tâche
+export function deleteTask(id: string): void {
+    const tasks = getDataFromLocalStorage<Task>('tasks');
+    const updatedTasks = tasks.filter(task => task.id !== id);
+    saveDataToLocalStorage('tasks', updatedTasks);
+}
+
+// Sauvegarde d'un nouveau projet
+export function saveProject(project: Project): void {
+    const projects = getDataFromLocalStorage<Project>('projects');
+    const newProject: Project = {
+        id: Date.now().toString(), // ID unique basé sur l'horodatage
+        nom_projet: project.nom_projet,
+        description: project.description,
+        date_creation: new Date().toISOString(),
+        date_limite: project.date_limite,
+        etat_projet: "pending",
+        priorite: project.priorite,
+        progression: 0,
+        id_utilisateur_attribue: project.id_utilisateur_attribue
+    };
+    projects.push(newProject);
+    saveDataToLocalStorage('projects', projects);
+}
+
+// Récupération des projets
+export function getProjects(): Project[] {
+    return getDataFromLocalStorage<Project>('projects');
+}
+
+// Suppression d'un projet
+export function deleteProject(id: string): void {
+    const projects = getDataFromLocalStorage<Project>('projects');
+    const updatedProjects = projects.filter(project => project.id !== id);
+    saveDataToLocalStorage('projects', updatedProjects);
+}
+
+// Sauvegarde de la liste des utilisateurs
+export function saveUsers(users: User[]): void {
+    if (!Array.isArray(users)) {
+        console.error("Les données à sauvegarder ne sont pas un tableau valide.");
+        return;
+    }
+    saveDataToLocalStorage('users', users);
+}
+
+// Récupération de la liste des utilisateurs
+export function getUsers(): User[] {
+    return getDataFromLocalStorage<User>('users');
+}
+
+// Récupération d'un utilisateur par ID
+export function getUserById(userId: string): User | undefined {
+    const users = getDataFromLocalStorage<User>('users');
+    return users.find(user => user.id === userId);
+}
+
+// Mise à jour d'un utilisateur
+export function updateUser(updatedUser: User): void {
+    const users = getDataFromLocalStorage<User>('users');
+    const index = users.findIndex(user => user.id === updatedUser.id);
+
+    if (index !== -1) {
+        users[index] = updatedUser;
+        saveDataToLocalStorage('users', users);
+    }
+}
+
+// Sauvegarde du profil utilisateur
+export function saveUserProfile(profile: User): void {
+    localStorage.setItem('userProfile', JSON.stringify(profile));
+}
+
+// Correction des utilisateurs sans ID
+function fixUsersWithoutId(): void {
+    const users = getDataFromLocalStorage<User>('users').map(user => {
+        if (!user.id) {
+            user.id = Date.now().toString() + Math.random().toString(36).substring(2, 9);
+        }
+        return user;
+    });
+    saveDataToLocalStorage('users', users);
+    console.log("Utilisateurs corrigés :", users);
+}
+
+// Appelle cette fonction une seule fois pour corriger les utilisateurs existants
+fixUsersWithoutId();

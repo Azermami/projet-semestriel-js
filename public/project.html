@@ -1,59 +1,170 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Manager</title>
-    <script src="/dist/projectManager.js" type="module"></script>
+    <title>Projet</title>
+    <!-- Styles et Scripts -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="Style/project.css">
+    <script src="/dist/project.js" type="module"></script>
+    <script src="/dist/sidebar.js"></script>
+    <script src="/dist/dashboard.js" type="module"></script>
 </head>
 <body class="bg-gray-100">
+    <!-- Sidebar mobile -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
     <div class="min-h-screen flex flex-col">
+        <!-- Header -->
         <div id="header"></div>
+
+        <!-- Main Section -->
         <main class="flex-1 p-4">
-            <header class="bg-blue-600 p-4 text-white">
-                <h1 class="text-2xl">Project Manager</h1>
+            <header class="custom-header">
+                <h1 class="text-2xl">Projet</h1>
             </header>
-            <form id="addProjectForm" class="space-y-4 bg-white p-4 rounded shadow-md mb-6">
-                <input id="projectTitle" type="text" placeholder="Project Title" class="w-full p-2 border rounded" required />
-                <textarea id="projectDescription" placeholder="Project Description" class="w-full p-2 border rounded" required></textarea>
-                <label for="projectPriority">Priorité:</label>
-                <select id="projectPriority" name="projectPriority">
-                    <option value="haute">Haute</option>
-                    <option value="moyenne">Moyenne</option>
-                    <option value="basse">Basse</option>
-                </select>
-                <input id="projectDeadline" type="date" class="w-full p-2 border rounded" required />
-                <button type="submit" class="w-full bg-green-500 text-white p-2 rounded">Add Project</button>
+
+            <!-- Liste des projets -->
+            <div class="grid grid-cols-3 gap-4 mb-8">
+                <div id="todoList" class="task-list p-4 bg-white rounded shadow" data-status="todo">
+                    <h3 class="text-lg font-bold mb-2">À faire (<span id="todoCount">0</span>)</h3>
+                    <div class="task-items"></div>
+                </div>
+                <div id="inProgressList" class="task-list p-4 bg-white rounded shadow" data-status="in-progress">
+                    <h3 class="text-lg font-bold mb-2">En cours (<span id="inProgressCount">0</span>)</h3>
+                    <div class="task-items"></div>
+                </div>
+                <div id="doneList" class="task-list p-4 bg-white rounded shadow" data-status="done">
+                    <h3 class="text-lg font-bold mb-2">Terminé (<span id="doneCount">0</span>)</h3>
+                    <div class="task-items"></div>
+                </div>
+            </div>
+
+            <!-- Bouton pour ajouter un projet -->
+            <div class="mb-4" style="text-align: right;">
+                <button id="toggleFormButton" class="right-align-button">
+                    + Crée un Nouveau projet
+                </button>
+            </div>
+
+            <!-- Formulaire d'ajout de projet -->
+            <form id="addProjectForm" class="space-y-4 bg-white p-4 rounded shadow-md hidden">
+                <input id="projectTitle" type="text" placeholder="Nom du projet" class="w-full p-2 border rounded" required />
+                <textarea id="projectDescription" placeholder="Description du projet" class="w-full p-2 border rounded" required></textarea>
+                <div class="flex items-center gap-2">
+                    <label for="projectPriority">Priorité:</label>
+                    <select id="projectPriority" name="projectPriority" class="p-2 border rounded">
+                        <option value="haute">Haute</option>
+                        <option value="moyenne">Moyenne</option>
+                        <option value="basse">Basse</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-2">
+                    <label for="projectStatus">Statut:</label>
+                    <select id="projectStatus" class="p-2 border rounded">
+                        <option value="todo">À faire</option>
+                        <option value="in-progress">En cours</option>
+                        <option value="done">Terminé</option>
+                    </select>
+                </div>
+                <input id="projectStartDate" type="date" class="w-full p-2 border rounded" required />
+                <input id="projectEndDate" type="date" class="w-full p-2 border rounded" required />
+                <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white p-2 rounded transition">
+                    Ajouter Projet
+                </button>
             </form>
+
+            <!-- Table des projets -->
             <div class="bg-white p-4 rounded shadow-md">
                 <h2 class="text-xl font-bold mb-4">Liste des Projets</h2>
                 <table class="min-w-full table-auto">
                     <thead>
                         <tr class="bg-gray-200">
-                            <th class="px-4 py-2">Titre</th>
-                            <th class="px-4 py-2">Description</th>
-                            <th class="px-4 py-2">Priorité</th>
-                            <th class="px-4 py-2">Date Limite</th>
-                            <th class="px-4 py-2">Actions</th>
+                            <th class="px-4 py-2 text-left">Titre</th>
+                            <th class="px-4 py-2 text-left">Description</th>
+                            <th class="px-4 py-2 text-left">Priorité</th>
+                            <th class="px-4 py-2 text-left">Date Début</th>
+                            <th class="px-4 py-2 text-left">Date Fin</th>
+                            <th class="px-4 py-2 text-left">Statut</th>
+                            <th class="px-4 py-2 text-left">Actions</th>
                         </tr>
-                    </thead> 
+                    </thead>
                     <tbody id="projectTableBody">
-                        <!-- Les lignes de tâches seront insérées ici -->
+                        <!-- Exemple de ligne -->
+                        <tr>
+                            <td class="px-4 py-2">Exemple de Projet</td>
+                            <td class="px-4 py-2">Description du projet</td>
+                            <td class="px-4 py-2">Haute</td>
+                            <td class="px-4 py-2">2024-01-01</td>
+                            <td class="px-4 py-2">2024-12-31</td>
+                            <td class="px-4 py-2">
+                                <select class="w-full p-2 border rounded">
+                                    <option value="todo">À faire</option>
+                                    <option value="in-progress">En cours</option>
+                                    <option value="done">Terminé</option>
+                                </select>
+                            </td>
+                            <td class="px-4 py-2">
+                                <button class="text-blue-500 hover:text-blue-700 mr-2" onclick="editProject(this)">Modifier</button>
+                                <button class="text-red-500 hover:text-red-700">Supprimer</button>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
         </main>
     </div>
+
+    <!-- Sidebar mobile -->
+    <div class="sidebar-mobile">
+        <nav class="mobile-nav">
+            <ul class="mobile-nav-items">
+                <li><button onclick="location.href='dashboard.html'"><span class="icon"><img src="assets/dashboard.png" alt="Dashboard"></span></button></li>
+                <li><button onclick="location.href='project.html'"><span class="icon"><img src="assets/project.png" alt="Projet"></span></button></li>
+                <li><button onclick="location.href='task.html'"><span class="icon"><img src="assets/task.png" alt="Tâches"></span></button></li>
+                <li><button onclick="location.href='calendar.html'"><span class="icon"><img src="assets/calendar.png" alt="Calendrier"></span></button></li>
+                <li><button onclick="location.href='profile.html'"><span class="icon"><img src="assets/setting.png" alt="Settings"></span></button></li>
+                <li><button onclick="location.href='login.html'"><span class="icon"><img src="assets/logout.png" alt="Déconnexion"></span></button></li>
+            </ul>
+        </nav>
+    </div>
+
     <script>
-        // Charger le menu de navigation une fois que le DOM est prêt
-        window.onload = function() {
-            fetch('header.html')
+        document.addEventListener('DOMContentLoaded', () => {
+            // Sidebar
+            fetch('sidebar.html')
                 .then(response => response.text())
                 .then(data => {
-                    document.getElementById('header').innerHTML = data;
+                    document.getElementById('sidebar-container').innerHTML = data;
                 });
-        };
+
+            // Toggle Add Project Form
+            document.getElementById('toggleFormButton').addEventListener('click', () => {
+                const form = document.getElementById('addProjectForm');
+                form.classList.toggle('hidden');
+            });
+        });
+
+        // Edit Project Functionality
+        function editProject(button) {
+            const row = button.closest('tr');
+            const title = row.querySelector('td:nth-child(1)').textContent;
+            const description = row.querySelector('td:nth-child(2)').textContent;
+            const priority = row.querySelector('td:nth-child(3)').textContent;
+            const startDate = row.querySelector('td:nth-child(4)').textContent;
+            const endDate = row.querySelector('td:nth-child(5)').textContent;
+
+            document.getElementById('projectTitle').value = title;
+            document.getElementById('projectDescription').value = description;
+            document.getElementById('projectPriority').value = priority;
+            document.getElementById('projectStartDate').value = startDate;
+            document.getElementById('projectEndDate').value = endDate;
+
+            const form = document.getElementById('addProjectForm');
+            form.classList.remove('hidden');
+        }
     </script>
 </body>
 </html>

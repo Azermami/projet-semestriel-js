@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <title>Sidebar</title>
+    <link rel="stylesheet" href="style/sidebar.css">
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="logo-container">
+            <div class="logo">
+                <img src="assets/TO.png" alt="Logo">
+            </div>
+            <div class="dark-mode-switch">
+                <img src="assets/darktheme.png" alt="Dark Mode Switch" id="darkModeToggle">
+            </div>
+        </div>
+
+        <div class="user">
+        </div>
+
+        <ul class="nav-items">
+            <li><button onclick="location.href='dashboard.html'"><span class="icon"><img src="assets/dashboard.png" alt="Logo dashboard"></span>Dashboard</button></li>
+            <li><button onclick="location.href='project.html'"><span class="icon"><img src="assets/project.png" alt="Logo project"></span>Projet</button></li>
+            <li><button onclick="location.href='task.html'"><span class="icon"><img src="assets/task.png" alt="Logo task"></span>Tâches</button></li>
+            <li><button onclick="location.href='calendar.html'"><span class="icon"><img src="assets/calendar.png" alt="Logo calendar"></span>Calendrier</button></li>
+            <li><button onclick="location.href='profile.html'"><span class="icon"><img src="assets/setting.png" alt="Logo setting"></span>Settings</button></li>
+            <li><button onclick="location.href='login.html'"><span class="icon"><img src="assets/logout.png" alt="Logo logout" class="logout-icon"></span>Déconnexion</button></li>
+        </ul>
+    </nav>
+
+    <script>
+        // Fonction utilitaire pour récupérer des données du localStorage
+        function getDataFromLocalStorage(key) {
+            try {
+                const data = localStorage.getItem(key);
+                return data ? JSON.parse(data) : null;
+            } catch (error) {
+                console.error(`Erreur lors de la récupération des données pour la clé "${key}":`, error);
+                return null;
+            }
+        }
+    
+        // Fonction exécutée après le chargement du DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            // Gestion des informations utilisateur
+            const loggedInUser = getDataFromLocalStorage("loggedInUser");
+            const usernameElement = document.getElementById('user-username');
+            
+            if (loggedInUser && loggedInUser.username) {
+                usernameElement.innerHTML = `<strong>${loggedInUser.username}</strong>`;
+            } else {
+                usernameElement.innerHTML = `<strong>Invité</strong>`;
+            }
+    
+            // Gestion du mode sombre
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            darkModeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+            });
+    
+            // Déterminer la page actuelle et gérer la classe active
+            const currentPage = window.location.pathname.split('/').pop(); // Récupère le fichier HTML actuel
+            document.querySelectorAll('.nav-items li').forEach(item => {
+                const button = item.querySelector('button'); // Trouve le bouton dans chaque élément de la liste
+                const targetPage = button.getAttribute('onclick')?.match(/'([^']+)'/)[1]; // Extrait le nom de la page cible
+                if (targetPage === currentPage) {
+                    item.classList.add('active'); // Ajoute la classe active à l'élément correspondant
+                } else {
+                    item.classList.remove('active'); // Retire la classe active des autres éléments
+                }
+            });
+        });
+    </script>
+    
+</body>
+</html>

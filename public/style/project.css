@@ -1,0 +1,410 @@
+:root {
+    --dark: #1B1B1B;
+    --light: #FFFFFF;
+    --sidebar-border: #292929;
+}
+
+.min-h-screen {
+    padding-left: 280px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 14px;
+}
+
+table thead tr {
+    background-color: #f3f4f6;
+    border-bottom: 2px solid #d1d5db; /* Gray */
+}
+
+table th,
+table td {
+    border-bottom: 1px solid #e5e7eb; /* Light gray */
+    padding: 8px;
+    text-align: left;
+}
+
+table tbody tr:hover {
+    background-color: #f9fafb; /* Lighter gray */
+}
+
+select {
+    background-color: #f9fafb;
+    cursor: pointer;
+}
+
+button {
+    font-weight: bold;
+}
+
+/* Notifications and States */
+.text-blue-500:hover {
+    color: #2563eb;
+}
+
+.text-red-500:hover {
+    color: #b91c1c;
+}
+
+/* Sidebar and Header */
+#sidebar-container {
+    width: 100%;
+    background-color: #1e3a8a; /* Navy Blue */
+    color: white;
+}
+
+@media (min-width: 768px) {
+    #sidebar-container {
+        width: 20%;
+    }
+}
+
+/* Table General Styling */
+table {
+    border-collapse: separate;
+    border-spacing: 0 10px; /* Espace entre les lignes */
+    width: 100%;
+    font-size: 14px;
+    background-color: #E7E7E7; /* Couleur de fond générale */
+}
+
+table thead tr {
+    background-color: #dbeafe; /* Bleu clair pour l'en-tête */
+    border: none;
+}
+
+table th {
+    padding: 10px;
+    text-align: left;
+    font-weight: bold;
+    color: #1f2937; /* Texte gris foncé */
+}
+
+table tbody tr {
+    background-color: #ffffff; /* Fond blanc pour les lignes */
+    border: 1px solid #e5e7eb; /* Bordures gris clair */
+    border-radius: 8px; /* Arrondi des coins */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Effet d'ombre */
+    overflow: hidden; /* Éviter les débordements */
+}
+
+table tbody td {
+    padding: 12px;
+    text-align: left;
+    color: #030303; /* Texte gris */
+}
+
+table tbody tr:hover {
+    background-color: #f3f4f6; /* Gris clair au survol */
+}
+
+/* Notifications */
+table .notification {
+    color: #6366f1; /* Texte violet */
+    font-weight: bold;
+}
+
+/* Buttons Styling */
+table .actions button {
+    background-color: #f3f4f6; /* Fond gris clair */
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    margin-right: 5px;
+    color: #4b5563; /* Texte gris */
+    cursor: pointer;
+    font-size: 12px;
+}
+
+table .actions button:hover {
+    background-color: #e5e7eb; /* Gris plus clair au survol */
+    color: #1f2937; /* Texte plus foncé */
+}
+
+/* State Dropdown */
+table .state-select {
+    background-color: #ffffff;
+    border: 1px solid #d1d5db; /* Gris clair */
+    border-radius: 4px;
+    padding: 6px 12px;
+    color: #4b5563; /* Texte gris */
+    font-size: 12px;
+}
+
+/* Boutons dans le tableau */
+table .actions button {
+    background-color: transparent; /* Fond transparent */
+    border: 1px solid #d1d5db; /* Bordure gris clair */
+    border-radius: 4px; /* Coins légèrement arrondis */
+    padding: 6px 10px; /* Espacement interne */
+    color: #4b5563; /* Texte gris foncé */
+    font-size: 12px; /* Taille du texte */
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-right: 4px; /* Espacement entre les boutons */
+}
+
+/* Effet au survol */
+table .actions button:hover {
+    background-color: #e5e7eb; /* Fond gris clair au survol */
+    color: #1f2937; /* Texte plus foncé */
+}
+
+/* Désactiver les ombres ou autres effets pour correspondre au style minimal */
+table .actions button:focus {
+    outline: none; /* Pas de contour */
+    box-shadow: none; /* Pas d'ombre */
+}
+.task-list {
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    width: 150px; /* Ajustez la largeur selon vos besoins */
+    height: 59px; /* Ajustez la hauteur selon vos besoins */
+    line-height: 75px; /* Centrage vertical */
+    display: inline-block;
+    margin: 10px; /* Espace entre les divs */
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-end; /* Place le bouton complètement à droite */
+    margin-bottom: 16px; /* Espacement inférieur */
+    padding-right: 20px; /* Ajustez pour aligner avec le contenu de la page */
+}
+
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: #fff;
+    font-weight: bold;
+    opacity: 0.9;
+    z-index: 1000;
+    animation: fadeIn 0.5s, fadeOut 0.5s 2.5s;
+}
+
+.notification.success {
+    background-color: #4caf50;
+}
+
+.notification.info {
+    background-color: #2196f3;
+}
+
+.notification.danger {
+    background-color: #f44336;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 0.9;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 0.9;
+    }
+    to {
+        opacity: 0;
+    }
+}
+header {
+    background-color: #000000; /* Couleur de fond noir */
+    color: #ffffff;           /* Couleur du texte blanc */
+    padding: 1rem;            /* Espacement interne */
+    border-radius: 0.5rem;    /* Bords arrondis */
+    margin-bottom: 1.5rem;    /* Espacement en bas */
+}
+
+header h1 {
+    font-size: 1.5rem; /* Taille de police pour le titre */
+}
+.right-align-button {
+    background-color: transparent; /* Pas de couleur de fond */
+    color: #000000; /* Texte noir */
+    padding: 0.5rem 1rem; /* Espacement interne */
+    border: none; /* Pas de bordure */
+    font-size: 1rem; /* Taille de la police */
+    cursor: pointer; /* Curseur pointer pour bouton */
+    text-align: right; /* Alignement du texte */
+    float: right; /* Positionnement à droite */
+}
+
+.right-align-button:hover {
+    color: #555555; /* Couleur lors du survol */
+    text-decoration: underline; /* Soulignement lors du survol */
+}
+/* Sidebar Desktop */
+.sidebar {
+    width: 280px;
+    background-color: var(--dark);
+    color: var(--light);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: fixed;
+    border-right: 1px solid var(--sidebar-border);
+    z-index: 1000;
+}
+
+/* Logo Container */
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    width: 150px;
+    height: auto;
+}
+
+.logout-icon {
+    width: 25px !important;
+    height: auto;
+}
+
+/* Dark Mode Switch */
+.dark-mode-switch {
+    width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dark-mode-switch img {
+    width: 20px;
+    height: auto;
+    cursor: pointer;
+}
+
+/* Navigation Items */
+.nav-items {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.nav-items img {
+    width: 40px;
+    height: auto;
+}
+
+.nav-items li button {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+    padding: 16px;
+   }
+   /* Mobile Sidebar */
+.sidebar-mobile {
+    display: none;
+}
+
+.mobile-nav {
+    background-color: var(--dark);
+    color: var(--light);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 1000;
+    border-top: 1px solid var(--sidebar-border);
+}
+
+.mobile-nav-items {
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.mobile-nav-items li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mobile-nav-items li button {
+    background: none;
+    border: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Media Query */
+@media screen and (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+    .sidebar-mobile {
+        display: flex;
+    }
+
+    .min-h-screen {
+        padding-left: 0;
+    }
+
+    main {
+        max-width: 100%;
+    }
+
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+
+    table tr {
+        margin-bottom: 15px;
+    }
+
+    table th, table td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+    }
+
+    table th::before, table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 50%;
+        padding-left: 15px;
+        font-weight: bold;
+        text-align: left;
+    }
+}

@@ -1,124 +1,120 @@
-// // Sauvegarde d'une nouvelle tâche
-// export function saveTask(task: any): void {
-//     const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-//     const newTask = {
-//         id: Date.now().toString(),  // Utilisation d'un ID unique
-//         nom_tache: task.nom_tache,
-//         description: task.description,
-//         date_creation: new Date().toISOString(),
-//         date_limite: task.date_limite,
-//         etat_tache: "pending",
-//         priorite: task.priorite,
-//         progression: 0,
-//         id_projet: task.id_projet,
-//         id_utilisateur_attribue: task.id_utilisateur_attribue
-//     };
-//     tasks.push(newTask);
-//     localStorage.setItem('tasks', JSON.stringify(tasks));
-// }
+const data = localStorage.getItem("key");
+const parsedData = data ? JSON.parse(data) : [];
 
-// // Récupération des tâches
-// export function getTasks(): any[] {
-//     return JSON.parse(localStorage.getItem('tasks') || '[]');
-// }
-
-// // Suppression d'une tâche
-// export function deleteTask(id: string): void {
-//     let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-//     tasks = tasks.filter((task: any) => task.id !== id);
-//     localStorage.setItem('tasks', JSON.stringify(tasks));
-// }
-// class TaskManager {
-//     static addTask(title: string, description: string, dueDate: string, priority: string) {
-//         const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-
-//         // Générer un nouvel identifiant pour la tâche
-//         const newTask = {
-//             id: tasks.length + 1,
-//             title,
-//             description,
-//             dueDate,
-//             priority,
-//             status: "en attente"
-//         };
-
-//         tasks.push(newTask);
-
-//         // Sauvegarder les tâches dans LocalStorage
-//         localStorage.setItem("tasks", JSON.stringify(tasks));
-//     }
-// }
-// Sauvegarde d'une nouvelle tâche
-// Sauvegarde d'une nouvelle tâche
 export function saveTask(task: any): void {
-    const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-    const newTask = {
-        id: Date.now().toString(),  // Utilisation d'un ID unique
-        nom_tache: task.nom_tache,
-        description: task.description,
-        date_creation: new Date().toISOString(),
-        date_limite: task.date_limite,
-        etat_tache: "pending",
-        priorite: task.priorite,
-        progression: 0,
-        id_projet: task.id_projet,
-        id_utilisateur_attribue: task.id_utilisateur_attribue
-    };
-    tasks.push(newTask);
+    const tasks = getTasks();
+    tasks.push({ ...task, date_creation: new Date().toISOString(), etat_tache: "pending", progression: 0 });
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
-// Récupération des tâches
-export function getTasks(): any[] {
-    return JSON.parse(localStorage.getItem('tasks') || '[]');
+export function updateTask(updatedTask: any): void {
+    const tasks = getTasks();
+    const index = tasks.findIndex((task: any) => task.id === updatedTask.id);
+
+    if (index !== -1) {
+        tasks[index] = updatedTask; // Mise à jour de la tâche existante
+    }
+    
+    localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
-// Suppression d'une tâche
+export function getTasks(): any[] {
+    try {
+        return JSON.parse(localStorage.getItem('tasks') || '[]');
+    } catch (e) {
+        console.error('Error parsing tasks from localStorage:', e);
+        return [];
+    }
+}
+
 export function deleteTask(id: string): void {
-    let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    let tasks = getTasks();
     tasks = tasks.filter((task: any) => task.id !== id);
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
-// Fonction pour sauvegarder un projet
-export function saveProject(project: any): void {
-    const projects = JSON.parse(localStorage.getItem('projects') || '[]');
-    const newProject = {
-        id: Date.now().toString(),  // Utilisation d'un ID unique
-        nom_projet: project.nom_projet,
-        description: project.description,
-        date_creation: new Date().toISOString(),
-        date_limite: project.date_limite,
-        etat_projet: "pending",
-        priorite: project.priorite,
-        progression: 0,
-        id_utilisateur_attribue: project.id_utilisateur_attribue
+export function getUserById(userId: string): any {
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    return users.find((user: any) => user.id === userId);
+}
+
+export function updateUser(updatedUser: any): void {
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    const index = users.findIndex((user: any) => user.id === updatedUser.id);
+
+    if (index !== -1) {
+        // Mise à jour de l'utilisateur, y compris la photo
+        users[index] = updatedUser;
+        localStorage.setItem("users", JSON.stringify(users)); // Sauvegarde les utilisateurs avec la nouvelle photo
+    }
+}
+
+export function saveUserProfile(profile: any): void {
+    localStorage.setItem('userProfile', JSON.stringify(profile));
+}
+
+function fixUsersWithoutId(): void {
+    const users = JSON.parse(localStorage.getItem("users") || "[]").map((user: any) => {
+        if (!user.id) {
+            user.id = Date.now().toString() + Math.random().toString(36).substring(2, 9);
+        }
+        return user;
+    });
+    localStorage.setItem("users", JSON.stringify(users));
+    console.log("Utilisateurs corrigés :", users);
+}
+
+// Fonction pour récupérer les projets filtrés par utilisateur
+export const getProjects = (userId?: string): Project[] => {
+    try {
+        const projects: Project[] = JSON.parse(localStorage.getItem("projects") || "[]");
+        return userId ? projects.filter(project => project.utilisateur_id === userId) : projects;
+    } catch (error) {
+        console.error("Erreur lors de la récupération des projets :", error);
+        return [];
+    }
+};
+
+// Fonction pour sauvegarder un tableau de projets
+export const saveProjects = (projects: Project[]): void => {
+    localStorage.setItem("projects", JSON.stringify(projects));
+};
+
+export const addProject = (
+    project: Omit<Project, "id" | "utilisateur_id">,
+    userId: string
+): void => {
+    const projects = getProjects();
+    const newProject: Project = {
+        ...project,
+        id: Date.now().toString() + Math.random().toString(36).substring(2, 9),
+        utilisateur_id: userId,
     };
     projects.push(newProject);
-    localStorage.setItem('projects', JSON.stringify(projects));
-}
+    saveProjects(projects);
+    console.log("Projet ajouté :", newProject);
+};
 
-// Récupération des projets
-export function getProjects(): any[] {
-    return JSON.parse(localStorage.getItem('projects') || '[]');
-}
+// Fonction pour mettre à jour un projet
+export const updateProject = (updatedProject: Project): void => {
+    const projects = getProjects();
+    const index = projects.findIndex(project => project.id === updatedProject.id);
 
-// Suppression d'un projet
-export function deleteProject(id: string): void {
-    let projects = JSON.parse(localStorage.getItem('projects') || '[]');
-    projects = projects.filter((project: any) => project.id !== id);
-    localStorage.setItem('projects', JSON.stringify(projects));
-}
+    if (index !== -1) {
+        projects[index] = updatedProject;
+        saveProjects(projects);
+        console.log("Projet mis à jour :", updatedProject);
+    } else {
+        console.error("Projet introuvable :", updatedProject.id);
+    }
+};
 
+// Fonction pour supprimer un projet
+export const deleteProject = (projectId: string): void => {
+    const projects = getProjects();
+    const updatedProjects = projects.filter(project => project.id !== projectId);
+    saveProjects(updatedProjects);
+    console.log("Projet supprimé :", projectId);
+};
 
-//Mis a jour profil
-// Récupérer la liste des utilisateurs
-export function getUsers(): any[] {
-    return JSON.parse(localStorage.getItem('users') || '[]');
-}
-
-// Sauvegarder la liste des utilisateurs
-export function saveUsers(users: any[]): void {
-    localStorage.setItem('users', JSON.stringify(users));
-}
-
+fixUsersWithoutId();

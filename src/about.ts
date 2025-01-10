@@ -5,3 +5,13 @@ if (backButton) {
         window.location.href = 'index.html';
     });
 }
+interface Project {
+    id: string;
+    title: string;
+    description: string;
+    priority: string;
+    startDate: string;
+    endDate: string;
+    status: string;
+
+}

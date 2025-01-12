@@ -36,19 +36,23 @@
     </div>
 
     <script>
-        // Effacer les champs de saisie au chargement de la page
-        window.onload = function() {
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-        };
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hash = await crypto.subtle.digest("SHA-256", data);
+            return Array.from(new Uint8Array(hash))
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+        }
 
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
+            const hashedPassword = await hashPassword(password);
             const users = JSON.parse(localStorage.getItem('users') || '[]');
-            const user = users.find(user => user.username === username && user.password === password);
+            const user = users.find(user => user.username === username && user.password === hashedPassword);
 
             if (user) {
                 localStorage.setItem('loggedInUser', JSON.stringify(user));

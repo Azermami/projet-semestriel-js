@@ -6,10 +6,7 @@
     <title>Task Manager</title>
     <script src="/dist/taskManager.js" type="module"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    
     <link rel="stylesheet" href="Style/taskManager.css">
-
-    <script src="sidebar.js"></script>
     <script src="/dist/dashboard.js" type="module"></script>
 </head>
 <body class="bg-gray-100">
@@ -17,7 +14,7 @@
     <div class="min-h-screen flex flex-col">
         <div id="header"></div>
         <main class="flex-1 p-4">
-            <header >
+            <header>
                 <h1 class="text-2xl">Tâches</h1>
             </header>
 
@@ -28,8 +25,14 @@
             
             <!-- Add Task Form (hidden by default) -->
             <form id="addTaskForm" class="space-y-4 bg-white p-4 rounded shadow-md mb-6 hidden">
-                <input id="taskTitle" type="text" placeholder="Task Title" class="w-full p-2 border rounded" required />
-                <textarea id="taskDescription" placeholder="Task Description" class="w-full p-2 border rounded" required></textarea>
+                <div class="flex items-center gap-2">
+                    <input id="taskTitle" type="text" placeholder="Task Title" class="w-full p-2 border rounded" required />
+                    <button type="button" id="startTitleRecognition" class="bg-blue-500 text-white p-2 rounded">🎤</button>
+                </div>
+                <div class="flex items-center gap-2">
+                    <textarea id="taskDescription" placeholder="Task Description" class="w-full p-2 border rounded" required></textarea>
+                    <button type="button" id="startDescriptionRecognition" class="bg-blue-500 text-white p-2 rounded">🎤</button>
+                </div>
                 <div class="flex items-center gap-2">
                     <label for="taskPriority">Priorité:</label>
                     <select id="taskPriority" name="taskPriority" class="p-2 border rounded">
@@ -59,7 +62,6 @@
                     <div class="task-items"></div>
                 </div>
             </div>
-            
             
             <!-- Task Table -->
             <div class="bg-white p-4 rounded shadow-md">
@@ -117,6 +119,36 @@
                 const form = document.getElementById('addTaskForm');
                 form.classList.toggle('hidden');
             });
+
+            // Web Speech API for task title
+            const titleRecognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            titleRecognition.lang = 'fr-FR';
+            titleRecognition.continuous = false;
+            titleRecognition.interimResults = false;
+
+            document.getElementById('startTitleRecognition').addEventListener('click', function() {
+                titleRecognition.start();
+            });
+
+            titleRecognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('taskTitle').value = transcript;
+            };
+
+            // Web Speech API for task description
+            const descriptionRecognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            descriptionRecognition.lang = 'fr-FR';
+            descriptionRecognition.continuous = false;
+            descriptionRecognition.interimResults = false;
+
+            document.getElementById('startDescriptionRecognition').addEventListener('click', function() {
+                descriptionRecognition.start();
+            });
+
+            descriptionRecognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('taskDescription').value = transcript;
+            };
         });
 
         // Edit Task (sample function)

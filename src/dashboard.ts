@@ -3,7 +3,7 @@ interface Project {
     id: string;
     title: string;
     description: string;
-    priority?: string;
+    priority: string;
     deadline?: string;
     date_creation: string;
     date_limite: string;
@@ -40,16 +40,17 @@ function displayUsername(): void {
     }
 }
 
-// Récupère tous les projets depuis le stockage local
-function getProjects(): Project[] {
-    const projectsJson = localStorage.getItem('projects');
-    return projectsJson ? JSON.parse(projectsJson) : [];
-}
 
 // Récupère toutes les tâches depuis le stockage local
 function getTasks(): Task[] {
     const tasksJson = localStorage.getItem('tasks');
     return tasksJson ? JSON.parse(tasksJson) : [];
+}
+
+// Récupère les projets depuis le localStorage
+function getProjects(): Project[] {
+    const projectsJson = localStorage.getItem('projects');
+    return projectsJson ? JSON.parse(projectsJson) : [];
 }
 
 // Affiche tous les projets sur le tableau de bord
@@ -72,7 +73,6 @@ function displayProjectsInDashboard(): void {
             <div class="project-content">
                 <div class="project-title">${project.title}</div>
                 <div class="project-description">${project.description}</div>
-                <div class="project-progress">${project.deadline}</div>
             </div>
         `;
         projectsList.appendChild(projectElement);

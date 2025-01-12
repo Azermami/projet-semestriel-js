@@ -1,16 +1,17 @@
+import * as bcrypt from 'bcryptjs';
+
 class Auth {
     static login(username: string, password: string): boolean {
         const userData = JSON.parse(localStorage.getItem("users") || "[]");
-        const user = userData.find((user: any) => user.username === username && user.password === password);
+        const user = userData.find((user: any) => user.username === username);
 
-        if (user) {
+        if (user && bcrypt.compareSync(password, user.password)) {
             localStorage.setItem("loggedInUser", JSON.stringify(user));
             const photoDisplay = document.getElementById("profilePhotoDisplay") as HTMLImageElement;
 
             if (photoDisplay) {
-                // Vérifier si l'utilisateur a une photo et l'afficher, sinon une photo par défaut
-                photoDisplay.src = user.photo || "default-photo.png"; // Utiliser une photo par défaut si vide
-                photoDisplay.style.display = "block"; // Afficher l'image après le chargement
+                photoDisplay.src = user.photo || "default-photo.png";
+                photoDisplay.style.display = "block";
             }
             return true;
         }
@@ -28,7 +29,7 @@ class Auth {
     }
 
     static applyDarkMode(user: any): void {
-        const darkModePreference = user.darkMode || 'disabled';  // Vérifie si l'utilisateur a une préférence de mode sombre stockée
+        const darkModePreference = user.darkMode || 'disabled';
         if (darkModePreference === 'enabled') {
             document.body.classList.add("dark-mode");
         } else {
@@ -42,56 +43,63 @@ class UserManager {
         try {
             const users = JSON.parse(localStorage.getItem("users") || "[]");
 
-            // Vérification des champs obligatoires
             if (!username || !email || !password) {
                 console.error("Tous les champs sont requis !");
                 return;
             }
 
-            // Vérification des doublons
             const isDuplicate = users.some((user: any) => user.username === username || user.email === email);
             if (isDuplicate) {
                 console.error("Cet utilisateur existe déjà !");
                 return;
             }
 
-            // Générer un ID unique
             const userId = Date.now().toString() + Math.random().toString(36).substring(2, 9);
+            const hashedPassword = bcrypt.hashSync(password, 10);
 
-            // Créer un utilisateur avec une photo par défaut ou téléchargée
-            let userPhoto = "default-photo.png";  // Photo par défaut
+            let userPhoto = "default-photo.png";
             if (photo) {
                 const reader = new FileReader();
                 reader.onloadend = () => {
-                    userPhoto = reader.result as string;  // Convertir l'image en base64
+                    userPhoto = reader.result as string;
                     const newUser = {
                         id: userId,
                         username: username,
                         email: email,
-                        password: password,
-                        photo: userPhoto,  // Photo de l'utilisateur
+                        password: hashedPassword,
+                        photo: userPhoto,
                     };
 
-                    // Ajouter et sauvegarder l'utilisateur
                     users.push(newUser);
-                    localStorage.setItem("users", JSON.stringify(users)); // Sauvegarde les utilisateurs avec la photo
-                    console.log("Utilisateur ajouté avec succès :", newUser);
+                    localStorage.setItem("users", JSON.stringify(users));
+                    const userForDisplay = {
+                        id: newUser.id,
+                        username: newUser.username,
+                        email: newUser.email,
+                        photo: newUser.photo
+                    };
+                    console.log("Utilisateur ajouté avec succès :", userForDisplay);
                 };
 
-                reader.readAsDataURL(photo);  // Convertir l'image en base64
+                reader.readAsDataURL(photo);
             } else {
                 const newUser = {
                     id: userId,
                     username: username,
                     email: email,
-                    password: password,
-                    photo: userPhoto,  // Photo de l'utilisateur
+                    password: hashedPassword,
+                    photo: userPhoto,
                 };
 
-                // Ajouter et sauvegarder l'utilisateur
                 users.push(newUser);
-                localStorage.setItem("users", JSON.stringify(users)); // Sauvegarde les utilisateurs avec la photo
-                console.log("Utilisateur ajouté avec succès :", newUser);
+                localStorage.setItem("users", JSON.stringify(users));
+                const userForDisplay = {
+                    id: newUser.id,
+                    username: newUser.username,
+                    email: newUser.email,
+                    photo: newUser.photo
+                };
+                console.log("Utilisateur ajouté avec succès :", userForDisplay);
             }
         } catch (error) {
             console.error("Erreur lors de l'ajout d'un utilisateur :", error);

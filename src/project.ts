@@ -16,13 +16,16 @@ document.addEventListener("DOMContentLoaded", () => {
         // Créer un objet projet
         const newProject: Project = {
             id: Date.now().toString(),
-            title,
-            description,
+            title: title,
+            description: description,
             priority: (document.getElementById("projectPriority") as HTMLSelectElement).value,
-            startDate,
-            endDate,
-            status,
+            startDate: startDate,
+            endDate: endDate,
+            status: status,
+            date_creation: startDate,
+            date_limite: endDate
         };
+        
 
         // Ajouter le projet au localStorage
         addProject(newProject);

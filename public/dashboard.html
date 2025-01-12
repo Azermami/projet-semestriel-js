@@ -11,7 +11,6 @@
     <script defer src="dist/dashboard.js"></script> 
     <script defer src="dist/user.js"></script> 
     <script defer src="dist/projectManager.js"></script>
-    <script src="sidebar.js"></script>
 
 </head>
 <body>
@@ -22,7 +21,6 @@
             <header>
                 <h1>Dashboard</h1>
                 <div class="user-info">
-                    <img src="" alt="Profile" class="avatar">
                     <span id="user-username"><strong>Chargement...</strong></span>
                     <button class="notification-button" onclick="location.href='notification.html'">
                         <img src="assets/cloche.png" alt="Notification">
@@ -53,7 +51,7 @@
                 <div class="bottom-section">
                     <div class="projects-card">
                         <h2>Mes projets</h2>
-                        <div class="projects-list" id="projectsList"></div>
+                        <div class="projects-list" id="projectsList"></div> <!-- Ajout de l'élément #projectsList -->
                     </div>
 
                     <div class="tasks-card">

@@ -105,7 +105,13 @@ export function saveProject(project: Project): void {
 
 // Récupération des projets
 export function getProjects(): Project[] {
-    return getDataFromLocalStorage<Project>('projects');
+
+    try {
+        return JSON.parse(localStorage.getItem('projects') || '[]');
+    } catch (error) {
+        console.error('Error parsing projects from localStorage:', error);
+        return [];
+    }
 }
 
 // Suppression d'un projet
